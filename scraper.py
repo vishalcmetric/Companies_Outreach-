@@ -16,6 +16,7 @@ Run:
 
 import asyncio
 import logging
+import os
 import re
 import time
 import urllib.parse
@@ -25,6 +26,7 @@ import httpx
 from bs4 import BeautifulSoup
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, HTMLResponse
 from pydantic import BaseModel, field_validator
 
 # Playwright is used as a JS-rendering fallback for SPA sites.
@@ -46,6 +48,24 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Serve the frontend (index.html) directly from this same service, so a
+# single Render deploy gives one URL for both the UI and the API — no
+# separate static-site deploy needed. Falls back to a plain status message
+# if index.html isn't sitting next to this script (e.g. local dev where you
+# open index.html directly in the browser instead).
+_FRONTEND_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "index.html")
+
+@app.get("/", include_in_schema=False)
+async def frontend():
+    if os.path.exists(_FRONTEND_PATH):
+        return FileResponse(_FRONTEND_PATH, media_type="text/html")
+    return HTMLResponse(
+        "<h3>C-Metric Scraper backend is running.</h3>"
+        "<p>index.html wasn't found next to scraper.py in this deploy — "
+        "open index.html locally instead, pointing its Backend URL field "
+        "at this service's address.</p>"
+    )
 
 # ── tuning constants ───────────────────────────────────────────────────────────
 TIMEOUT           = 14          # seconds per individual HTTP request
