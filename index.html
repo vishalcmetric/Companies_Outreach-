@@ -267,7 +267,7 @@
     <div class="footnote" style="margin-bottom:14px;">Your key is used only in this browser tab and never sent anywhere except <b>api.groq.com</b>. Free tier is roughly: GPT-OSS 120B ~30 req/min, ~200K tokens/day; GPT-OSS 20B similar or higher. Limits are per-organization (a second key on the same account shares the same quota) and <b>Groq's model lineup changes over time</b> — if a model 404s as "does not exist," check <a href="https://console.groq.com/docs/models" target="_blank">console.groq.com/docs/models</a> for the current list and swap the model ID in the code. Pick your model in Step 3.</div>
     <div class="backend-row">
       <label>Scraper backend</label>
-      <input type="text" id="backendUrl" value="https://companies-outreach.onrender.com" placeholder="https://companies-outreach.onrender.com">
+      <input type="text" id="backendUrl" value="http://localhost:8765" placeholder="http://localhost:8765">
       <span class="backend-status" id="backendStatus">NOT CHECKED</span>
       <button class="ghost" id="checkBackendBtn" style="white-space:nowrap;padding:7px 12px;">Ping</button>
     </div>
@@ -399,6 +399,22 @@ const state = { rows: [], mapping: {}, headers: [], running: false, backendOnlin
 
 function genRunId(){ return Math.random().toString(36).slice(2,8).toUpperCase(); }
 document.getElementById('runid').textContent = genRunId();
+
+// ─── auto-detect backend URL when this page is served BY the backend ──────────
+// scraper.py now serves this file directly at "/", so when opened via the
+// deployed Render URL (not as a local file://), the backend lives at the
+// exact same origin — no manual edit needed. Only applies the default when
+// the field still holds the original localhost placeholder, so it never
+// clobbers a URL the user already typed in.
+(function autoDetectBackendUrl(){
+  const el = document.getElementById('backendUrl');
+  if (el && el.value === 'http://localhost:8765' &&
+      location.protocol !== 'file:' &&
+      !location.hostname.includes('localhost') &&
+      location.hostname !== '127.0.0.1') {
+    el.value = location.origin;
+  }
+})();
 
 // ─── sleep helper ─────────────────────────────────────────────────────────────
 const sleep = ms => new Promise(res => setTimeout(res, ms));
