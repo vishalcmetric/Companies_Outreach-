@@ -1,0 +1,2804 @@
+
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--<meta charset="UTF-8">-->
+<!--<title>C-Metric Signal Intelligence Engine</title>-->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>-->
+<!--<style>-->
+<!--  :root{-->
+<!--    &#45;&#45;bg:#ffffff; &#45;&#45;panel:#fafafa; &#45;&#45;line:#dcdcdc; &#45;&#45;line-strong:#111111;-->
+<!--    &#45;&#45;ink:#111111; &#45;&#45;ink-soft:#555555; &#45;&#45;ink-faint:#999999;-->
+<!--    &#45;&#45;g1:#111111; &#45;&#45;g2:#3d3d3d; &#45;&#45;g3:#6b6b6b; &#45;&#45;g4:#9a9a9a; &#45;&#45;g5:#c9c9c9; &#45;&#45;g6:#ececec;-->
+<!--    &#45;&#45;mono: "IBM Plex Mono", "SF Mono", Consolas, monospace;-->
+<!--    &#45;&#45;sans: "IBM Plex Sans", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;-->
+<!--  }-->
+<!--  *{box-sizing:border-box;}-->
+<!--  body{-->
+<!--    margin:0; background:var(&#45;&#45;bg); color:var(&#45;&#45;ink); font-family:var(&#45;&#45;sans);-->
+<!--    font-size:14px; line-height:1.5;-->
+<!--  }-->
+<!--  .wrap{max-width:1180px; margin:0 auto; padding:36px 28px 80px;}-->
+
+<!--  .masthead{-->
+<!--    display:flex; justify-content:space-between; align-items:flex-end;-->
+<!--    border-bottom:2px solid var(&#45;&#45;line-strong); padding-bottom:14px; margin-bottom:28px;-->
+<!--  }-->
+<!--  .masthead h1{font-family:var(&#45;&#45;mono); font-size:20px; font-weight:600; letter-spacing:-0.02em; margin:0; text-transform:uppercase;}-->
+<!--  .masthead .tag{font-family:var(&#45;&#45;mono); font-size:11px; color:var(&#45;&#45;ink-faint); letter-spacing:.04em; display:flex; align-items:center; gap:10px;}-->
+<!--  .masthead .model-badge{font-family:var(&#45;&#45;mono); font-size:10px; background:var(&#45;&#45;g6); border:1px solid var(&#45;&#45;g5); padding:2px 7px; color:var(&#45;&#45;ink-soft); letter-spacing:.02em;}-->
+<!--  .masthead .id{font-family:var(&#45;&#45;mono); font-size:11px; color:var(&#45;&#45;ink-faint); text-align:right;}-->
+
+<!--  .pipeline{-->
+<!--    display:grid; grid-template-columns:1fr auto 1fr auto 1fr; align-items:center;-->
+<!--    gap:0; margin:28px 0 36px; border:1px solid var(&#45;&#45;line); background:var(&#45;&#45;panel);-->
+<!--  }-->
+<!--  .node{padding:18px 22px;}-->
+<!--  .node .no{font-family:var(&#45;&#45;mono); font-size:11px; color:var(&#45;&#45;ink-faint);}-->
+<!--  .node h2{font-family:var(&#45;&#45;mono); font-size:14px; margin:4px 0 6px; text-transform:uppercase; letter-spacing:.02em;}-->
+<!--  .node p{margin:0; font-size:12.5px; color:var(&#45;&#45;ink-soft);}-->
+<!--  .node.active{background:var(&#45;&#45;ink);}-->
+<!--  .node.active .no,.node.active p{color:#cfcfcf;}-->
+<!--  .node.active h2{color:#fff;}-->
+<!--  .conduit{position:relative; height:100%; display:flex; align-items:center; justify-content:center; padding:0 6px;}-->
+<!--  .conduit svg{display:block;}-->
+<!--  .conduit .pulse{opacity:0; transition:opacity .3s;}-->
+<!--  .conduit.flowing .pulse{opacity:1; animation:travel 1.4s linear infinite;}-->
+<!--  @keyframes travel{ from{stroke-dashoffset:24;} to{stroke-dashoffset:0;} }-->
+
+<!--  .step{border:1px solid var(&#45;&#45;line); margin-bottom:18px;}-->
+<!--  .step-head{-->
+<!--    display:flex; justify-content:space-between; align-items:center;-->
+<!--    padding:12px 18px; background:var(&#45;&#45;panel); border-bottom:1px solid var(&#45;&#45;line);-->
+<!--  }-->
+<!--  .step-head .label{font-family:var(&#45;&#45;mono); font-size:12px; text-transform:uppercase; letter-spacing:.03em;}-->
+<!--  .step-head .label b{color:var(&#45;&#45;ink);}-->
+<!--  .step-body{padding:18px;}-->
+<!--  .step.disabled{opacity:.45; pointer-events:none;}-->
+
+<!--  .dropzone{-->
+<!--    border:1.5px dashed var(&#45;&#45;g5); padding:26px; text-align:center; cursor:pointer; font-size:13px; color:var(&#45;&#45;ink-soft);-->
+<!--  }-->
+<!--  .dropzone:hover{border-color:var(&#45;&#45;ink);}-->
+<!--  .dropzone b{color:var(&#45;&#45;ink);}-->
+<!--  input[type=file]{display:none;}-->
+
+<!--  .maprow{display:grid; grid-template-columns:190px 1fr; gap:10px; align-items:center; margin-bottom:10px; max-width:560px;}-->
+<!--  .maprow label{font-size:12.5px; color:var(&#45;&#45;ink-soft);}-->
+<!--  .maprow .req::after{content:" *"; color:var(&#45;&#45;ink);}-->
+<!--  select, input[type=text]{-->
+<!--    font-family:var(&#45;&#45;sans); font-size:13px; padding:7px 9px; border:1px solid var(&#45;&#45;g5); background:#fff; color:var(&#45;&#45;ink);-->
+<!--    width:100%;-->
+<!--  }-->
+<!--  select:focus, input:focus{outline:none; border-color:var(&#45;&#45;ink);}-->
+
+<!--  .btnrow{display:flex; gap:10px; margin-top:16px; flex-wrap:wrap;}-->
+<!--  button{-->
+<!--    font-family:var(&#45;&#45;mono); font-size:12px; text-transform:uppercase; letter-spacing:.03em;-->
+<!--    padding:10px 18px; border:1px solid var(&#45;&#45;ink); background:#fff; color:var(&#45;&#45;ink); cursor:pointer;-->
+<!--  }-->
+<!--  button.primary{background:var(&#45;&#45;ink); color:#fff;}-->
+<!--  button:hover:not(:disabled){background:var(&#45;&#45;ink); color:#fff;}-->
+<!--  button:disabled{opacity:.35; cursor:not-allowed; background:#fff; color:var(&#45;&#45;ink);}-->
+<!--  button.ghost{border-color:var(&#45;&#45;g5); color:var(&#45;&#45;ink-soft);}-->
+<!--  button.ghost:hover{border-color:var(&#45;&#45;ink); color:#fff;}-->
+
+<!--  .row3{display:flex; gap:20px; flex-wrap:wrap; margin-top:4px; align-items:flex-end;}-->
+<!--  .field{font-size:12.5px; color:var(&#45;&#45;ink-soft);}-->
+<!--  .field select{width:220px;}-->
+
+<!--  /* API key input */-->
+<!--  .apikey-row{display:flex; gap:10px; align-items:center; margin-bottom:6px; max-width:560px;}-->
+<!--  .apikey-row label{font-size:12.5px; color:var(&#45;&#45;ink-soft); white-space:nowrap; min-width:110px;}-->
+<!--  .apikey-row input[type=password]{-->
+<!--    font-family:var(&#45;&#45;mono); font-size:12px; padding:7px 9px; border:1px solid var(&#45;&#45;g5);-->
+<!--    background:#fff; color:var(&#45;&#45;ink); flex:1;-->
+<!--  }-->
+<!--  .apikey-row input[type=password]:focus{outline:none; border-color:var(&#45;&#45;ink);}-->
+
+<!--  /* Rate-limit notice banner */-->
+<!--  .rate-notice{-->
+<!--    background:var(&#45;&#45;panel); border:1px solid var(&#45;&#45;g5); border-left:3px solid var(&#45;&#45;ink);-->
+<!--    padding:10px 14px; font-size:12px; color:var(&#45;&#45;ink-soft); margin-top:12px; display:none;-->
+<!--  }-->
+<!--  .rate-notice b{color:var(&#45;&#45;ink);}-->
+<!--  .rate-notice.show{display:block;}-->
+
+<!--  /* Retry badge on the status chip when waiting */-->
+<!--  .status.waiting{color:#7a5800; border-color:#c89520;}-->
+<!--  .status.scraping{color:#fff; background:#2563a8; border-color:#2563a8;}-->
+<!--  .rec-connect{font-family:var(&#45;&#45;mono);font-size:10px;padding:2px 7px;background:#d4edda;border:1px solid #28a745;color:#155724;white-space:nowrap;}-->
+<!--  .rec-maybe{font-family:var(&#45;&#45;mono);font-size:10px;padding:2px 7px;background:#fff3cd;border:1px solid #ffc107;color:#856404;white-space:nowrap;}-->
+<!--  .rec-pass{font-family:var(&#45;&#45;mono);font-size:10px;padding:2px 7px;background:#f8d7da;border:1px solid #dc3545;color:#721c24;white-space:nowrap;}-->
+<!--  .hiring-badge{font-family:var(&#45;&#45;mono);font-size:10px;padding:2px 7px;background:#e8f4f8;border:1px solid #0077b5;color:#0077b5;white-space:nowrap;}-->
+
+<!--  /* Scrape summary box shown in modal */-->
+<!--  .scrape-box{-->
+<!--    background:#f0f4ff; border:1px solid #c5d4f0; border-left:3px solid #2563a8;-->
+<!--    padding:10px 14px; font-size:11.5px; color:#1e3a6e; margin-bottom:10px; line-height:1.6;-->
+<!--  }-->
+<!--  .scrape-box b{color:#111;}-->
+<!--  .scrape-box .scrape-pages{display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;}-->
+<!--  .scrape-pages .spill{-->
+<!--    font-family:var(&#45;&#45;mono); font-size:10px; background:#dce8ff; border:1px solid #b0c8f0;-->
+<!--    padding:2px 7px; color:#2563a8;-->
+<!--  }-->
+
+<!--  /* backend URL row */-->
+<!--  .backend-row{display:flex; gap:10px; align-items:center; margin-bottom:10px; max-width:560px;}-->
+<!--  .backend-row label{font-size:12.5px; color:var(&#45;&#45;ink-soft); white-space:nowrap; min-width:110px;}-->
+<!--  .backend-row input[type=text]{-->
+<!--    font-family:var(&#45;&#45;mono); font-size:12px; padding:7px 9px; border:1px solid var(&#45;&#45;g5);-->
+<!--    background:#fff; color:var(&#45;&#45;ink); flex:1;-->
+<!--  }-->
+<!--  .backend-row input[type=text]:focus{outline:none; border-color:var(&#45;&#45;ink);}-->
+<!--  .backend-status{-->
+<!--    font-family:var(&#45;&#45;mono); font-size:10.5px; padding:2px 8px; border:1px solid var(&#45;&#45;g5);-->
+<!--    color:var(&#45;&#45;ink-faint); white-space:nowrap;-->
+<!--  }-->
+<!--  .backend-status.online{color:#155724; background:#d4edda; border-color:#c3e6cb;}-->
+<!--  .backend-status.offline{color:#856404; background:#fff3cd; border-color:#ffc107;}-->
+
+<!--  .stats{display:flex; border:1px solid var(&#45;&#45;line); margin-bottom:18px;}-->
+<!--  .stat{flex:1; padding:14px 18px; border-right:1px solid var(&#45;&#45;line);}-->
+<!--  .stat:last-child{border-right:none;}-->
+<!--  .stat .n{font-family:var(&#45;&#45;mono); font-size:22px; font-weight:600;}-->
+<!--  .stat .l{font-size:11px; color:var(&#45;&#45;ink-faint); text-transform:uppercase; letter-spacing:.03em; margin-top:2px;}-->
+<!--  .progressbar{height:3px; background:var(&#45;&#45;g6); margin-bottom:18px;}-->
+<!--  .progressbar .fill{height:100%; background:var(&#45;&#45;ink); width:0%; transition:width .3s;}-->
+
+<!--  table{width:100%; border-collapse:collapse; font-size:12.5px;}-->
+<!--  th{-->
+<!--    text-align:left; font-family:var(&#45;&#45;mono); font-size:10.5px; text-transform:uppercase; letter-spacing:.03em;-->
+<!--    color:var(&#45;&#45;ink-faint); padding:8px 10px; border-bottom:1px solid var(&#45;&#45;line-strong); white-space:nowrap;-->
+<!--  }-->
+<!--  td{padding:9px 10px; border-bottom:1px solid var(&#45;&#45;line); vertical-align:top;}-->
+<!--  tr:hover td{background:#fafafa;}-->
+<!--  .company{font-weight:600;}-->
+<!--  .status{font-family:var(&#45;&#45;mono); font-size:10.5px; text-transform:uppercase; padding:2px 6px; border:1px solid var(&#45;&#45;g5); white-space:nowrap;}-->
+<!--  .status.queued{color:var(&#45;&#45;ink-faint);}-->
+<!--  .status.working{color:#fff; background:var(&#45;&#45;ink); border-color:var(&#45;&#45;ink);}-->
+<!--  .status.done{color:var(&#45;&#45;ink); border-color:var(&#45;&#45;ink);}-->
+<!--  .status.error{color:#fff; background:#b00020; border-color:#b00020;}-->
+<!--  .sig{max-width:280px; color:var(&#45;&#45;ink-soft);}-->
+<!--  .sigpct{display:flex; align-items:center; gap:8px; white-space:nowrap;}-->
+<!--  .sigpct .bar{width:54px; height:6px; background:var(&#45;&#45;g6); position:relative;}-->
+<!--  .sigpct .bar i{position:absolute; left:0; top:0; bottom:0; background:var(&#45;&#45;ink);}-->
+<!--  .sigpct b{font-family:var(&#45;&#45;mono); font-size:12px; width:32px;}-->
+<!--  .emailcell{max-width:120px;}-->
+<!--  .emailbtn{font-family:var(&#45;&#45;mono); font-size:10.5px; text-transform:uppercase; background:none; border:1px solid var(&#45;&#45;g5); padding:4px 8px;}-->
+<!--  .emailbtn:hover{background:var(&#45;&#45;ink); color:#fff;}-->
+<!--  .retry{font-family:var(&#45;&#45;mono); font-size:10.5px; text-transform:uppercase; background:none; border:1px solid var(&#45;&#45;g5); padding:4px 8px; margin-left:6px;}-->
+
+<!--  .overlay{position:fixed; inset:0; background:rgba(0,0,0,.5); display:none; align-items:center; justify-content:center; z-index:50; padding:20px;}-->
+<!--  .overlay.show{display:flex;}-->
+<!--  .modal{background:#fff; width:100%; max-width:680px; max-height:88vh; overflow-y:auto; border:1px solid var(&#45;&#45;ink);}-->
+<!--  .modal-head{display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid var(&#45;&#45;line);}-->
+<!--  .modal-head h3{font-family:var(&#45;&#45;mono); font-size:13px; margin:0; text-transform:uppercase;}-->
+<!--  .modal-head-actions{display:flex; align-items:center; gap:10px;}-->
+<!--  .modal-close{cursor:pointer; font-family:var(&#45;&#45;mono); font-size:16px; background:none; border:none; color:var(&#45;&#45;ink);}-->
+<!--  .modal-body{padding:0;}-->
+<!--  .modal-meta{font-size:11px; color:var(&#45;&#45;ink-faint); font-family:var(&#45;&#45;mono); background:var(&#45;&#45;panel); padding:10px 20px; border-bottom:1px solid var(&#45;&#45;line); display:flex; gap:18px; flex-wrap:wrap;}-->
+<!--  .modal-meta span{display:flex; align-items:center; gap:5px;}-->
+
+<!--  /* Email letter layout inside modal */-->
+<!--  .email-letter{padding:28px 32px 32px; font-family:var(&#45;&#45;sans); font-size:13.5px; line-height:1.75; color:#1a1a1a;}-->
+<!--  .email-subject-line{-->
+<!--    font-size:11px; font-family:var(&#45;&#45;mono); text-transform:uppercase; letter-spacing:.05em;-->
+<!--    color:var(&#45;&#45;ink-faint); margin-bottom:4px;-->
+<!--  }-->
+<!--  .email-subject-value{-->
+<!--    font-size:15px; font-weight:700; color:var(&#45;&#45;ink); margin-bottom:20px;-->
+<!--    padding-bottom:14px; border-bottom:2px solid var(&#45;&#45;line-strong); line-height:1.3;-->
+<!--  }-->
+<!--  .email-field-row{display:flex; gap:10px; margin-bottom:6px; font-size:12px;}-->
+<!--  .email-field-label{font-family:var(&#45;&#45;mono); color:var(&#45;&#45;ink-faint); min-width:52px; font-size:11px; padding-top:1px;}-->
+<!--  .email-field-value{color:var(&#45;&#45;ink-soft);}-->
+<!--  .email-divider{border:none; border-top:1px dashed var(&#45;&#45;g5); margin:16px 0;}-->
+<!--  .email-body-text{white-space:pre-wrap; font-size:13.5px; line-height:1.8; color:#1a1a1a;}-->
+<!--  .email-body-text p{margin:0 0 14px;}-->
+<!--  .email-copy-bar{-->
+<!--    display:flex; justify-content:flex-end; gap:8px; padding:12px 20px;-->
+<!--    border-top:1px solid var(&#45;&#45;line); background:var(&#45;&#45;panel);-->
+<!--  }-->
+<!--  .copy-btn{-->
+<!--    font-family:var(&#45;&#45;mono); font-size:11px; text-transform:uppercase; letter-spacing:.03em;-->
+<!--    padding:7px 14px; border:1px solid var(&#45;&#45;g5); background:#fff; color:var(&#45;&#45;ink-soft); cursor:pointer;-->
+<!--  }-->
+<!--  .copy-btn:hover{background:var(&#45;&#45;ink); color:#fff; border-color:var(&#45;&#45;ink);}-->
+<!--  .copy-btn.copied{background:var(&#45;&#45;ink); color:#fff; border-color:var(&#45;&#45;ink);}-->
+
+<!--  .footnote{font-size:11.5px; color:var(&#45;&#45;ink-faint); margin-top:6px;}-->
+<!--  .empty{padding:30px; text-align:center; color:var(&#45;&#45;ink-faint); font-size:13px;}-->
+<!--</style>-->
+<!--</head>-->
+<!--<body>-->
+<!--<div class="wrap">-->
+<!--<div class="masthead">-->
+<!--  <div>-->
+<!--    <h1>Signal Intelligence &amp; Outreach Engine</h1>-->
+<!--    <div class="tag">-->
+<!--      C-METRIC · TWO-AGENT RESEARCH-TO-OUTREACH PIPELINE-->
+<!--      <span class="model-badge">GROQ · model selectable in Step 3</span>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--  <div class="id">RUN ID: <span id="runid">—</span><br>STATUS: <span id="runstatus">IDLE</span></div>-->
+<!--</div>-->
+
+<!--<div class="pipeline">-->
+<!--  <div class="node" id="node0">-->
+<!--    <div class="no">STEP 0</div>-->
+<!--    <h2>Web Scraper</h2>-->
+<!--    <p>Fetches the company website, crawls news/about/careers pages, and pulls DuckDuckGo headlines — giving the LLM real, confirmed text.</p>-->
+<!--  </div>-->
+<!--  <div class="conduit" id="conduit0">-->
+<!--    <svg width="70" height="24" viewBox="0 0 70 24">-->
+<!--      <line x1="0" y1="12" x2="70" y2="12" stroke="#c9c9c9" stroke-width="1.5"/>-->
+<!--      <line class="pulse" x1="0" y1="12" x2="70" y2="12" stroke="#2563a8" stroke-width="1.5" stroke-dasharray="6 18"/>-->
+<!--      <polygon points="62,7 70,12 62,17" fill="#2563a8"/>-->
+<!--    </svg>-->
+<!--  </div>-->
+<!--  <div class="node" id="node1">-->
+<!--    <div class="no">AGENT 01</div>-->
+<!--    <h2>Signal Researcher</h2>-->
+<!--    <p>Analyses scraped page text + news headlines against the epistemic framework — labels each claim [CONFIRMED] / [INFERRED] / [SPECULATIVE] and scores accordingly.</p>-->
+<!--  </div>-->
+<!--  <div class="conduit" id="conduit">-->
+<!--    <svg width="70" height="24" viewBox="0 0 70 24">-->
+<!--      <line x1="0" y1="12" x2="70" y2="12" stroke="#c9c9c9" stroke-width="1.5"/>-->
+<!--      <line class="pulse" x1="0" y1="12" x2="70" y2="12" stroke="#111" stroke-width="1.5" stroke-dasharray="6 18"/>-->
+<!--      <polygon points="62,7 70,12 62,17" fill="#111"/>-->
+<!--    </svg>-->
+<!--  </div>-->
+<!--  <div class="node" id="node2">-->
+<!--    <div class="no">AGENT 02</div>-->
+<!--    <h2>Outreach Strategist</h2>-->
+<!--    <p>Turns each confirmed signal into a personalized, peer-level email positioning C-Metric's engineering &amp; AI implementation services.</p>-->
+<!--  </div>-->
+<!--</div>-->
+
+<!--&lt;!&ndash; STEP 1: API KEY + UPLOAD &ndash;&gt;-->
+<!--<div class="step" id="step1">-->
+<!--  <div class="step-head"><div class="label"><b>Step 1</b> · API key &amp; company list</div></div>-->
+<!--  <div class="step-body">-->
+<!--    <div class="apikey-row">-->
+<!--      <label>Groq API key <span style="color:var(&#45;&#45;ink)">*</span></label>-->
+<!--      <input type="password" id="groqApiKey" placeholder="gsk_…  (get yours free at console.groq.com)" autocomplete="off">-->
+<!--    </div>-->
+<!--    <div class="footnote" style="margin-bottom:14px;">Your key is used only in this browser tab and never sent anywhere except <b>api.groq.com</b>. Free tier on 70B Versatile: ~1,000 requests/day, 100,000 tokens/day. On 8B Instant: ~14,400 requests/day, 500,000 tokens/day. Limits are per-organization — a second key on the same account shares the same daily quota. Pick your model in Step 3.</div>-->
+<!--    <div class="backend-row">-->
+<!--      <label>Scraper backend</label>-->
+<!--      <input type="text" id="backendUrl" value="http://localhost:8765" placeholder="http://localhost:8765">-->
+<!--      <span class="backend-status" id="backendStatus">NOT CHECKED</span>-->
+<!--      <button class="ghost" id="checkBackendBtn" style="white-space:nowrap;padding:7px 12px;">Ping</button>-->
+<!--    </div>-->
+<!--    <div class="footnote" style="margin-bottom:14px;">-->
+<!--      Run <b>python scraper.py</b> locally to enable real web scraping. Without it the engine falls back to LLM training-knowledge only (all signals will be [SPECULATIVE]).-->
+<!--    </div>-->
+<!--    <div class="dropzone" id="dropzone">-->
+<!--      <div id="dzlabel">Drop an <b>.xlsx / .csv</b> file here, or click to browse — needs at least one column of company names</div>-->
+<!--      <input type="file" id="fileinput" accept=".xlsx,.xls,.csv">-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+
+<!--&lt;!&ndash; STEP 2: MAP COLUMNS &ndash;&gt;-->
+<!--<div class="step disabled" id="step2">-->
+<!--  <div class="step-head">-->
+<!--    <div class="label"><b>Step 2</b> · Map columns <span id="rowcount" style="color:var(&#45;&#45;ink-faint);font-weight:400;"></span></div>-->
+<!--  </div>-->
+<!--  <div class="step-body">-->
+<!--    <div class="maprow"><label class="req">Company name</label><select id="mapCompany"></select></div>-->
+<!--    <div class="maprow"><label>Website (optional)</label><select id="mapWebsite"></select></div>-->
+<!--    <div class="maprow"><label>Contact name (optional)</label><select id="mapContact"></select></div>-->
+<!--    <div class="maprow"><label>Target designation (optional)</label><select id="mapDesignation"></select></div>-->
+<!--    <div class="footnote">Leave optional fields as "— none —" if your sheet doesn't have them.</div>-->
+<!--    <div class="btnrow"><button class="primary" id="confirmMap">Confirm mapping →</button></div>-->
+<!--  </div>-->
+<!--</div>-->
+
+<!--&lt;!&ndash; STEP 3: RUN &ndash;&gt;-->
+<!--<div class="step disabled" id="step3">-->
+<!--  <div class="step-head"><div class="label"><b>Step 3</b> · Run the pipeline</div></div>-->
+<!--  <div class="step-body">-->
+<!--    <div class="row3">-->
+<!--      <div class="field">-->
+<!--        Groq model-->
+<!--        <select id="groqModel">-->
+<!--          <option value="llama-3.3-70b-versatile" selected>70B Versatile — best quality, 100K tokens/day cap</option>-->
+<!--          <option value="llama-3.1-8b-instant">8B Instant — 500K tokens/day (5x more), slightly lower quality</option>-->
+<!--        </select>-->
+<!--      </div>-->
+<!--      <div class="field">-->
+<!--        Concurrency-->
+<!--        <select id="concurrency">-->
+<!--          <option value="1" selected>1 — recommended for large lists</option>-->
+<!--          <option value="2">2 — medium lists (&lt;15)</option>-->
+<!--          <option value="3">3 — small lists only (&lt;8)</option>-->
+<!--        </select>-->
+<!--      </div>-->
+<!--      <div class="field">-->
+<!--        Inter-company delay-->
+<!--        <select id="reqDelay">-->
+<!--          <option value="0">None (fastest)</option>-->
+<!--          <option value="3000" selected>3 s — recommended</option>-->
+<!--          <option value="5000">5 s</option>-->
+<!--          <option value="10000">10 s — very large lists</option>-->
+<!--        </select>-->
+<!--      </div>-->
+<!--      <div class="field">-->
+<!--        Email tone-->
+<!--        <select id="tone">-->
+<!--          <option value="formal" selected>Formal, high-register</option>-->
+<!--          <option value="direct">Direct, concise</option>-->
+<!--        </select>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    <div class="rate-notice show" id="rateNotice">-->
+<!--      <b>Auto-paced.</b> The pipeline reads your account's actual token/request limits from Groq's response headers and self-throttles to match — no more guessing a fixed rate. Groq's daily token cap (TPD) resets on a rolling 24h basis, applies per organization (not per key), and is separate from the per-minute limits shown here. If you hit "Rate limited — daily quota", switch to the 8B model above or wait for the window to roll forward. Keep concurrency at 1 for large lists.-->
+<!--    </div>-->
+<!--    <div class="btnrow">-->
+<!--      <button class="primary" id="runPipeline">▶ Run pipeline — Agent 1 → Agent 2 per company</button>-->
+<!--      <button class="ghost" id="exportBtn" disabled>⬇ Export updated sheet</button>-->
+<!--    </div>-->
+<!--    <div class="footnote">Each company runs research, then immediately drafts its outreach email before the next company starts. Companies with a repeated name reuse the first signal — no duplicate API spend.</div>-->
+<!--  </div>-->
+<!--</div>-->
+
+<!--&lt;!&ndash; STATS + TABLE &ndash;&gt;-->
+<!--<div id="resultsArea" style="display:none;">-->
+<!--  <div class="stats">-->
+<!--    <div class="stat"><div class="n" id="statTotal">0</div><div class="l">Companies</div></div>-->
+<!--    <div class="stat"><div class="n" id="statResearched">0</div><div class="l">Researched</div></div>-->
+<!--    <div class="stat"><div class="n" id="statHigh">0</div><div class="l">Signal ≥ 60%</div></div>-->
+<!--    <div class="stat"><div class="n" id="statEmails">0</div><div class="l">Emails drafted</div></div>-->
+<!--    <div class="stat"><div class="n" id="statErrors">0</div><div class="l">Errors</div></div>-->
+<!--  </div>-->
+<!--  <div class="progressbar"><div class="fill" id="progressFill"></div></div>-->
+<!--  <table>-->
+<!--    <thead>-->
+<!--      <tr>-->
+<!--        <th>Company</th><th>Status</th><th>Recommendation</th><th>Signal found</th>-->
+<!--        <th>Strength</th><th>AI/ML Hiring</th><th>Draft Q</th><th>Contact / Designation</th><th>Outreach email</th>-->
+<!--      </tr>-->
+<!--    </thead>-->
+<!--    <tbody id="tbody"></tbody>-->
+<!--  </table>-->
+<!--</div>-->
+<!--</div>-->
+
+<!--&lt;!&ndash; EMAIL MODAL &ndash;&gt;-->
+<!--<div class="overlay" id="overlay">-->
+<!--  <div class="modal">-->
+<!--    <div class="modal-head">-->
+<!--      <h3 id="modalCompany">—</h3>-->
+<!--      <div class="modal-head-actions">-->
+<!--        <button class="modal-close" id="modalClose">✕</button>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    &lt;!&ndash; meta bar: signal strength + evidence &ndash;&gt;-->
+<!--    <div class="modal-meta" id="modalMeta"></div>-->
+<!--    &lt;!&ndash; email letter &ndash;&gt;-->
+<!--    <div class="email-letter">-->
+<!--      <div class="email-subject-line">Subject line</div>-->
+<!--      <div class="email-subject-value" id="modalSubj"></div>-->
+<!--      <div class="email-field-row"><span class="email-field-label">To</span><span class="email-field-value" id="modalTo"></span></div>-->
+<!--      <div class="email-field-row"><span class="email-field-label">From</span><span class="email-field-value">AK &lt;ak@c-metric.com&gt;</span></div>-->
+<!--      <hr class="email-divider">-->
+<!--      <div class="email-body-text" id="modalBody"></div>-->
+<!--    </div>-->
+<!--    <div class="email-copy-bar">-->
+<!--      <button class="copy-btn" id="copySubjBtn">Copy subject</button>-->
+<!--      <button class="copy-btn" id="copyBodyBtn">Copy email body</button>-->
+<!--      <button class="copy-btn" id="copyAllBtn">Copy all</button>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+
+<!--<script>-->
+<!--const state = { rows: [], mapping: {}, headers: [], running: false, backendOnline: false };-->
+
+<!--function genRunId(){ return Math.random().toString(36).slice(2,8).toUpperCase(); }-->
+<!--document.getElementById('runid').textContent = genRunId();-->
+
+<!--// ─── sleep helper ─────────────────────────────────────────────────────────────-->
+<!--const sleep = ms => new Promise(res => setTimeout(res, ms));-->
+
+<!--// ─── Backend health check ─────────────────────────────────────────────────────-->
+<!--async function pingBackend(){-->
+<!--  const base = document.getElementById('backendUrl').value.trim().replace(/\/$/, '');-->
+<!--  const el   = document.getElementById('backendStatus');-->
+<!--  el.textContent = 'CHECKING…';-->
+<!--  el.className   = 'backend-status';-->
+<!--  try {-->
+<!--    const r = await fetch(base + '/health', { signal: AbortSignal.timeout(4000) });-->
+<!--    if (r.ok) {-->
+<!--      const j = await r.json();-->
+<!--      el.textContent = 'ONLINE — ' + (j.service || 'ok');-->
+<!--      el.className   = 'backend-status online';-->
+<!--      state.backendOnline = true;-->
+<!--    } else {-->
+<!--      throw new Error('HTTP ' + r.status);-->
+<!--    }-->
+<!--  } catch(e) {-->
+<!--    el.textContent = 'OFFLINE — ' + e.message;-->
+<!--    el.className   = 'backend-status offline';-->
+<!--    state.backendOnline = false;-->
+<!--  }-->
+<!--}-->
+<!--document.getElementById('checkBackendBtn').addEventListener('click', pingBackend);-->
+<!--// auto-ping on load-->
+<!--pingBackend();-->
+
+<!--// ─── Web Scraper ──────────────────────────────────────────────────────────────-->
+<!--// Falls back gracefully if the backend is offline.-->
+<!--async function scrapeCompany(companyName, websiteUrl){-->
+<!--  const base = document.getElementById('backendUrl').value.trim().replace(/\/$/, '');-->
+<!--  const empty = { combined_text:'', pages_fetched:0, news_headlines:[], hiring_signals:[], quality:'failed', quality_chars:0, tried_sources:[], sources:[], errors:[], chars:0 };-->
+<!--  if (!state.backendOnline) {-->
+<!--    return { ...empty, errors:['Backend offline — using LLM training knowledge only.'] };-->
+<!--  }-->
+<!--  try {-->
+<!--    const resp = await fetch(base + '/scrape', {-->
+<!--      method: 'POST',-->
+<!--      headers: { 'Content-Type': 'application/json' },-->
+<!--      body: JSON.stringify({ company: companyName, website: websiteUrl || null }),-->
+<!--      signal: AbortSignal.timeout(90000)   // 90 s — job + social searches add time-->
+<!--    });-->
+<!--    if (!resp.ok) throw new Error('Scraper HTTP ' + resp.status);-->
+<!--    const data = await resp.json();-->
+<!--    return {-->
+<!--      combined_text:   data.combined_text    || '',-->
+<!--      pages_fetched:   data.pages_fetched    || 0,-->
+<!--      news_headlines:  data.news_headlines   || [],-->
+<!--      hiring_signals:  data.hiring_signals   || [],-->
+<!--      sources:         data.sources          || [],-->
+<!--      quality:         data.quality          || 'failed',-->
+<!--      quality_chars:   data.quality_chars    || 0,-->
+<!--      tried_sources:   data.tried_sources    || [],-->
+<!--      errors:          data.errors           || [],-->
+<!--      chars:           data.total_chars      || 0,-->
+<!--    };-->
+<!--  } catch(e) {-->
+<!--    return { ...empty, errors:['Scrape failed: ' + e.message] };-->
+<!--  }-->
+<!--}-->
+
+<!--// ─── File upload ──────────────────────────────────────────────────────────────-->
+<!--const dropzone  = document.getElementById('dropzone');-->
+<!--const fileinput = document.getElementById('fileinput');-->
+<!--dropzone.addEventListener('click', () => fileinput.click());-->
+<!--dropzone.addEventListener('dragover',  e => { e.preventDefault(); dropzone.style.borderColor = '#111'; });-->
+<!--dropzone.addEventListener('dragleave', () => { dropzone.style.borderColor = ''; });-->
+<!--dropzone.addEventListener('drop', e => {-->
+<!--  e.preventDefault(); dropzone.style.borderColor = '';-->
+<!--  if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);-->
+<!--});-->
+<!--fileinput.addEventListener('change', e => { if (e.target.files.length) handleFile(e.target.files[0]); });-->
+
+<!--function handleFile(file){-->
+<!--  const reader = new FileReader();-->
+<!--  reader.onload = e => {-->
+<!--    const wb   = XLSX.read(e.target.result, { type: 'array' });-->
+<!--    const sheet = wb.Sheets[wb.SheetNames[0]];-->
+<!--    const json  = XLSX.utils.sheet_to_json(sheet, { defval: '' });-->
+<!--    if (!json.length){ alert('No rows found in the first sheet.'); return; }-->
+<!--    state.rows    = json.map((r, i) => ({ idx: i, raw: r, status: 'queued', signal: null, pct: null, evidence: null, angle: null, newsSignals: null, techStackSignals: null, sourcesAnalysed: null, outreachRec: null, aiMlHiring: null, scrapeData: null, scrapePagesCount: 0, scrapeChars: 0, scrapeQuality: null, scrapeTriedSources: [], scrapeSources: [], scrapeHiringSignals: [], email: null, draftQuality: null, error: null, reused: false, waitSec: 0 }));-->
+<!--    state.headers = Object.keys(json[0]);-->
+<!--    document.getElementById('dzlabel').innerHTML = `<b>${file.name}</b> loaded — ${json.length} rows found`;-->
+<!--    populateMapping();-->
+<!--    document.getElementById('rowcount').textContent = `(${json.length} rows)`;-->
+<!--    document.getElementById('step2').classList.remove('disabled');-->
+<!--  };-->
+<!--  reader.readAsArrayBuffer(file);-->
+<!--}-->
+
+<!--function populateMapping(){-->
+<!--  ['mapCompany','mapWebsite','mapContact','mapDesignation'].forEach(id => {-->
+<!--    const sel = document.getElementById(id);-->
+<!--    sel.innerHTML = '<option value="">— none —</option>' + state.headers.map(h => `<option value="${h}">${h}</option>`).join('');-->
+<!--  });-->
+<!--  const guess = patterns => state.headers.find(h => patterns.some(p => h.toLowerCase().includes(p)));-->
+<!--  const c = guess(['company','name of company','organisation','organization']);-->
+<!--  const w = guess(['website','domain','url']);-->
+<!--  const ct = guess(['contact','person']);-->
+<!--  const d  = guess(['designation','title','role']);-->
+<!--  if (c)  document.getElementById('mapCompany').value     = c;-->
+<!--  if (w)  document.getElementById('mapWebsite').value     = w;-->
+<!--  if (ct) document.getElementById('mapContact').value     = ct;-->
+<!--  if (d)  document.getElementById('mapDesignation').value = d;-->
+<!--}-->
+
+<!--document.getElementById('confirmMap').addEventListener('click', () => {-->
+<!--  const company = document.getElementById('mapCompany').value;-->
+<!--  if (!company){ alert('Please map the Company name column — it is required.'); return; }-->
+<!--  state.mapping = {-->
+<!--    company,-->
+<!--    website:     document.getElementById('mapWebsite').value,-->
+<!--    contact:     document.getElementById('mapContact').value,-->
+<!--    designation: document.getElementById('mapDesignation').value-->
+<!--  };-->
+<!--  document.getElementById('step3').classList.remove('disabled');-->
+<!--  document.getElementById('resultsArea').style.display = 'block';-->
+<!--  renderTable();-->
+<!--  updateStats();-->
+<!--});-->
+
+<!--// ─── Rendering ────────────────────────────────────────────────────────────────-->
+<!--function statusChip(s){-->
+<!--  const map = { queued:'Queued', scraping:'Scraping', researching:'Analysing', researched:'Researched', drafting:'Drafting', done:'Done', error:'Error', waiting:'Waiting…' };-->
+<!--  const cls = s === 'scraping' ? 'scraping'-->
+<!--            : (s==='researching'||s==='drafting') ? 'working'-->
+<!--            : (s==='error' ? 'error'-->
+<!--            : (s==='done' ? 'done'-->
+<!--            : (s==='waiting' ? 'waiting' : 'queued')));-->
+<!--  return `<span class="status ${cls}">${map[s]||s}</span>`;-->
+<!--}-->
+
+<!--// Safe HTML escape — prevents XSS from company names / signal text in innerHTML-->
+<!--function esc(str){ return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }-->
+
+<!--// Mirror of scraper.py clean_company_name() — extracts readable name from LinkedIn/social URLs-->
+<!--const _socialSlugRe = /^https?:\/\/(?:www\.)?(?:linkedin\.com\/(?:company|in|school)|twitter\.com|x\.com|facebook\.com|instagram\.com|crunchbase\.com\/(?:organization|company)|angel\.co\/company|wellfound\.com\/company|github\.com|glassdoor\.com\/Overview)\/([^/?#]+)/i;-->
+<!--function displayName(raw){-->
+<!--  const m = _socialSlugRe.exec(String(raw || ''));-->
+<!--  if (m) return m[1].replace(/[-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());-->
+<!--  return raw || '(unnamed)';-->
+<!--}-->
+
+<!--function renderTable(){-->
+<!--  const tbody = document.getElementById('tbody');-->
+<!--  tbody.innerHTML = state.rows.map(r => {-->
+<!--    const name    = esc(displayName(r.raw[state.mapping.company]));-->
+<!--    const cVal    = state.mapping.contact     ? (r.raw[state.mapping.contact]     || '') : '';-->
+<!--    const dVal    = state.mapping.designation ? (r.raw[state.mapping.designation] || '') : '';-->
+<!--    const contact = [esc(cVal), esc(dVal)].filter(Boolean).join(' — ') || '<span style="color:var(&#45;&#45;ink-faint)">not supplied</span>';-->
+
+<!--    // BUG FIX: clamp pct to 0-100 and coerce to number-->
+<!--    const pct = r.pct !== null ? Math.min(100, Math.max(0, parseInt(r.pct, 10) || 0)) : null;-->
+<!--    const bar = pct !== null-->
+<!--      ? `<div class="sigpct"><div class="bar"><i style="width:${pct}%"></i></div><b>${pct}%</b></div>`-->
+<!--      : '—';-->
+
+<!--    // Show rate-limit countdown inline in the signal cell-->
+<!--    const waitingInline = r.waitSec > 0-->
+<!--      ? `<span style="color:#856404;background:#fff3cd;padding:1px 6px;border-radius:3px;font-size:11px;font-family:var(&#45;&#45;mono);">⏳ rate limit — retrying in ${r.waitSec}s</span>`-->
+<!--      : '';-->
+
+<!--    const sig = r.error-->
+<!--      ? `<span style="color:#b00020;">${esc(r.error)}</span>`-->
+<!--      : (r.signal-->
+<!--          ? `<span class="sig">${esc(r.signal)}${r.reused ? ' <b style="color:var(&#45;&#45;ink-faint);font-family:var(&#45;&#45;mono);font-size:10.5px;">↻ reused</b>' : ''}</span>`-->
+<!--          : (r.status==='researching' || r.status==='drafting'-->
+<!--              ? (waitingInline || '<span style="color:var(&#45;&#45;ink-faint)">analysing…</span>')-->
+<!--              : '—'));-->
+
+<!--    // Outreach recommendation badge-->
+<!--    let recCell = '—';-->
+<!--    if (r.outreachRec) {-->
+<!--      const cls = r.outreachRec === 'CONNECT' ? 'rec-connect' : r.outreachRec === 'MAYBE' ? 'rec-maybe' : 'rec-pass';-->
+<!--      recCell = `<span class="${cls}">${esc(r.outreachRec)}</span>`;-->
+<!--    } else if (r.status === 'researching') {-->
+<!--      recCell = '<span style="color:var(&#45;&#45;ink-faint);font-size:11px;">analysing…</span>';-->
+<!--    }-->
+
+<!--    // AI/ML hiring badge (two-tier)-->
+<!--    const hiringArr    = r.scrapeHiringSignals || [];-->
+<!--    const directCount  = hiringArr.filter(h => h.role?.includes('[DIRECT AI/ML]')).length;-->
+<!--    const adjacentCount= hiringArr.filter(h => h.role?.includes('[ADJACENT/DATA]')).length;-->
+<!--    const hiringLabel  = directCount > 0-->
+<!--      ? `⚡ ${directCount} Direct${adjacentCount > 0 ? ' + '+adjacentCount+' Adj' : ''}`-->
+<!--      : adjacentCount > 0 ? `📊 ${adjacentCount} Adjacent` : 'None';-->
+<!--    const hiringCell = r.aiMlHiring-->
+<!--      ? `<span class="hiring-badge" title="${esc(r.aiMlHiring)}">${(directCount+adjacentCount) > 0 ? hiringLabel : 'None'}</span>`-->
+<!--      : (r.status === 'scraping' ? '<span style="color:var(&#45;&#45;ink-faint);font-size:11px;">scanning…</span>' : '—');-->
+
+<!--    const dqCell = r.draftQuality !== null && r.draftQuality !== undefined-->
+<!--      ? `<span style="font-family:var(&#45;&#45;mono);font-size:12px;">${r.draftQuality}/10</span>`-->
+<!--      : '—';-->
+
+<!--    let emailCell = '—';-->
+<!--    if (r.status==='drafting')   emailCell = '<span style="color:var(&#45;&#45;ink-faint)">drafting…</span>';-->
+<!--    else if (r.email)            emailCell = `<button class="emailbtn" data-idx="${r.idx}">View</button>`;-->
+<!--    else if (r.status==='error') emailCell = `<button class="retry" data-retry="${r.idx}">Retry</button>`;-->
+
+<!--    return `<tr>-->
+<!--      <td class="company">${name}</td>-->
+<!--      <td>${statusChip(r.status)}</td>-->
+<!--      <td>${recCell}</td>-->
+<!--      <td>${sig}</td>-->
+<!--      <td>${bar}</td>-->
+<!--      <td>${hiringCell}</td>-->
+<!--      <td>${dqCell}</td>-->
+<!--      <td>${contact}</td>-->
+<!--      <td class="emailcell">${emailCell}</td>-->
+<!--    </tr>`;-->
+<!--  }).join('');-->
+<!--  tbody.querySelectorAll('.emailbtn').forEach(b  => b.addEventListener('click', () => openModal(parseInt(b.dataset.idx))));-->
+<!--  tbody.querySelectorAll('[data-retry]').forEach(b => b.addEventListener('click', () => retryRow(parseInt(b.dataset.retry))));-->
+<!--}-->
+
+<!--function updateStats(){-->
+<!--  const total      = state.rows.length;-->
+<!--  const researched = state.rows.filter(r => r.pct !== null).length;-->
+<!--  const high       = state.rows.filter(r => r.pct !== null && parseInt(r.pct,10) >= 60).length;-->
+<!--  const emails     = state.rows.filter(r => r.email).length;-->
+<!--  const errors     = state.rows.filter(r => r.status === 'error').length;-->
+<!--  document.getElementById('statTotal').textContent      = total;-->
+<!--  document.getElementById('statResearched').textContent = researched;-->
+<!--  document.getElementById('statHigh').textContent       = high;-->
+<!--  document.getElementById('statEmails').textContent     = emails;-->
+<!--  document.getElementById('statErrors').textContent     = errors;-->
+<!--  // BUG FIX: progress = fraction of fully done (both agents complete) out of total-->
+<!--  const done = state.rows.filter(r => r.status === 'done' || r.status === 'error').length;-->
+<!--  const fillPct = total ? Math.round((done / total) * 100) : 0;-->
+<!--  document.getElementById('progressFill').style.width   = fillPct + '%';-->
+<!--  document.getElementById('exportBtn').disabled         = researched === 0;-->
+<!--}-->
+
+<!--// ─── Modal ────────────────────────────────────────────────────────────────────-->
+<!--function openModal(idx){-->
+<!--  const r = state.rows[idx];-->
+<!--  if (!r || !r.email) return;-->
+
+<!--  const contact     = state.mapping.contact     ? (r.raw[state.mapping.contact]     || '') : '';-->
+<!--  const designation = state.mapping.designation ? (r.raw[state.mapping.designation] || '') : '';-->
+<!--  const toLine      = [contact, designation, displayName(r.raw[state.mapping.company])].filter(Boolean).join(', ');-->
+
+<!--  document.getElementById('modalCompany').textContent = displayName(r.raw[state.mapping.company]);-->
+
+<!--  // quality badge colour-->
+<!--  const qColour = { rich:'#155724', adequate:'#0c3a6e', thin:'#856404', failed:'#721c24' };-->
+<!--  const qBg     = { rich:'#d4edda', adequate:'#dce8ff', thin:'#fff3cd', failed:'#f8d7da' };-->
+<!--  const qLabel  = r.scrapeQuality || 'none';-->
+
+<!--  // meta bar-->
+<!--  const meta = document.getElementById('modalMeta');-->
+<!--  const recColour = r.outreachRec === 'CONNECT' ? '#155724' : r.outreachRec === 'MAYBE' ? '#856404' : r.outreachRec === 'PASS' ? '#721c24' : '#555';-->
+<!--  const recBg     = r.outreachRec === 'CONNECT' ? '#d4edda' : r.outreachRec === 'MAYBE' ? '#fff3cd' : r.outreachRec === 'PASS' ? '#f8d7da' : '#f0f0f0';-->
+<!--  const hiringArr2    = r.scrapeHiringSignals || [];-->
+<!--  const directCount2  = hiringArr2.filter(h => h.role?.includes('[DIRECT AI/ML]')).length;-->
+<!--  const adjCount2     = hiringArr2.filter(h => h.role?.includes('[ADJACENT/DATA]')).length;-->
+<!--  meta.innerHTML = `-->
+<!--    ${r.outreachRec ? `<span style="color:${recColour};background:${recBg};padding:2px 8px;border:1px solid ${recColour};font-weight:700;">${esc(r.outreachRec)}</span>` : ''}-->
+<!--    <span>Signal <b style="color:var(&#45;&#45;ink)">${parseInt(r.pct,10) || 0}%</b></span>-->
+<!--    ${r.draftQuality ? `<span>Draft <b style="color:var(&#45;&#45;ink)">${r.draftQuality}/10</b></span>` : ''}-->
+<!--    ${directCount2 > 0 ? `<span style="color:#0077b5;background:#e8f4f8;padding:1px 6px;border:1px solid #0077b5;">⚡ ${directCount2} DIRECT AI/ML${adjCount2>0?' + '+adjCount2+' Adjacent':''}</span>` : adjCount2 > 0 ? `<span style="color:#555;background:#f0f0f0;padding:1px 6px;border:1px solid #aaa;">📊 ${adjCount2} Adjacent jobs</span>` : ''}-->
+<!--    ${r.scrapePagesCount-->
+<!--      ? `<span style="color:${qColour[qLabel]||'#0c3a6e'};background:${qBg[qLabel]||'#dce8ff'};padding:1px 6px;border:1px solid ${qColour[qLabel]||'#0c3a6e'};">🌐 ${r.scrapePagesCount} sources · ${qLabel.toUpperCase()}</span>`-->
+<!--      : '<span style="color:#856404;background:#fff3cd;padding:1px 6px;border:1px solid #c89520;">⚠ No web scrape</span>'}-->
+<!--    <span>${esc(r.evidence || '')}</span>`;-->
+
+<!--  // Scrape evidence box — shows every source tried and what was found-->
+<!--  const emailLetter = document.querySelector('.email-letter');-->
+<!--  const existingScrapeBox = emailLetter.querySelector('.scrape-box');-->
+<!--  if (existingScrapeBox) existingScrapeBox.remove();-->
+
+<!--  if (r.scrapePagesCount || r.scrapeHeadlines?.length || r.scrapeTriedSources?.length) {-->
+<!--    const sourceChips = (r.scrapeSources || [])-->
+<!--      .filter(s => s.status === 'ok')-->
+<!--      .map(s => `<span class="spill" title="${esc(s.url)}">${esc(s.source)}: ${esc((s.chars/1000).toFixed(1))}k</span>`)-->
+<!--      .join('');-->
+<!--    const triedList = r.scrapeTriedSources?.length-->
+<!--      ? `<div style="margin-top:4px;font-size:10.5px;color:#555;">Platforms tried: ${r.scrapeTriedSources.map(esc).join(' → ')}</div>`-->
+<!--      : '';-->
+<!--    const headlines = (r.scrapeHeadlines || [])-->
+<!--      .map(h => `• ${esc(h)}`).join('<br>');-->
+<!--    const newsLine  = r.newsSignals ? `<div style="margin-top:6px;font-size:11px;"><b>News signals:</b> ${esc(r.newsSignals)}</div>` : '';-->
+<!--    const techLine  = r.techStackSignals ? `<div style="font-size:11px;"><b>Tech:</b> ${esc(r.techStackSignals)}</div>` : '';-->
+<!--    const box = document.createElement('div');-->
+<!--    box.className = 'scrape-box';-->
+<!--    box.innerHTML = `<b>Web Intelligence Gathered</b> — quality: <b>${qLabel}</b> · ${r.scrapeChars ? (r.scrapeChars/1000).toFixed(1)+'k' : '0'} chars-->
+<!--      ${sourceChips ? `<div class="scrape-pages" style="margin-top:6px;">${sourceChips}</div>` : ''}-->
+<!--      ${triedList}-->
+<!--      ${headlines ? `<div style="margin-top:6px;font-size:11px;line-height:1.5;"><b>Headlines found:</b><br>${headlines}</div>` : ''}-->
+<!--      ${newsLine}${techLine}`;-->
+<!--    emailLetter.insertBefore(box, emailLetter.firstChild);-->
+<!--  }-->
+
+<!--  document.getElementById('modalTo').textContent   = toLine || '(contact not supplied)';-->
+<!--  document.getElementById('modalSubj').textContent = r.email.subject;-->
+
+<!--  // BUG FIX: normalise body — convert literal \n sequences the model may have kept-->
+<!--  // as two-char strings into real newlines before splitting into paragraphs-->
+<!--  const rawBody = r.email.body-->
+<!--    .replace(/\\n/g, '\n')   // literal backslash-n → real newline-->
+<!--    .replace(/\\t/g, '  ');  // literal backslash-t → spaces-->
+
+<!--  const bodyEl = document.getElementById('modalBody');-->
+<!--  // Split on 2+ newlines → paragraphs; single newline → <br>-->
+<!--  const paras = rawBody.split(/\n{2,}/);-->
+<!--  bodyEl.innerHTML = paras-->
+<!--    .map(p => `<p>${esc(p).replace(/\n/g, '<br>')}</p>`)-->
+<!--    .join('');-->
+
+<!--  document.getElementById('overlay').classList.add('show');-->
+<!--}-->
+
+<!--document.getElementById('modalClose').addEventListener('click', () => document.getElementById('overlay').classList.remove('show'));-->
+<!--document.getElementById('overlay').addEventListener('click', e => { if (e.target.id === 'overlay') e.target.classList.remove('show'); });-->
+
+<!--// Copy buttons-->
+<!--function flashCopied(btn){ btn.textContent = '✓ Copied'; btn.classList.add('copied'); setTimeout(()=>{ btn.textContent = btn.dataset.label; btn.classList.remove('copied'); }, 1800); }-->
+<!--document.getElementById('copySubjBtn').dataset.label = 'Copy subject';-->
+<!--document.getElementById('copyBodyBtn').dataset.label = 'Copy email body';-->
+<!--document.getElementById('copyAllBtn').dataset.label  = 'Copy all';-->
+
+<!--document.getElementById('copySubjBtn').addEventListener('click', () => {-->
+<!--  const subj = document.getElementById('modalSubj').textContent;-->
+<!--  navigator.clipboard.writeText('Subject: ' + subj);-->
+<!--  flashCopied(document.getElementById('copySubjBtn'));-->
+<!--});-->
+<!--document.getElementById('copyBodyBtn').addEventListener('click', () => {-->
+<!--  const body = document.getElementById('modalBody').innerText;-->
+<!--  navigator.clipboard.writeText(body);-->
+<!--  flashCopied(document.getElementById('copyBodyBtn'));-->
+<!--});-->
+<!--document.getElementById('copyAllBtn').addEventListener('click', () => {-->
+<!--  const subj = document.getElementById('modalSubj').textContent;-->
+<!--  const to   = document.getElementById('modalTo').textContent;-->
+<!--  const body = document.getElementById('modalBody').innerText;-->
+<!--  navigator.clipboard.writeText(`To: ${to}\nSubject: ${subj}\n\n${body}`);-->
+<!--  flashCopied(document.getElementById('copyAllBtn'));-->
+<!--});-->
+
+<!--// ─── Groq dual rate limiter (TPM + RPM) ──────────────────────────────────────-->
+<!--// Groq free tier for llama-3.3-70b-versatile:-->
+<!--//   TPM: 12,000 tokens/min   RPM: 30 requests/min-->
+<!--// Both limits run on a rolling 60-second window. We track every call and-->
+<!--// proactively wait before firing if either limit would be exceeded.-->
+<!--const _groqBucket = {-->
+<!--  calls: [],         // [{ts, tokens}] rolling 60-s window-->
+<!--  // Conservative defaults used only until the first real Groq response tells-->
+<!--  // us the account's ACTUAL limits (these vary a lot by account/model/tier —-->
+<!--  // hardcoding 12000 TPM was the main cause of "rate limited 3x" errors,-->
+<!--  // because plenty of free-tier keys sit well below that).-->
+<!--  TPM_LIMIT: 5000,-->
+<!--  RPM_LIMIT: 20,-->
+<!--  calibrated: false,-->
+
+<!--  // Prune calls older than 60s and return {tokens, reqs} used in the window-->
+<!--  _used() {-->
+<!--    const cutoff = Date.now() - 60_000;-->
+<!--    this.calls   = this.calls.filter(c => c.ts > cutoff);-->
+<!--    return {-->
+<!--      tokens: this.calls.reduce((s, c) => s + c.tokens, 0),-->
+<!--      reqs:   this.calls.length-->
+<!--    };-->
+<!--  },-->
+
+<!--  record(tokens) {-->
+<!--    this.calls.push({ ts: Date.now(), tokens });-->
+<!--  },-->
+
+<!--  // Read Groq's own rate-limit headers (sent on EVERY response, including-->
+<!--  // 429s) and recalibrate the bucket to the account's real limits with a-->
+<!--  // safety margin. This replaces guessing entirely.-->
+<!--  calibrate(headers) {-->
+<!--    const tpmLim = parseInt(headers.get('x-ratelimit-limit-tokens'), 10);-->
+<!--    const rpmLim = parseInt(headers.get('x-ratelimit-limit-requests'), 10);-->
+<!--    if (!isNaN(tpmLim) && tpmLim > 0) {-->
+<!--      this.TPM_LIMIT = Math.max(500, tpmLim - Math.ceil(tpmLim * 0.12));-->
+<!--      this.calibrated = true;-->
+<!--    }-->
+<!--    if (!isNaN(rpmLim) && rpmLim > 0) {-->
+<!--      this.RPM_LIMIT = Math.max(1, rpmLim - 2);-->
+<!--      this.calibrated = true;-->
+<!--    }-->
+<!--  },-->
+
+<!--  // Wait until both TPM and RPM have room, then return-->
+<!--  async waitIfNeeded(neededTokens, statusEl, onWait) {-->
+<!--    for (;;) {-->
+<!--      const { tokens, reqs } = this._used();-->
+<!--      const tpmOk = tokens + neededTokens <= this.TPM_LIMIT;-->
+<!--      const rpmOk = reqs + 1             <= this.RPM_LIMIT;-->
+<!--      if (tpmOk && rpmOk) break;-->
+
+<!--      // Find the oldest call — when it expires we free one request slot-->
+<!--      const oldest = [...this.calls].sort((a, b) => a.ts - b.ts)[0];-->
+<!--      const waitMs  = oldest ? Math.max(2000, oldest.ts + 61_000 - Date.now()) : 10_000;-->
+<!--      const reason  = !rpmOk ? `RPM limit (${reqs}/${this.RPM_LIMIT} req)` : `TPM limit (${tokens}/${this.TPM_LIMIT} tok)`;-->
+<!--      const waitSec = Math.ceil(waitMs / 1000);-->
+<!--      let remaining = waitSec;-->
+
+<!--      statusEl.textContent = `⏳ Pacing — ${reason}, wait ${remaining}s…`;-->
+<!--      if (onWait) onWait(remaining);-->
+<!--      const ticker = setInterval(() => {-->
+<!--        remaining = Math.max(0, remaining - 1);-->
+<!--        statusEl.textContent = `⏳ Pacing — ${reason}, wait ${remaining}s…`;-->
+<!--        if (onWait) onWait(remaining);-->
+<!--      }, 1000);-->
+<!--      await sleep(waitMs);-->
+<!--      clearInterval(ticker);-->
+<!--      statusEl.textContent = 'PIPELINE RUNNING';-->
+<!--      if (onWait) onWait(0);-->
+<!--    }-->
+<!--  }-->
+<!--};-->
+
+<!--function parseGroqWait(errText) {-->
+<!--  const minSec  = errText.match(/(\d+)m([\d.]+)s/);-->
+<!--  const secOnly = errText.match(/try again in ([\d.]+)s/i);-->
+<!--  const minsOnly= errText.match(/try again in (\d+)m/i);-->
+<!--  if (minSec)  return parseInt(minSec[1], 10) * 60 + parseFloat(minSec[2]) + 2;-->
+<!--  if (minsOnly) return parseInt(minsOnly[1], 10) * 60 + 2;-->
+<!--  if (secOnly)  return parseFloat(secOnly[1]) + 1;-->
+<!--  return 0;-->
+<!--}-->
+
+<!--// onWait(remainingSec) — optional callback fired every second during a pause-->
+<!--async function callGroq(messages, maxTokens = 1500, onWait = null){-->
+<!--  const apiKey = document.getElementById('groqApiKey').value.trim();-->
+<!--  if (!apiKey) throw new Error('No Groq API key entered. Please enter your key in Step 1.');-->
+
+<!--  const modelSel = document.getElementById('groqModel');-->
+<!--  const model = modelSel ? modelSel.value : 'llama-3.3-70b-versatile';-->
+
+<!--  const REQUEST_TIMEOUT_MS = 60_000;-->
+<!--  const statusEl = document.getElementById('runstatus');-->
+
+<!--  // Estimate token cost: prompt chars / 3.5 + max output.-->
+<!--  // Diagnostic showed actual usage is ~295 prompt + ~134 completion = ~430 per call.-->
+<!--  const inputChars = messages.reduce((s, m) => s + (m.content?.length || 0), 0);-->
+<!--  const estTokens  = Math.ceil(inputChars / 3.5) + maxTokens;-->
+
+<!--  // Proactively wait if this call would exceed the per-minute budget-->
+<!--  await _groqBucket.waitIfNeeded(estTokens, statusEl, onWait);-->
+
+<!--  // Try up to 3 times — covers one transient 429 that slips through the bucket-->
+<!--  for (let attempt = 1; attempt <= 3; attempt++) {-->
+<!--    const controller = new AbortController();-->
+<!--    const timeoutId  = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);-->
+
+<!--    let resp;-->
+<!--    try {-->
+<!--      resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {-->
+<!--        method: "POST",-->
+<!--        signal: controller.signal,-->
+<!--        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + apiKey },-->
+<!--        body: JSON.stringify({-->
+<!--          model: model,-->
+<!--          max_tokens: maxTokens,-->
+<!--          messages,-->
+<!--          temperature: 0.4-->
+<!--        })-->
+<!--      });-->
+<!--    } catch(fetchErr) {-->
+<!--      clearTimeout(timeoutId);-->
+<!--      if (fetchErr.name === 'AbortError') {-->
+<!--        throw new Error(`Groq request timed out after ${REQUEST_TIMEOUT_MS/1000}s. Check your connection and try again.`);-->
+<!--      }-->
+<!--      throw fetchErr;-->
+<!--    }-->
+<!--    clearTimeout(timeoutId);-->
+
+<!--    // Learn the account's real TPM/RPM limits from Groq's own headers —-->
+<!--    // sent on every response, success or 429. This is what actually fixes-->
+<!--    // hitting 429s despite "self-throttling": we stop guessing.-->
+<!--    _groqBucket.calibrate(resp.headers);-->
+
+<!--    if (resp.status === 429) {-->
+<!--      const errText = await resp.text().catch(() => '');-->
+<!--      let waitSec = parseGroqWait(errText);-->
+<!--      if (waitSec === 0) waitSec = 65;-->
+
+<!--      // A genuine per-minute rate limit can NEVER require more than ~60s to-->
+<!--      // clear — it's a rolling 60-second window. If Groq is telling us to-->
+<!--      // wait longer than that, we've hit a bigger bucket (hourly/daily-->
+<!--      // token or request quota on the free tier), which will NOT clear by-->
+<!--      // retrying — only by waiting out the real reset or upgrading/switching-->
+<!--      // keys. Blindly waiting 9+ minutes 3× in a row wastes ~30 minutes for-->
+<!--      // nothing, so we surface this immediately instead of looping.-->
+<!--      const LIKELY_LARGER_QUOTA_THRESHOLD = 90;-->
+<!--      if (waitSec > LIKELY_LARGER_QUOTA_THRESHOLD) {-->
+<!--        throw new Error(-->
+<!--          `Groq rate limit: wait is ${Math.round(waitSec)}s (${Math.round(waitSec/60)}m). ` +-->
+<!--          `A per-minute limit never needs more than ~60s, so this is almost certainly your ` +-->
+<!--          `account's DAILY token/request quota, not a per-minute pace issue — retrying won't ` +-->
+<!--          `fix it. Check usage at console.groq.com/settings/limits, or try again after the ` +-->
+<!--          `quota resets. Raw Groq message: ${errText.slice(0, 300)}`-->
+<!--        );-->
+<!--      }-->
+
+<!--      // No cap — respect whatever Groq says (can be up to ~90s on RPM limits)-->
+
+<!--      if (attempt === 3) {-->
+<!--        throw new Error(`Rate limited 3× — Groq says wait ${Math.round(waitSec)}s. The pipeline is pacing automatically now. Please wait ${Math.round(waitSec)}s then use the Retry button on this row.`);-->
+<!--      }-->
+<!--      // Wait exactly what Groq says, then try again-->
+<!--      let remaining = Math.ceil(waitSec);-->
+<!--      statusEl.textContent = `⏳ Rate limited — resuming in ${remaining}s (attempt ${attempt}/3)…`;-->
+<!--      if (onWait) onWait(remaining);-->
+<!--      const ticker = setInterval(() => {-->
+<!--        remaining = Math.max(0, remaining - 1);-->
+<!--        statusEl.textContent = `⏳ Rate limited — resuming in ${remaining}s (attempt ${attempt}/3)…`;-->
+<!--        if (onWait) onWait(remaining);-->
+<!--      }, 1000);-->
+<!--      console.warn(`[callGroq] 429 attempt ${attempt}/3 — waiting ${waitSec}s`);-->
+<!--      await sleep(Math.ceil(waitSec * 1000));-->
+<!--      clearInterval(ticker);-->
+<!--      statusEl.textContent = 'PIPELINE RUNNING';-->
+<!--      if (onWait) onWait(0);-->
+<!--      continue;-->
+<!--    }-->
+
+<!--    if (!resp.ok) {-->
+<!--      const errText = await resp.text().catch(() => '');-->
+<!--      throw new Error(`Groq API error ${resp.status}: ${errText.slice(0, 200)}`);-->
+<!--    }-->
+
+<!--    const data = await resp.json();-->
+<!--    // Record actual usage in the bucket so future calls pace correctly-->
+<!--    const used = data.usage?.total_tokens || estTokens;-->
+<!--    _groqBucket.record(used);-->
+<!--    return data.choices?.[0]?.message?.content ?? '';-->
+<!--  }-->
+<!--  throw new Error('callGroq: exhausted 3 attempts');-->
+<!--}-->
+
+<!--function extractJSON(text){-->
+<!--  const cleaned = text.replace(/```json/gi, '').replace(/```/g, '').trim();-->
+<!--  const start   = cleaned.indexOf('{');-->
+<!--  if (start === -1) throw new Error('No JSON object found in LLM response');-->
+
+<!--  // Try from the last '}' first (normal case), then try to auto-close truncated JSON-->
+<!--  let raw;-->
+<!--  const end = cleaned.lastIndexOf('}');-->
+<!--  if (end !== -1 && end > start) {-->
+<!--    raw = cleaned.slice(start, end + 1);-->
+<!--  } else {-->
+<!--    // Response was truncated — grab everything from { and append a closing brace-->
+<!--    raw = cleaned.slice(start) + '"}';-->
+<!--    console.warn('[extractJSON] Response appears truncated — attempting best-effort close');-->
+<!--  }-->
+
+<!--  // Escape bare control characters inside JSON string values-->
+<!--  raw = raw.replace(/"((?:[^"\\]|\\.)*)"/gs, (match, inner) => {-->
+<!--    const fixed = inner-->
+<!--      .replace(/\r\n/g, '\\n')-->
+<!--      .replace(/(?<!\\)\r/g, '\\n')-->
+<!--      .replace(/(?<!\\)\n/g, '\\n')-->
+<!--      .replace(/(?<!\\)\t/g, '\\t');-->
+<!--    return '"' + fixed + '"';-->
+<!--  });-->
+
+<!--  // First attempt: parse as-is-->
+<!--  let parsed;-->
+<!--  try {-->
+<!--    parsed = JSON.parse(raw);-->
+<!--  } catch(e) {-->
+<!--    // Second attempt: strip trailing incomplete key/value and close the object-->
+<!--    const safeRaw = raw.replace(/,\s*"[^"]*"\s*:\s*"[^"]*$/, '').replace(/,\s*"[^"]*"\s*:?\s*$/, '') + '}';-->
+<!--    try {-->
+<!--      parsed = JSON.parse(safeRaw);-->
+<!--    } catch(e2) {-->
+<!--      throw new Error(`JSON parse failed: ${e.message}. Raw snippet: ${raw.slice(0,120)}`);-->
+<!--    }-->
+<!--  }-->
+
+<!--  // Coerce signal_strength_pct — model sometimes wraps it in quotes-->
+<!--  if (parsed.signal_strength_pct !== undefined)-->
+<!--    parsed.signal_strength_pct = parseInt(parsed.signal_strength_pct, 10) || 0;-->
+<!--  return parsed;-->
+<!--}-->
+
+<!--// ─── Agent 1: research ────────────────────────────────────────────────────────-->
+<!--async function researchCompany(r){-->
+<!--  const name    = displayName(r.raw[state.mapping.company]);-->
+<!--  const site    = state.mapping.website ? r.raw[state.mapping.website] : '';-->
+
+<!--  // Determine whether we have real scraped content or not-->
+<!--  const hasScrape  = r.scrapeData && r.scrapeData.trim().length > 100 &&-->
+<!--                     !r.scrapeData.startsWith('NO_SCRAPE_FALLBACK');-->
+<!--  const isFullFallback = !hasScrape;-->
+
+<!--  const qualityNote = r.scrapeQuality === 'rich'     ? 'RICH — multiple sources with substantial text.'-->
+<!--                    : r.scrapeQuality === 'adequate' ? 'ADEQUATE — some confirmed content available.'-->
+<!--                    : r.scrapeQuality === 'thin'     ? 'THIN — limited content; prioritise hiring signals and news.'-->
+<!--                    : 'FAILED — no usable web content retrieved.';-->
+<!--  const triedNote  = r.scrapeTriedSources?.length-->
+<!--    ? `Sources attempted: ${r.scrapeTriedSources.join(', ')}.`-->
+<!--    : '';-->
+
+<!--  // Summarise AI/ML hiring signals for the prompt (two-tier classification)-->
+<!--  const hiringSignals = r.scrapeHiringSignals || [];-->
+<!--  const directJobs   = hiringSignals.filter(h => h.role && h.role.includes('[DIRECT AI/ML]'));-->
+<!--  const adjacentJobs = hiringSignals.filter(h => h.role && h.role.includes('[ADJACENT/DATA]'));-->
+<!--  const generalJobs  = hiringSignals.filter(h => !h.role?.includes('[DIRECT AI/ML]') && !h.role?.includes('[ADJACENT/DATA]'));-->
+<!--  const hiringNote = hiringSignals.length > 0-->
+<!--    ? `JOB POSTINGS FOUND: ${hiringSignals.length} total — ${directJobs.length} DIRECT AI/ML, ${adjacentJobs.length} ADJACENT/DATA, ${generalJobs.length} General.\n` +-->
+<!--      `TIER DEFINITIONS: [DIRECT AI/ML] = data scientist, ML engineer, LLM, NLP, AI researcher, MLOps, AI product manager — strong signal. [ADJACENT/DATA] = data engineer, analytics engineer, BI developer, data platform, Spark/dbt/Snowflake, data infrastructure — supporting signal indicating ML investment. [GENERAL] = all other roles.\n\n` +-->
+<!--      hiringSignals.slice(0, 20).map(h =>-->
+<!--        `  ${h.role} | posted: ${h.date_hint} | source: ${h.source}`-->
+<!--      ).join('\n')-->
+<!--    : 'NO JOB POSTINGS DATA. This is a DATA GAP, not evidence of "no hiring" — job-board search is currently blocked at the network level for ALL companies in this run, so absence of job postings here must NOT be read as a negative signal or used to justify a low score. Base the assessment on the WEBSITE CONTENT and any other evidence below instead.';-->
+
+<!--  const scrapeNote = hasScrape-->
+<!--    ? `SCRAPED CONTENT AVAILABLE — quality: ${qualityNote} ${r.scrapePagesCount} source(s), ${r.scrapeChars} chars. ${triedNote}`-->
+<!--    : `NO SCRAPED CONTENT — falling back to LLM training knowledge. ${triedNote} ALL claims MUST be [SPECULATIVE] unless widely verifiable. Still analyse from training knowledge — do not output empty fields.`;-->
+
+<!--  const messages = [-->
+<!--    {-->
+<!--      role: "system",-->
+<!--      content: `You are a senior B2B intelligence analyst for C-Metric, a custom software development company (IBM Silver Partner for AI & Automation). Your job is to assess companies for genuine sales opportunity signals with rigorous, calibrated honesty.-->
+
+<!--EPISTEMIC DISCIPLINE — follow these rules without exception:-->
+<!-- - Separate FACTS (confirmed, publicly known) from INFERENCES (reasonable but unproven) from SPECULATION (plausible but no evidence).-->
+<!-- - Label every claim with one of: [CONFIRMED], [INFERRED], or [SPECULATIVE].-->
+<!-- - [CONFIRMED] = directly supported by text in the SCRAPED CONTENT section below, OR by a widely reported, verifiable public fact you are highly confident about.-->
+<!-- - [INFERRED]  = a reasonable conclusion drawn from one or more [CONFIRMED] facts — must be explicitly derived.-->
+<!-- - [SPECULATIVE] = plausible but not supported by anything in the scraped content or verifiable training knowledge.-->
+<!-- - NEVER convert "could benefit from" into "needs" or "is seeking."-->
+<!-- - NEVER assume that because a company is growing, hiring, or has raised funding, it will outsource engineering — many scale entirely in-house.-->
+<!-- - A signal only counts if it specifically implies an external services gap — not just business activity in general.-->
+<!-- - If you do not have direct evidence for a claim, say so explicitly and lower the score accordingly.-->
+<!-- - The signal_strength_pct must reflect ONLY what is actually evidenced, not the best-case interpretation.-->
+<!--  Score caps: 80-100 = multiple CONFIRMED signals directly implying outsourcing need.-->
+<!--              60-79  = 1 CONFIRMED + strong INFERRED signals.-->
+<!--              40-59  = mostly INFERRED, no confirmed outsourcing gap.-->
+<!--              20-39  = SPECULATIVE only.-->
+<!--              0-19   = no meaningful signal.-->
+
+<!--You respond ONLY with valid JSON — no markdown, no explanation, no extra text.`-->
+<!--    },-->
+<!--    {-->
+<!--      role: "user",-->
+<!--      content: `Analyse "${name}"${site ? ' (' + site + ')' : ''} as a prospect for C-Metric (IBM Silver Partner, AI/automation services).-->
+
+<!--${scrapeNote}-->
+
+<!--${hasScrape ? `=== EVIDENCE (quote phrases directly — do not paraphrase) ===-->
+<!--${r.scrapeData.slice(0, 3200)}-->
+<!--=== END ===-->
+
+<!--` : ''}HIRING SIGNALS:-->
+<!--${hiringNote}-->
+
+<!--SIGNAL SOURCES — analyse ALL of these together. Hiring data is currently unavailable-->
+<!--for every company this run (see note above) — it must NOT be the deciding factor.-->
+<!--Weigh what IS available properly instead of defaulting to a low score by omission:-->
+<!--1. WEBSITE CONTENT — product/service descriptions, tech stack mentions, stated scale-->
+<!--   (team size, client base, geography), industry vertical and its typical complexity-->
+<!--   (e.g. healthcare/finance imply compliance & integration overhead), any stated pain-->
+<!--   points, recent updates/news/blog content on their own site, evidence of manual or-->
+<!--   legacy processes, statements about growth, expansion, or technology investment.-->
+<!--2. WIKIPEDIA / THIRD-PARTY CONTEXT — company history, scale, funding, market position,-->
+<!--   when available.-->
+<!--3. HIRING SIGNALS — a positive signal WHEN present, but its absence this run reflects a-->
+<!--   tool limitation, not a fact about the company.-->
+<!--4. NEWS — funding, product launches, partnerships found in scraped content.-->
+
+<!--SCORING RULES for signal_strength_pct — combine evidence from ALL sources above; do NOT-->
+<!--gate the score on hiring signals alone, since those are unavailable for every company:-->
+<!-- - 80-100: Multiple CONFIRMED signals (from website content, Wikipedia, or news) directly-->
+<!--  implying an active technology/outsourcing need — e.g. explicit tech complexity beyond-->
+<!--  likely in-house capacity, stated digital-transformation initiative, confirmed AI/ML-->
+<!--  hiring where hiring data exists.-->
+<!-- - 60-79: 1 CONFIRMED signal from any source + supporting INFERRED signals from company-->
+<!--  profile (industry, scale, stated technology usage).-->
+<!-- - 40-59: Mostly INFERRED from company profile and industry context — no single strong-->
+<!--  confirmed signal, but the company's stated business plausibly needs this kind of work.-->
+<!-- - 20-39: SPECULATIVE only — website content is thin or generic, best-effort industry-based-->
+<!--  reasoning.-->
+<!-- - 0-19: Reserve for scrape quality FAILED (no usable content at all) AND no substitutable-->
+<!--  reasoning is possible — not simply "hiring signals were empty."-->
+<!-- - Every score must be traceable to specific evidence you cite in signal_found / evidence_source-->
+<!--  — but that evidence can come from the website or Wikipedia content just as validly as from-->
+<!--  hiring data.-->
+
+<!--DECISION: CONNECT (strong signal from any evidence source) | MAYBE (moderate/inferred from company profile) | PASS (genuinely no usable evidence anywhere, including website content).-->
+
+<!--Respond ONLY with this JSON, no markdown, no extra text:-->
+<!--{-->
+<!--  "signal_found": "[TIER] 1-2 sentences with evidence quotes.",-->
+<!--  "signal_strength_pct": <0-100>,-->
+<!--  "evidence_source": "Top 2 signals with confidence tier",-->
+<!--  "suggested_angle": "One sentence opening angle based on strongest confirmed signal",-->
+<!--  "news_signals": "Exact headline+date from scraped text, or 'None confirmed'",-->
+<!--  "tech_stack_signals": "Tech confirmed in scraped text (cite source), or [SPECULATIVE]",-->
+<!--  "sources_analysed": "Comma list of sources used",-->
+<!--  "outreach_recommendation": "CONNECT | MAYBE | PASS",-->
+<!--  "outreach_reason": "One sentence",-->
+<!--  "ai_ml_hiring_summary": "X DIRECT, Y ADJACENT, Z General. Recency note. AI maturity implication."-->
+<!--}`-->
+<!--    }-->
+<!--  ];-->
+
+<!--  const onWait = (sec) => { r.waitSec = sec; renderTable(); };-->
+<!--  const text = await callGroq(messages, 900, onWait);-->
+<!--  r.waitSec = 0;-->
+<!--  return extractJSON(text);-->
+<!--}-->
+
+<!--// ─── Agent 2: draft email ─────────────────────────────────────────────────────-->
+<!--async function draftEmail(r){-->
+<!--  const name        = displayName(r.raw[state.mapping.company]);-->
+<!--  const contact     = state.mapping.contact     ? r.raw[state.mapping.contact]     : '';-->
+<!--  const designation = state.mapping.designation ? r.raw[state.mapping.designation] : '';-->
+<!--  const tone        = document.getElementById('tone').value;-->
+<!--  const messages = [-->
+<!--    {-->
+<!--      role: "system",-->
+<!--      content: `You are a senior B2B sales strategist and cold email specialist. You write high-converting outreach emails that feel like peer-to-peer communication, never like a vendor pitch. You have access to deep multi-signal intelligence on the prospect and use it to write hyper-personalised emails. You respond ONLY with valid JSON — absolutely no markdown fences, no explanations, no extra text outside the JSON.`-->
+<!--    },-->
+<!--    {-->
+<!--      role: "user",-->
+<!--      content: `Write a cold outreach email from AK at C-Metric to ${name}.-->
+
+<!--SENDER: AK, C-Metric — custom software, AI & automation (IBM Silver Partner, 30yr track record, embedded model, AIVIO product). c-metric.com-->
+<!--RECIPIENT: ${contact || '[Name]'}, ${designation || 'CTO/VP Engineering'} at ${name}-->
+
+<!--INTELLIGENCE (from research on this specific company):-->
+<!-- - Signal: ${r.signal?.slice(0, 500) || 'No confirmed signal'}-->
+<!-- - Evidence: ${r.evidence?.slice(0, 350) || 'None'}-->
+<!-- - Angle: ${r.angle?.slice(0, 300) || 'General AI/automation'}-->
+<!--${r.newsSignals && r.newsSignals !== 'None confirmed' ? `- News: ${r.newsSignals.slice(0, 250)}` : ''}-->
+<!--${r.techStackSignals && !r.techStackSignals.startsWith('[SPEC') ? `- Tech: ${r.techStackSignals.slice(0, 250)}` : ''}-->
+<!--${r.scrapeData ? `\nRAW RESEARCH EXCERPT (mine this for one concrete, company-specific detail — a product name, technology, market segment, or number — that the summary above may have compressed away):\n${r.scrapeData.slice(0, 900)}` : ''}-->
+
+<!--TONE: ${tone === 'formal' ? 'Formal, senior executive register' : 'Direct, crisp, no fluff'}-->
+<!--LENGTH: 150-200 words body only.-->
+
+<!--SPECIFICITY REQUIREMENT — this is the most important rule:-->
+<!--The HOOK (step 2) MUST reference one CONCRETE fact that is true of THIS company only —-->
+<!--an exact product/service name, a specific technology, their market segment, a stated-->
+<!--number, or a direct quote/paraphrase from the intelligence above. Do NOT use a hook that-->
+<!--could be sent unchanged to any other company on this list — no "as you scale," "given your-->
+<!--growth," "in your industry," or similarly generic openers. If the available evidence is-->
+<!--genuinely thin, say so plainly in outreach reasoning by keeping the email shorter and more-->
+<!--research-based (e.g. referencing their stated business/product directly) rather than-->
+<!--inventing a specific that isn't in the evidence, and rather than falling back to a generic-->
+<!--growth/industry platitude.-->
+
+<!--STRUCTURE (blank line between each):-->
+<!--1. "Dear ${contact || '[Name]'},"-->
+<!--2. HOOK: the concrete, company-specific fact above, framed as observation/question — never "you need X"-->
+<!--3. PROBLEM BRIDGE: connect that specific fact to a plausible gap — grounded in what was actually found, not a generic template line-->
+<!--4. VALUE PROP: one C-Metric credential most relevant to THIS specific situation-->
+<!--5. CREDIBILITY: one specific statement-->
+<!--6. CTA: suggest 20-min call-->
+<!--7. "Warm regards,\\n\\nAK\\nC-Metric | Custom Software & AI Implementation\\nc-metric.com"-->
+
+<!--NO buzzwords (synergy/leverage/cutting-edge/robust/revolutionize). Pick ONE credential. Subject: 6-10 words, no ALLCAPS, must reference the specific hook — no generic subjects like "Quick question" or "Partnership opportunity."-->
+
+<!--Respond ONLY with this JSON, no markdown:-->
+<!--{"subject": "...", "body": "...", "draft_quality_score": <1-10>}`-->
+<!--    }-->
+<!--  ];-->
+
+<!--  const onWait = (sec) => { r.waitSec = sec; renderTable(); };-->
+<!--  const text = await callGroq(messages, 800, onWait);-->
+<!--  r.waitSec = 0;-->
+<!--  return extractJSON(text);-->
+<!--}-->
+
+<!--// ─── Pipeline queue ───────────────────────────────────────────────────────────-->
+<!--async function processQueue(items, worker, concurrency, interDelay){-->
+<!--  let i = 0;-->
+<!--  async function next(){-->
+<!--    while (i < items.length) {-->
+<!--      const item = items[i++];-->
+<!--      await worker(item);-->
+<!--      // stagger between companies to respect TPM window-->
+<!--      if (i < items.length && interDelay > 0) {-->
+<!--        await sleep(interDelay);-->
+<!--      }-->
+<!--    }-->
+<!--  }-->
+<!--  const workers = Array.from({ length: Math.min(concurrency, items.length) }, next);-->
+<!--  await Promise.all(workers);-->
+<!--}-->
+
+<!--function refreshPipelineGlow(){-->
+<!--  const scraping    = state.rows.some(r => r.status === 'scraping');-->
+<!--  const researching = state.rows.some(r => r.status === 'researching');-->
+<!--  const drafting    = state.rows.some(r => r.status === 'drafting');-->
+<!--  document.getElementById('node0').classList.toggle('active', scraping);-->
+<!--  document.getElementById('node1').classList.toggle('active', researching);-->
+<!--  document.getElementById('node2').classList.toggle('active', drafting);-->
+<!--  document.getElementById('conduit0').classList.toggle('flowing', scraping);-->
+<!--  document.getElementById('conduit').classList.toggle('flowing', researching || drafting);-->
+<!--}-->
+
+<!--// Dedupe cache: normalized company name → researched signal payload-->
+<!--const signalCache = {};-->
+<!--const normName    = name => String(name || '').trim().toLowerCase();-->
+
+<!--async function processCompanyRow(r){-->
+<!--  const key     = normName(r.raw[state.mapping.company]);-->
+<!--  const company = displayName(r.raw[state.mapping.company]);-->
+<!--  const website = state.mapping.website ? (r.raw[state.mapping.website] || '') : '';-->
+
+<!--  // ── Step 0: web scrape (only for non-duplicates) ─────────────────────────-->
+<!--  if (!signalCache[key]) {-->
+<!--    r.status = 'scraping'; r.error = null; renderTable(); refreshPipelineGlow();-->
+<!--    const scraped           = await scrapeCompany(company, website);-->
+<!--    r.scrapeData            = scraped.combined_text;-->
+<!--    r.scrapePagesCount      = scraped.pages_fetched;-->
+<!--    r.scrapeChars           = scraped.chars;-->
+<!--    r.scrapeQuality         = scraped.quality;-->
+<!--    r.scrapeTriedSources    = scraped.tried_sources || [];-->
+<!--    r.scrapeHeadlines       = scraped.news_headlines || [];-->
+<!--    r.scrapeSources         = (scraped.sources || []).map(s => ({ source: s.source, url: s.url, title: s.title, chars: s.chars, status: s.status }));-->
+<!--    r.scrapeHiringSignals   = scraped.hiring_signals || [];-->
+<!--    r.scrapeErrors          = scraped.errors || [];-->
+<!--    renderTable();-->
+<!--  }-->
+
+<!--  // ── Agent 1: research ────────────────────────────────────────────────────-->
+<!--  if (signalCache[key]) {-->
+<!--    // reuse cached signal for duplicate company names — also reuse scrape-->
+<!--    r.status = 'researching'; renderTable(); refreshPipelineGlow();-->
+<!--    const cached          = signalCache[key];-->
+<!--    r.signal              = cached.signal_found;-->
+<!--    r.pct                 = cached.signal_strength_pct;-->
+<!--    r.evidence            = cached.evidence_source;-->
+<!--    r.angle               = cached.suggested_angle;-->
+<!--    r.newsSignals         = cached.news_signals       || null;-->
+<!--    r.techStackSignals    = cached.tech_stack_signals || null;-->
+<!--    r.sourcesAnalysed     = cached.sources_analysed   || null;-->
+<!--    r.outreachRec         = cached.outreach_recommendation || null;-->
+<!--    r.aiMlHiring          = cached.ai_ml_hiring_summary   || null;-->
+<!--    r.reused              = true;-->
+<!--    r.status              = 'researched';-->
+<!--    renderTable(); updateStats(); refreshPipelineGlow();-->
+<!--  } else {-->
+<!--    r.status = 'researching'; r.error = null; renderTable(); refreshPipelineGlow();-->
+<!--    try {-->
+<!--      const res           = await researchCompany(r);-->
+<!--      r.signal            = res.signal_found;-->
+<!--      r.pct               = res.signal_strength_pct;-->
+<!--      r.evidence          = res.evidence_source;-->
+<!--      r.angle             = res.suggested_angle;-->
+<!--      r.newsSignals       = res.news_signals           || null;-->
+<!--      r.techStackSignals  = res.tech_stack_signals     || null;-->
+<!--      r.sourcesAnalysed   = res.sources_analysed       || null;-->
+<!--      r.outreachRec       = res.outreach_recommendation|| null;-->
+<!--      r.aiMlHiring        = res.ai_ml_hiring_summary   || null;-->
+<!--      r.status            = 'researched';-->
+<!--      signalCache[key]    = res;-->
+<!--    } catch(err) {-->
+<!--      r.status = 'error'; r.error = 'Research failed: ' + err.message;-->
+<!--      renderTable(); updateStats(); refreshPipelineGlow();-->
+<!--      return; // skip email draft when research failed-->
+<!--    }-->
+<!--    renderTable(); updateStats(); refreshPipelineGlow();-->
+<!--  }-->
+
+<!--  // ── Agent 2: draft outreach ──────────────────────────────────────────────-->
+<!--  r.status = 'drafting'; renderTable(); refreshPipelineGlow();-->
+<!--  try {-->
+<!--    const email      = await draftEmail(r);-->
+<!--    r.email          = email;-->
+<!--    r.draftQuality   = email.draft_quality_score !== undefined ? parseInt(email.draft_quality_score, 10) : null;-->
+<!--    r.status         = 'done';-->
+<!--  } catch(err) {-->
+<!--    r.status = 'error'; r.error = 'Email draft failed: ' + err.message;-->
+<!--  }-->
+<!--  renderTable(); updateStats(); refreshPipelineGlow();-->
+<!--}-->
+
+<!--// ─── Run button ───────────────────────────────────────────────────────────────-->
+<!--document.getElementById('runPipeline').addEventListener('click', async () => {-->
+<!--  if (state.running) return;-->
+<!--  const apiKey = document.getElementById('groqApiKey').value.trim();-->
+<!--  if (!apiKey){ alert('Please enter your Groq API key in Step 1 before running.'); return; }-->
+<!--  state.running = true;-->
+<!--  document.getElementById('runstatus').textContent    = 'PIPELINE RUNNING';-->
+<!--  document.getElementById('runPipeline').disabled     = true;-->
+
+<!--  const concurrency = parseInt(document.getElementById('concurrency').value);-->
+<!--  const interDelay  = parseInt(document.getElementById('reqDelay').value);-->
+<!--  const targets     = state.rows.filter(r => r.status === 'queued' || r.status === 'error');-->
+
+<!--  await processQueue(targets, processCompanyRow, concurrency, interDelay);-->
+
+<!--  state.running = false;-->
+<!--  document.getElementById('runPipeline').disabled  = false;-->
+<!--  document.getElementById('runstatus').textContent = 'PIPELINE COMPLETE';-->
+<!--  document.getElementById('node1').classList.remove('active');-->
+<!--  document.getElementById('node2').classList.remove('active');-->
+<!--  document.getElementById('conduit').classList.remove('flowing');-->
+<!--  updateStats();-->
+
+<!--  // Auto-prompt export when all rows are done and at least one succeeded-->
+<!--  const doneCount = state.rows.filter(r => r.status === 'done').length;-->
+<!--  if (doneCount > 0) {-->
+<!--    const exportBtn = document.getElementById('exportBtn');-->
+<!--    exportBtn.textContent = `⬇ Export ${doneCount} companies to Excel`;-->
+<!--    exportBtn.classList.remove('ghost');-->
+<!--    exportBtn.classList.add('primary');-->
+<!--    exportBtn.disabled = false;-->
+<!--  }-->
+<!--});-->
+
+<!--async function retryRow(idx){-->
+<!--  const r = state.rows[idx];-->
+<!--  r.status              = 'queued';-->
+<!--  r.error               = null;-->
+<!--  r.signal              = null;-->
+<!--  r.pct                 = null;-->
+<!--  r.evidence            = null;-->
+<!--  r.angle               = null;-->
+<!--  r.newsSignals         = null;-->
+<!--  r.techStackSignals    = null;-->
+<!--  r.sourcesAnalysed     = null;-->
+<!--  r.outreachRec         = null;-->
+<!--  r.aiMlHiring          = null;-->
+<!--  r.scrapeData          = null;-->
+<!--  r.scrapePagesCount    = 0;-->
+<!--  r.scrapeChars         = 0;-->
+<!--  r.scrapeQuality       = null;-->
+<!--  r.scrapeTriedSources  = [];-->
+<!--  r.scrapeHeadlines     = [];-->
+<!--  r.scrapeSources       = [];-->
+<!--  r.scrapeHiringSignals = [];-->
+<!--  r.scrapeErrors        = [];-->
+<!--  r.email               = null;-->
+<!--  r.draftQuality        = null;-->
+<!--  r.reused            = false;-->
+<!--  r.waitSec           = 0;-->
+<!--  // Also evict from signal cache so research reruns cleanly-->
+<!--  const key = normName(r.raw[state.mapping.company]);-->
+<!--  delete signalCache[key];-->
+<!--  renderTable();-->
+<!--  await processCompanyRow(r);-->
+<!--}-->
+
+<!--// ─── Export ───────────────────────────────────────────────────────────────────-->
+<!--document.getElementById('exportBtn').addEventListener('click', () => {-->
+<!--  const out = state.rows.map(r => {-->
+<!--    const base = { ...r.raw };-->
+<!--    const hiringExport   = r.scrapeHiringSignals || [];-->
+<!--    const directExport   = hiringExport.filter(h => h.role?.includes('[DIRECT AI/ML]'));-->
+<!--    const adjacentExport = hiringExport.filter(h => h.role?.includes('[ADJACENT/DATA]'));-->
+<!--    const aiMlExport     = [...directExport, ...adjacentExport];-->
+<!--    base['Outreach Recommendation']   = r.outreachRec          || '';-->
+<!--    base['AI/ML Hiring Summary']      = r.aiMlHiring            || '';-->
+<!--    base['DIRECT AI/ML Jobs Count']   = directExport.length;-->
+<!--    base['ADJACENT/DATA Jobs Count']  = adjacentExport.length;-->
+<!--    base['AI/ML Jobs Count (Total)']  = aiMlExport.length;-->
+<!--    base['All Jobs Count']            = hiringExport.length;-->
+<!--    base['DIRECT AI/ML Job Details']  = directExport.slice(0,10).map(h => `${h.role} | ${h.date_hint} | ${h.source}`).join(' || ');-->
+<!--    base['ADJACENT/DATA Job Details'] = adjacentExport.slice(0,10).map(h => `${h.role} | ${h.date_hint} | ${h.source}`).join(' || ');-->
+<!--    base['Signal Found']           = r.signal             || '';-->
+<!--    base['Signal Strength %']      = r.pct !== null ? parseInt(r.pct, 10) : '';-->
+<!--    base['Evidence Source']        = r.evidence           || '';-->
+<!--    base['Suggested Angle']        = r.angle              || '';-->
+<!--    base['News / Press Signals']   = r.newsSignals         || '';-->
+<!--    base['Tech Stack Signals']     = r.techStackSignals    || '';-->
+<!--    base['Sources Analysed']       = r.sourcesAnalysed     || '';-->
+<!--    base['Pages Scraped']          = r.scrapePagesCount    || 0;-->
+<!--    base['Scrape Quality']         = r.scrapeQuality       || '';-->
+<!--    base['Sources Tried']          = (r.scrapeTriedSources || []).join(', ');-->
+<!--    base['Scraped Headlines']      = (r.scrapeHeadlines    || []).join(' | ');-->
+<!--    base['Draft Quality Score']    = r.draftQuality !== null ? r.draftQuality : '';-->
+<!--    base['Email Subject']          = r.email               ? r.email.subject : '';-->
+<!--    base['Email Body']             = r.email               ? r.email.body.replace(/\\n/g, '\n').replace(/\\t/g, '\t') : '';-->
+<!--    return base;-->
+<!--  });-->
+<!--  const ws = XLSX.utils.json_to_sheet(out);-->
+<!--  const wb = XLSX.utils.book_new();-->
+<!--  XLSX.utils.book_append_sheet(wb, ws, 'Signals & Outreach');-->
+<!--  XLSX.writeFile(wb, 'cmetric-signal-intelligence-output.xlsx');-->
+<!--});-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>C-Metric Signal Intelligence Engine</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root{
+    --bg:#ffffff; --panel:#fafafa; --line:#dcdcdc; --line-strong:#111111;
+    --ink:#111111; --ink-soft:#555555; --ink-faint:#999999;
+    --g1:#111111; --g2:#3d3d3d; --g3:#6b6b6b; --g4:#9a9a9a; --g5:#c9c9c9; --g6:#ececec;
+    --mono: "IBM Plex Mono", "SF Mono", Consolas, monospace;
+    --sans: "IBM Plex Sans", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans);
+    font-size:14px; line-height:1.5;
+  }
+  .wrap{max-width:1180px; margin:0 auto; padding:36px 28px 80px;}
+
+  .masthead{
+    display:flex; justify-content:space-between; align-items:flex-end;
+    border-bottom:2px solid var(--line-strong); padding-bottom:14px; margin-bottom:28px;
+  }
+  .masthead h1{font-family:var(--mono); font-size:20px; font-weight:600; letter-spacing:-0.02em; margin:0; text-transform:uppercase;}
+  .masthead .tag{font-family:var(--mono); font-size:11px; color:var(--ink-faint); letter-spacing:.04em; display:flex; align-items:center; gap:10px;}
+  .masthead .model-badge{font-family:var(--mono); font-size:10px; background:var(--g6); border:1px solid var(--g5); padding:2px 7px; color:var(--ink-soft); letter-spacing:.02em;}
+  .masthead .id{font-family:var(--mono); font-size:11px; color:var(--ink-faint); text-align:right;}
+
+  .pipeline{
+    display:grid; grid-template-columns:1fr auto 1fr auto 1fr; align-items:center;
+    gap:0; margin:28px 0 36px; border:1px solid var(--line); background:var(--panel);
+  }
+  .node{padding:18px 22px;}
+  .node .no{font-family:var(--mono); font-size:11px; color:var(--ink-faint);}
+  .node h2{font-family:var(--mono); font-size:14px; margin:4px 0 6px; text-transform:uppercase; letter-spacing:.02em;}
+  .node p{margin:0; font-size:12.5px; color:var(--ink-soft);}
+  .node.active{background:var(--ink);}
+  .node.active .no,.node.active p{color:#cfcfcf;}
+  .node.active h2{color:#fff;}
+  .conduit{position:relative; height:100%; display:flex; align-items:center; justify-content:center; padding:0 6px;}
+  .conduit svg{display:block;}
+  .conduit .pulse{opacity:0; transition:opacity .3s;}
+  .conduit.flowing .pulse{opacity:1; animation:travel 1.4s linear infinite;}
+  @keyframes travel{ from{stroke-dashoffset:24;} to{stroke-dashoffset:0;} }
+
+  .step{border:1px solid var(--line); margin-bottom:18px;}
+  .step-head{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:12px 18px; background:var(--panel); border-bottom:1px solid var(--line);
+  }
+  .step-head .label{font-family:var(--mono); font-size:12px; text-transform:uppercase; letter-spacing:.03em;}
+  .step-head .label b{color:var(--ink);}
+  .step-body{padding:18px;}
+  .step.disabled{opacity:.45; pointer-events:none;}
+
+  .dropzone{
+    border:1.5px dashed var(--g5); padding:26px; text-align:center; cursor:pointer; font-size:13px; color:var(--ink-soft);
+  }
+  .dropzone:hover{border-color:var(--ink);}
+  .dropzone b{color:var(--ink);}
+  input[type=file]{display:none;}
+
+  .maprow{display:grid; grid-template-columns:190px 1fr; gap:10px; align-items:center; margin-bottom:10px; max-width:560px;}
+  .maprow label{font-size:12.5px; color:var(--ink-soft);}
+  .maprow .req::after{content:" *"; color:var(--ink);}
+  select, input[type=text]{
+    font-family:var(--sans); font-size:13px; padding:7px 9px; border:1px solid var(--g5); background:#fff; color:var(--ink);
+    width:100%;
+  }
+  select:focus, input:focus{outline:none; border-color:var(--ink);}
+
+  .btnrow{display:flex; gap:10px; margin-top:16px; flex-wrap:wrap;}
+  button{
+    font-family:var(--mono); font-size:12px; text-transform:uppercase; letter-spacing:.03em;
+    padding:10px 18px; border:1px solid var(--ink); background:#fff; color:var(--ink); cursor:pointer;
+  }
+  button.primary{background:var(--ink); color:#fff;}
+  button:hover:not(:disabled){background:var(--ink); color:#fff;}
+  button:disabled{opacity:.35; cursor:not-allowed; background:#fff; color:var(--ink);}
+  button.ghost{border-color:var(--g5); color:var(--ink-soft);}
+  button.ghost:hover{border-color:var(--ink); color:#fff;}
+
+  .row3{display:flex; gap:20px; flex-wrap:wrap; margin-top:4px; align-items:flex-end;}
+  .field{font-size:12.5px; color:var(--ink-soft);}
+  .field select{width:220px;}
+
+  /* API key input */
+  .apikey-row{display:flex; gap:10px; align-items:center; margin-bottom:6px; max-width:560px;}
+  .apikey-row label{font-size:12.5px; color:var(--ink-soft); white-space:nowrap; min-width:110px;}
+  .apikey-row input[type=password]{
+    font-family:var(--mono); font-size:12px; padding:7px 9px; border:1px solid var(--g5);
+    background:#fff; color:var(--ink); flex:1;
+  }
+  .apikey-row input[type=password]:focus{outline:none; border-color:var(--ink);}
+
+  /* Rate-limit notice banner */
+  .rate-notice{
+    background:var(--panel); border:1px solid var(--g5); border-left:3px solid var(--ink);
+    padding:10px 14px; font-size:12px; color:var(--ink-soft); margin-top:12px; display:none;
+  }
+  .rate-notice b{color:var(--ink);}
+  .rate-notice.show{display:block;}
+
+  /* Retry badge on the status chip when waiting */
+  .status.waiting{color:#7a5800; border-color:#c89520;}
+  .status.scraping{color:#fff; background:#2563a8; border-color:#2563a8;}
+  .rec-connect{font-family:var(--mono);font-size:10px;padding:2px 7px;background:#d4edda;border:1px solid #28a745;color:#155724;white-space:nowrap;}
+  .rec-maybe{font-family:var(--mono);font-size:10px;padding:2px 7px;background:#fff3cd;border:1px solid #ffc107;color:#856404;white-space:nowrap;}
+  .rec-pass{font-family:var(--mono);font-size:10px;padding:2px 7px;background:#f8d7da;border:1px solid #dc3545;color:#721c24;white-space:nowrap;}
+  .hiring-badge{font-family:var(--mono);font-size:10px;padding:2px 7px;background:#e8f4f8;border:1px solid #0077b5;color:#0077b5;white-space:nowrap;}
+
+  /* Scrape summary box shown in modal */
+  .scrape-box{
+    background:#f0f4ff; border:1px solid #c5d4f0; border-left:3px solid #2563a8;
+    padding:10px 14px; font-size:11.5px; color:#1e3a6e; margin-bottom:10px; line-height:1.6;
+  }
+  .scrape-box b{color:#111;}
+  .scrape-box .scrape-pages{display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;}
+  .scrape-pages .spill{
+    font-family:var(--mono); font-size:10px; background:#dce8ff; border:1px solid #b0c8f0;
+    padding:2px 7px; color:#2563a8;
+  }
+
+  /* backend URL row */
+  .backend-row{display:flex; gap:10px; align-items:center; margin-bottom:10px; max-width:560px;}
+  .backend-row label{font-size:12.5px; color:var(--ink-soft); white-space:nowrap; min-width:110px;}
+  .backend-row input[type=text]{
+    font-family:var(--mono); font-size:12px; padding:7px 9px; border:1px solid var(--g5);
+    background:#fff; color:var(--ink); flex:1;
+  }
+  .backend-row input[type=text]:focus{outline:none; border-color:var(--ink);}
+  .backend-status{
+    font-family:var(--mono); font-size:10.5px; padding:2px 8px; border:1px solid var(--g5);
+    color:var(--ink-faint); white-space:nowrap;
+  }
+  .backend-status.online{color:#155724; background:#d4edda; border-color:#c3e6cb;}
+  .backend-status.offline{color:#856404; background:#fff3cd; border-color:#ffc107;}
+
+  .stats{display:flex; border:1px solid var(--line); margin-bottom:18px;}
+  .stat{flex:1; padding:14px 18px; border-right:1px solid var(--line);}
+  .stat:last-child{border-right:none;}
+  .stat .n{font-family:var(--mono); font-size:22px; font-weight:600;}
+  .stat .l{font-size:11px; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.03em; margin-top:2px;}
+  .progressbar{height:3px; background:var(--g6); margin-bottom:18px;}
+  .progressbar .fill{height:100%; background:var(--ink); width:0%; transition:width .3s;}
+
+  table{width:100%; border-collapse:collapse; font-size:12.5px;}
+  th{
+    text-align:left; font-family:var(--mono); font-size:10.5px; text-transform:uppercase; letter-spacing:.03em;
+    color:var(--ink-faint); padding:8px 10px; border-bottom:1px solid var(--line-strong); white-space:nowrap;
+  }
+  td{padding:9px 10px; border-bottom:1px solid var(--line); vertical-align:top;}
+  tr:hover td{background:#fafafa;}
+  .company{font-weight:600;}
+  .status{font-family:var(--mono); font-size:10.5px; text-transform:uppercase; padding:2px 6px; border:1px solid var(--g5); white-space:nowrap;}
+  .status.queued{color:var(--ink-faint);}
+  .status.working{color:#fff; background:var(--ink); border-color:var(--ink);}
+  .status.done{color:var(--ink); border-color:var(--ink);}
+  .status.error{color:#fff; background:#b00020; border-color:#b00020;}
+  .sig{max-width:280px; color:var(--ink-soft);}
+  .sigpct{display:flex; align-items:center; gap:8px; white-space:nowrap;}
+  .sigpct .bar{width:54px; height:6px; background:var(--g6); position:relative;}
+  .sigpct .bar i{position:absolute; left:0; top:0; bottom:0; background:var(--ink);}
+  .sigpct b{font-family:var(--mono); font-size:12px; width:32px;}
+  .emailcell{max-width:120px;}
+  .emailbtn{font-family:var(--mono); font-size:10.5px; text-transform:uppercase; background:none; border:1px solid var(--g5); padding:4px 8px;}
+  .emailbtn:hover{background:var(--ink); color:#fff;}
+  .retry{font-family:var(--mono); font-size:10.5px; text-transform:uppercase; background:none; border:1px solid var(--g5); padding:4px 8px; margin-left:6px;}
+
+  .overlay{position:fixed; inset:0; background:rgba(0,0,0,.5); display:none; align-items:center; justify-content:center; z-index:50; padding:20px;}
+  .overlay.show{display:flex;}
+  .modal{background:#fff; width:100%; max-width:680px; max-height:88vh; overflow-y:auto; border:1px solid var(--ink);}
+  .modal-head{display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid var(--line);}
+  .modal-head h3{font-family:var(--mono); font-size:13px; margin:0; text-transform:uppercase;}
+  .modal-head-actions{display:flex; align-items:center; gap:10px;}
+  .modal-close{cursor:pointer; font-family:var(--mono); font-size:16px; background:none; border:none; color:var(--ink);}
+  .modal-body{padding:0;}
+  .modal-meta{font-size:11px; color:var(--ink-faint); font-family:var(--mono); background:var(--panel); padding:10px 20px; border-bottom:1px solid var(--line); display:flex; gap:18px; flex-wrap:wrap;}
+  .modal-meta span{display:flex; align-items:center; gap:5px;}
+
+  /* Email letter layout inside modal */
+  .email-letter{padding:28px 32px 32px; font-family:var(--sans); font-size:13.5px; line-height:1.75; color:#1a1a1a;}
+  .email-subject-line{
+    font-size:11px; font-family:var(--mono); text-transform:uppercase; letter-spacing:.05em;
+    color:var(--ink-faint); margin-bottom:4px;
+  }
+  .email-subject-value{
+    font-size:15px; font-weight:700; color:var(--ink); margin-bottom:20px;
+    padding-bottom:14px; border-bottom:2px solid var(--line-strong); line-height:1.3;
+  }
+  .email-field-row{display:flex; gap:10px; margin-bottom:6px; font-size:12px;}
+  .email-field-label{font-family:var(--mono); color:var(--ink-faint); min-width:52px; font-size:11px; padding-top:1px;}
+  .email-field-value{color:var(--ink-soft);}
+  .email-divider{border:none; border-top:1px dashed var(--g5); margin:16px 0;}
+  .email-body-text{white-space:pre-wrap; font-size:13.5px; line-height:1.8; color:#1a1a1a;}
+  .email-body-text p{margin:0 0 14px;}
+  .email-copy-bar{
+    display:flex; justify-content:flex-end; gap:8px; padding:12px 20px;
+    border-top:1px solid var(--line); background:var(--panel);
+  }
+  .copy-btn{
+    font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.03em;
+    padding:7px 14px; border:1px solid var(--g5); background:#fff; color:var(--ink-soft); cursor:pointer;
+  }
+  .copy-btn:hover{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .copy-btn.copied{background:var(--ink); color:#fff; border-color:var(--ink);}
+
+  .footnote{font-size:11.5px; color:var(--ink-faint); margin-top:6px;}
+  .empty{padding:30px; text-align:center; color:var(--ink-faint); font-size:13px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="masthead">
+  <div>
+    <h1>Signal Intelligence &amp; Outreach Engine</h1>
+    <div class="tag">
+      C-METRIC · TWO-AGENT RESEARCH-TO-OUTREACH PIPELINE
+      <span class="model-badge">GROQ · model selectable in Step 3</span>
+    </div>
+  </div>
+  <div class="id">RUN ID: <span id="runid">—</span><br>STATUS: <span id="runstatus">IDLE</span></div>
+</div>
+
+<div class="pipeline">
+  <div class="node" id="node0">
+    <div class="no">STEP 0</div>
+    <h2>Web Scraper</h2>
+    <p>Fetches the company website, crawls news/about/careers pages, and pulls DuckDuckGo headlines — giving the LLM real, confirmed text.</p>
+  </div>
+  <div class="conduit" id="conduit0">
+    <svg width="70" height="24" viewBox="0 0 70 24">
+      <line x1="0" y1="12" x2="70" y2="12" stroke="#c9c9c9" stroke-width="1.5"/>
+      <line class="pulse" x1="0" y1="12" x2="70" y2="12" stroke="#2563a8" stroke-width="1.5" stroke-dasharray="6 18"/>
+      <polygon points="62,7 70,12 62,17" fill="#2563a8"/>
+    </svg>
+  </div>
+  <div class="node" id="node1">
+    <div class="no">AGENT 01</div>
+    <h2>Signal Researcher</h2>
+    <p>Analyses scraped page text + news headlines against the epistemic framework — labels each claim [CONFIRMED] / [INFERRED] / [SPECULATIVE] and scores accordingly.</p>
+  </div>
+  <div class="conduit" id="conduit">
+    <svg width="70" height="24" viewBox="0 0 70 24">
+      <line x1="0" y1="12" x2="70" y2="12" stroke="#c9c9c9" stroke-width="1.5"/>
+      <line class="pulse" x1="0" y1="12" x2="70" y2="12" stroke="#111" stroke-width="1.5" stroke-dasharray="6 18"/>
+      <polygon points="62,7 70,12 62,17" fill="#111"/>
+    </svg>
+  </div>
+  <div class="node" id="node2">
+    <div class="no">AGENT 02</div>
+    <h2>Outreach Strategist</h2>
+    <p>Turns each confirmed signal into a personalized, peer-level email positioning C-Metric's engineering &amp; AI implementation services.</p>
+  </div>
+</div>
+
+<!-- STEP 1: API KEY + UPLOAD -->
+<div class="step" id="step1">
+  <div class="step-head"><div class="label"><b>Step 1</b> · API key &amp; company list</div></div>
+  <div class="step-body">
+    <div class="apikey-row">
+      <label>Groq API key <span style="color:var(--ink)">*</span></label>
+      <input type="password" id="groqApiKey" placeholder="gsk_…  (get yours free at console.groq.com)" autocomplete="off">
+    </div>
+    <div class="footnote" style="margin-bottom:14px;">Your key is used only in this browser tab and never sent anywhere except <b>api.groq.com</b>. Free tier is roughly: GPT-OSS 120B ~30 req/min, ~200K tokens/day; GPT-OSS 20B similar or higher. Limits are per-organization (a second key on the same account shares the same quota) and <b>Groq's model lineup changes over time</b> — if a model 404s as "does not exist," check <a href="https://console.groq.com/docs/models" target="_blank">console.groq.com/docs/models</a> for the current list and swap the model ID in the code. Pick your model in Step 3.</div>
+    <div class="backend-row">
+      <label>Scraper backend</label>
+      <input type="text" id="backendUrl" value="http://localhost:8765" placeholder="http://localhost:8765">
+      <span class="backend-status" id="backendStatus">NOT CHECKED</span>
+      <button class="ghost" id="checkBackendBtn" style="white-space:nowrap;padding:7px 12px;">Ping</button>
+    </div>
+    <div class="footnote" style="margin-bottom:14px;">
+      Run <b>python scraper.py</b> locally to enable real web scraping. Without it the engine falls back to LLM training-knowledge only (all signals will be [SPECULATIVE]).
+    </div>
+    <div class="dropzone" id="dropzone">
+      <div id="dzlabel">Drop an <b>.xlsx / .csv</b> file here, or click to browse — needs at least one column of company names</div>
+      <input type="file" id="fileinput" accept=".xlsx,.xls,.csv">
+    </div>
+  </div>
+</div>
+
+<!-- STEP 2: MAP COLUMNS -->
+<div class="step disabled" id="step2">
+  <div class="step-head">
+    <div class="label"><b>Step 2</b> · Map columns <span id="rowcount" style="color:var(--ink-faint);font-weight:400;"></span></div>
+  </div>
+  <div class="step-body">
+    <div class="maprow"><label class="req">Company name</label><select id="mapCompany"></select></div>
+    <div class="maprow"><label>Website (optional)</label><select id="mapWebsite"></select></div>
+    <div class="maprow"><label>Contact name (optional)</label><select id="mapContact"></select></div>
+    <div class="maprow"><label>Target designation (optional)</label><select id="mapDesignation"></select></div>
+    <div class="footnote">Leave optional fields as "— none —" if your sheet doesn't have them.</div>
+    <div class="btnrow"><button class="primary" id="confirmMap">Confirm mapping →</button></div>
+  </div>
+</div>
+
+<!-- STEP 3: RUN -->
+<div class="step disabled" id="step3">
+  <div class="step-head"><div class="label"><b>Step 3</b> · Run the pipeline</div></div>
+  <div class="step-body">
+    <div class="row3">
+      <div class="field">
+        Groq model
+        <select id="groqModel">
+          <option value="openai/gpt-oss-120b" selected>GPT-OSS 120B — best quality, ~200K tokens/day</option>
+          <option value="openai/gpt-oss-20b">GPT-OSS 20B — faster, lighter, good for structured extraction</option>
+        </select>
+      </div>
+      <div class="field">
+        Concurrency
+        <select id="concurrency">
+          <option value="1" selected>1 — recommended for large lists</option>
+          <option value="2">2 — medium lists (&lt;15)</option>
+          <option value="3">3 — small lists only (&lt;8)</option>
+        </select>
+      </div>
+      <div class="field">
+        Inter-company delay
+        <select id="reqDelay">
+          <option value="0">None (fastest)</option>
+          <option value="3000" selected>3 s — recommended</option>
+          <option value="5000">5 s</option>
+          <option value="10000">10 s — very large lists</option>
+        </select>
+      </div>
+      <div class="field">
+        Email tone
+        <select id="tone">
+          <option value="formal" selected>Formal, high-register</option>
+          <option value="direct">Direct, concise</option>
+        </select>
+      </div>
+    </div>
+    <div class="rate-notice show" id="rateNotice">
+      <b>Auto-paced.</b> The pipeline reads your account's actual token/request limits from Groq's response headers and self-throttles to match — no more guessing a fixed rate. Groq's daily token cap (TPD) resets on a rolling 24h basis, applies per organization (not per key), and is separate from the per-minute limits shown here. If you hit "Rate limited — daily quota", switch to the 8B model above or wait for the window to roll forward. Keep concurrency at 1 for large lists.
+    </div>
+    <div class="btnrow">
+      <button class="primary" id="runPipeline">▶ Run pipeline — Agent 1 → Agent 2 per company</button>
+      <button class="ghost" id="exportBtn" disabled>⬇ Export updated sheet</button>
+    </div>
+    <div class="footnote">Each company runs research, then immediately drafts its outreach email before the next company starts. Companies with a repeated name reuse the first signal — no duplicate API spend.</div>
+  </div>
+</div>
+
+<!-- STATS + TABLE -->
+<div id="resultsArea" style="display:none;">
+  <div class="stats">
+    <div class="stat"><div class="n" id="statTotal">0</div><div class="l">Companies</div></div>
+    <div class="stat"><div class="n" id="statResearched">0</div><div class="l">Researched</div></div>
+    <div class="stat"><div class="n" id="statHigh">0</div><div class="l">Signal ≥ 60%</div></div>
+    <div class="stat"><div class="n" id="statEmails">0</div><div class="l">Emails drafted</div></div>
+    <div class="stat"><div class="n" id="statErrors">0</div><div class="l">Errors</div></div>
+  </div>
+  <div class="progressbar"><div class="fill" id="progressFill"></div></div>
+  <table>
+    <thead>
+      <tr>
+        <th>Company</th><th>Status</th><th>Recommendation</th><th>Signal found</th>
+        <th>Strength</th><th>AI/ML Hiring</th><th>Draft Q</th><th>Contact / Designation</th><th>Outreach email</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+</div>
+
+<!-- EMAIL MODAL -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modalCompany">—</h3>
+      <div class="modal-head-actions">
+        <button class="modal-close" id="modalClose">✕</button>
+      </div>
+    </div>
+    <!-- meta bar: signal strength + evidence -->
+    <div class="modal-meta" id="modalMeta"></div>
+    <!-- email letter -->
+    <div class="email-letter">
+      <div class="email-subject-line">Subject line</div>
+      <div class="email-subject-value" id="modalSubj"></div>
+      <div class="email-field-row"><span class="email-field-label">To</span><span class="email-field-value" id="modalTo"></span></div>
+      <div class="email-field-row"><span class="email-field-label">From</span><span class="email-field-value">AK &lt;ak@c-metric.com&gt;</span></div>
+      <hr class="email-divider">
+      <div class="email-body-text" id="modalBody"></div>
+    </div>
+    <div class="email-copy-bar">
+      <button class="copy-btn" id="copySubjBtn">Copy subject</button>
+      <button class="copy-btn" id="copyBodyBtn">Copy email body</button>
+      <button class="copy-btn" id="copyAllBtn">Copy all</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const state = { rows: [], mapping: {}, headers: [], running: false, backendOnline: false };
+
+function genRunId(){ return Math.random().toString(36).slice(2,8).toUpperCase(); }
+document.getElementById('runid').textContent = genRunId();
+
+// ─── sleep helper ─────────────────────────────────────────────────────────────
+const sleep = ms => new Promise(res => setTimeout(res, ms));
+
+// ─── Backend health check ─────────────────────────────────────────────────────
+async function pingBackend(){
+  const base = document.getElementById('backendUrl').value.trim().replace(/\/$/, '');
+  const el   = document.getElementById('backendStatus');
+  el.textContent = 'CHECKING…';
+  el.className   = 'backend-status';
+  try {
+    const r = await fetch(base + '/health', { signal: AbortSignal.timeout(4000) });
+    if (r.ok) {
+      const j = await r.json();
+      el.textContent = 'ONLINE — ' + (j.service || 'ok');
+      el.className   = 'backend-status online';
+      state.backendOnline = true;
+    } else {
+      throw new Error('HTTP ' + r.status);
+    }
+  } catch(e) {
+    el.textContent = 'OFFLINE — ' + e.message;
+    el.className   = 'backend-status offline';
+    state.backendOnline = false;
+  }
+}
+document.getElementById('checkBackendBtn').addEventListener('click', pingBackend);
+// auto-ping on load
+pingBackend();
+
+// ─── Web Scraper ──────────────────────────────────────────────────────────────
+// Falls back gracefully if the backend is offline.
+async function scrapeCompany(companyName, websiteUrl){
+  const base = document.getElementById('backendUrl').value.trim().replace(/\/$/, '');
+  const empty = { combined_text:'', pages_fetched:0, news_headlines:[], hiring_signals:[], quality:'failed', quality_chars:0, tried_sources:[], sources:[], errors:[], chars:0 };
+  if (!state.backendOnline) {
+    return { ...empty, errors:['Backend offline — using LLM training knowledge only.'] };
+  }
+  try {
+    const resp = await fetch(base + '/scrape', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ company: companyName, website: websiteUrl || null }),
+      signal: AbortSignal.timeout(90000)   // 90 s — job + social searches add time
+    });
+    if (!resp.ok) throw new Error('Scraper HTTP ' + resp.status);
+    const data = await resp.json();
+    return {
+      combined_text:   data.combined_text    || '',
+      pages_fetched:   data.pages_fetched    || 0,
+      news_headlines:  data.news_headlines   || [],
+      hiring_signals:  data.hiring_signals   || [],
+      sources:         data.sources          || [],
+      quality:         data.quality          || 'failed',
+      quality_chars:   data.quality_chars    || 0,
+      tried_sources:   data.tried_sources    || [],
+      errors:          data.errors           || [],
+      chars:           data.total_chars      || 0,
+    };
+  } catch(e) {
+    return { ...empty, errors:['Scrape failed: ' + e.message] };
+  }
+}
+
+// ─── File upload ──────────────────────────────────────────────────────────────
+const dropzone  = document.getElementById('dropzone');
+const fileinput = document.getElementById('fileinput');
+dropzone.addEventListener('click', () => fileinput.click());
+dropzone.addEventListener('dragover',  e => { e.preventDefault(); dropzone.style.borderColor = '#111'; });
+dropzone.addEventListener('dragleave', () => { dropzone.style.borderColor = ''; });
+dropzone.addEventListener('drop', e => {
+  e.preventDefault(); dropzone.style.borderColor = '';
+  if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+});
+fileinput.addEventListener('change', e => { if (e.target.files.length) handleFile(e.target.files[0]); });
+
+function handleFile(file){
+  const reader = new FileReader();
+  reader.onload = e => {
+    const wb   = XLSX.read(e.target.result, { type: 'array' });
+    const sheet = wb.Sheets[wb.SheetNames[0]];
+    const json  = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+    if (!json.length){ alert('No rows found in the first sheet.'); return; }
+    state.rows    = json.map((r, i) => ({ idx: i, raw: r, status: 'queued', signal: null, pct: null, evidence: null, angle: null, newsSignals: null, techStackSignals: null, sourcesAnalysed: null, outreachRec: null, aiMlHiring: null, scrapeData: null, scrapePagesCount: 0, scrapeChars: 0, scrapeQuality: null, scrapeTriedSources: [], scrapeSources: [], scrapeHiringSignals: [], email: null, draftQuality: null, error: null, reused: false, waitSec: 0 }));
+    state.headers = Object.keys(json[0]);
+    document.getElementById('dzlabel').innerHTML = `<b>${file.name}</b> loaded — ${json.length} rows found`;
+    populateMapping();
+    document.getElementById('rowcount').textContent = `(${json.length} rows)`;
+    document.getElementById('step2').classList.remove('disabled');
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function populateMapping(){
+  ['mapCompany','mapWebsite','mapContact','mapDesignation'].forEach(id => {
+    const sel = document.getElementById(id);
+    sel.innerHTML = '<option value="">— none —</option>' + state.headers.map(h => `<option value="${h}">${h}</option>`).join('');
+  });
+  const guess = patterns => state.headers.find(h => patterns.some(p => h.toLowerCase().includes(p)));
+  const c = guess(['company','name of company','organisation','organization']);
+  const w = guess(['website','domain','url']);
+  const ct = guess(['contact','person']);
+  const d  = guess(['designation','title','role']);
+  if (c)  document.getElementById('mapCompany').value     = c;
+  if (w)  document.getElementById('mapWebsite').value     = w;
+  if (ct) document.getElementById('mapContact').value     = ct;
+  if (d)  document.getElementById('mapDesignation').value = d;
+}
+
+document.getElementById('confirmMap').addEventListener('click', () => {
+  const company = document.getElementById('mapCompany').value;
+  if (!company){ alert('Please map the Company name column — it is required.'); return; }
+  state.mapping = {
+    company,
+    website:     document.getElementById('mapWebsite').value,
+    contact:     document.getElementById('mapContact').value,
+    designation: document.getElementById('mapDesignation').value
+  };
+  document.getElementById('step3').classList.remove('disabled');
+  document.getElementById('resultsArea').style.display = 'block';
+  renderTable();
+  updateStats();
+});
+
+// ─── Rendering ────────────────────────────────────────────────────────────────
+function statusChip(s){
+  const map = { queued:'Queued', scraping:'Scraping', researching:'Analysing', researched:'Researched', drafting:'Drafting', done:'Done', error:'Error', waiting:'Waiting…' };
+  const cls = s === 'scraping' ? 'scraping'
+            : (s==='researching'||s==='drafting') ? 'working'
+            : (s==='error' ? 'error'
+            : (s==='done' ? 'done'
+            : (s==='waiting' ? 'waiting' : 'queued')));
+  return `<span class="status ${cls}">${map[s]||s}</span>`;
+}
+
+// Safe HTML escape — prevents XSS from company names / signal text in innerHTML
+function esc(str){ return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// Mirror of scraper.py clean_company_name() — extracts readable name from LinkedIn/social URLs
+const _socialSlugRe = /^https?:\/\/(?:www\.)?(?:linkedin\.com\/(?:company|in|school)|twitter\.com|x\.com|facebook\.com|instagram\.com|crunchbase\.com\/(?:organization|company)|angel\.co\/company|wellfound\.com\/company|github\.com|glassdoor\.com\/Overview)\/([^/?#]+)/i;
+function displayName(raw){
+  const m = _socialSlugRe.exec(String(raw || ''));
+  if (m) return m[1].replace(/[-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  return raw || '(unnamed)';
+}
+
+function renderTable(){
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML = state.rows.map(r => {
+    const name    = esc(displayName(r.raw[state.mapping.company]));
+    const cVal    = state.mapping.contact     ? (r.raw[state.mapping.contact]     || '') : '';
+    const dVal    = state.mapping.designation ? (r.raw[state.mapping.designation] || '') : '';
+    const contact = [esc(cVal), esc(dVal)].filter(Boolean).join(' — ') || '<span style="color:var(--ink-faint)">not supplied</span>';
+
+    // BUG FIX: clamp pct to 0-100 and coerce to number
+    const pct = r.pct !== null ? Math.min(100, Math.max(0, parseInt(r.pct, 10) || 0)) : null;
+    const bar = pct !== null
+      ? `<div class="sigpct"><div class="bar"><i style="width:${pct}%"></i></div><b>${pct}%</b></div>`
+      : '—';
+
+    // Show rate-limit countdown inline in the signal cell
+    const waitingInline = r.waitSec > 0
+      ? `<span style="color:#856404;background:#fff3cd;padding:1px 6px;border-radius:3px;font-size:11px;font-family:var(--mono);">⏳ rate limit — retrying in ${r.waitSec}s</span>`
+      : '';
+
+    const sig = r.error
+      ? `<span style="color:#b00020;">${esc(r.error)}</span>`
+      : (r.signal
+          ? `<span class="sig">${esc(r.signal)}${r.reused ? ' <b style="color:var(--ink-faint);font-family:var(--mono);font-size:10.5px;">↻ reused</b>' : ''}</span>`
+          : (r.status==='researching' || r.status==='drafting'
+              ? (waitingInline || '<span style="color:var(--ink-faint)">analysing…</span>')
+              : '—'));
+
+    // Outreach recommendation badge
+    let recCell = '—';
+    if (r.outreachRec) {
+      const cls = r.outreachRec === 'CONNECT' ? 'rec-connect' : r.outreachRec === 'MAYBE' ? 'rec-maybe' : 'rec-pass';
+      recCell = `<span class="${cls}">${esc(r.outreachRec)}</span>`;
+    } else if (r.status === 'researching') {
+      recCell = '<span style="color:var(--ink-faint);font-size:11px;">analysing…</span>';
+    }
+
+    // AI/ML hiring badge (two-tier)
+    const hiringArr    = r.scrapeHiringSignals || [];
+    const directCount  = hiringArr.filter(h => h.role?.includes('[DIRECT AI/ML]')).length;
+    const adjacentCount= hiringArr.filter(h => h.role?.includes('[ADJACENT/DATA]')).length;
+    const hiringLabel  = directCount > 0
+      ? `⚡ ${directCount} Direct${adjacentCount > 0 ? ' + '+adjacentCount+' Adj' : ''}`
+      : adjacentCount > 0 ? `📊 ${adjacentCount} Adjacent` : 'None';
+    const hiringCell = r.aiMlHiring
+      ? `<span class="hiring-badge" title="${esc(r.aiMlHiring)}">${(directCount+adjacentCount) > 0 ? hiringLabel : 'None'}</span>`
+      : (r.status === 'scraping' ? '<span style="color:var(--ink-faint);font-size:11px;">scanning…</span>' : '—');
+
+    const dqCell = r.draftQuality !== null && r.draftQuality !== undefined
+      ? `<span style="font-family:var(--mono);font-size:12px;">${r.draftQuality}/10</span>`
+      : '—';
+
+    let emailCell = '—';
+    if (r.status==='drafting')   emailCell = '<span style="color:var(--ink-faint)">drafting…</span>';
+    else if (r.email)            emailCell = `<button class="emailbtn" data-idx="${r.idx}">View</button>`;
+    else if (r.status==='error') emailCell = `<button class="retry" data-retry="${r.idx}">Retry</button>`;
+
+    return `<tr>
+      <td class="company">${name}</td>
+      <td>${statusChip(r.status)}</td>
+      <td>${recCell}</td>
+      <td>${sig}</td>
+      <td>${bar}</td>
+      <td>${hiringCell}</td>
+      <td>${dqCell}</td>
+      <td>${contact}</td>
+      <td class="emailcell">${emailCell}</td>
+    </tr>`;
+  }).join('');
+  tbody.querySelectorAll('.emailbtn').forEach(b  => b.addEventListener('click', () => openModal(parseInt(b.dataset.idx))));
+  tbody.querySelectorAll('[data-retry]').forEach(b => b.addEventListener('click', () => retryRow(parseInt(b.dataset.retry))));
+}
+
+function updateStats(){
+  const total      = state.rows.length;
+  const researched = state.rows.filter(r => r.pct !== null).length;
+  const high       = state.rows.filter(r => r.pct !== null && parseInt(r.pct,10) >= 60).length;
+  const emails     = state.rows.filter(r => r.email).length;
+  const errors     = state.rows.filter(r => r.status === 'error').length;
+  document.getElementById('statTotal').textContent      = total;
+  document.getElementById('statResearched').textContent = researched;
+  document.getElementById('statHigh').textContent       = high;
+  document.getElementById('statEmails').textContent     = emails;
+  document.getElementById('statErrors').textContent     = errors;
+  // BUG FIX: progress = fraction of fully done (both agents complete) out of total
+  const done = state.rows.filter(r => r.status === 'done' || r.status === 'error').length;
+  const fillPct = total ? Math.round((done / total) * 100) : 0;
+  document.getElementById('progressFill').style.width   = fillPct + '%';
+  document.getElementById('exportBtn').disabled         = researched === 0;
+}
+
+// ─── Modal ────────────────────────────────────────────────────────────────────
+function openModal(idx){
+  const r = state.rows[idx];
+  if (!r || !r.email) return;
+
+  const contact     = state.mapping.contact     ? (r.raw[state.mapping.contact]     || '') : '';
+  const designation = state.mapping.designation ? (r.raw[state.mapping.designation] || '') : '';
+  const toLine      = [contact, designation, displayName(r.raw[state.mapping.company])].filter(Boolean).join(', ');
+
+  document.getElementById('modalCompany').textContent = displayName(r.raw[state.mapping.company]);
+
+  // quality badge colour
+  const qColour = { rich:'#155724', adequate:'#0c3a6e', thin:'#856404', failed:'#721c24' };
+  const qBg     = { rich:'#d4edda', adequate:'#dce8ff', thin:'#fff3cd', failed:'#f8d7da' };
+  const qLabel  = r.scrapeQuality || 'none';
+
+  // meta bar
+  const meta = document.getElementById('modalMeta');
+  const recColour = r.outreachRec === 'CONNECT' ? '#155724' : r.outreachRec === 'MAYBE' ? '#856404' : r.outreachRec === 'PASS' ? '#721c24' : '#555';
+  const recBg     = r.outreachRec === 'CONNECT' ? '#d4edda' : r.outreachRec === 'MAYBE' ? '#fff3cd' : r.outreachRec === 'PASS' ? '#f8d7da' : '#f0f0f0';
+  const hiringArr2    = r.scrapeHiringSignals || [];
+  const directCount2  = hiringArr2.filter(h => h.role?.includes('[DIRECT AI/ML]')).length;
+  const adjCount2     = hiringArr2.filter(h => h.role?.includes('[ADJACENT/DATA]')).length;
+  meta.innerHTML = `
+    ${r.outreachRec ? `<span style="color:${recColour};background:${recBg};padding:2px 8px;border:1px solid ${recColour};font-weight:700;">${esc(r.outreachRec)}</span>` : ''}
+    <span>Signal <b style="color:var(--ink)">${parseInt(r.pct,10) || 0}%</b></span>
+    ${r.draftQuality ? `<span>Draft <b style="color:var(--ink)">${r.draftQuality}/10</b></span>` : ''}
+    ${directCount2 > 0 ? `<span style="color:#0077b5;background:#e8f4f8;padding:1px 6px;border:1px solid #0077b5;">⚡ ${directCount2} DIRECT AI/ML${adjCount2>0?' + '+adjCount2+' Adjacent':''}</span>` : adjCount2 > 0 ? `<span style="color:#555;background:#f0f0f0;padding:1px 6px;border:1px solid #aaa;">📊 ${adjCount2} Adjacent jobs</span>` : ''}
+    ${r.scrapePagesCount
+      ? `<span style="color:${qColour[qLabel]||'#0c3a6e'};background:${qBg[qLabel]||'#dce8ff'};padding:1px 6px;border:1px solid ${qColour[qLabel]||'#0c3a6e'};">🌐 ${r.scrapePagesCount} sources · ${qLabel.toUpperCase()}</span>`
+      : '<span style="color:#856404;background:#fff3cd;padding:1px 6px;border:1px solid #c89520;">⚠ No web scrape</span>'}
+    <span>${esc(r.evidence || '')}</span>`;
+
+  // Scrape evidence box — shows every source tried and what was found
+  const emailLetter = document.querySelector('.email-letter');
+  const existingScrapeBox = emailLetter.querySelector('.scrape-box');
+  if (existingScrapeBox) existingScrapeBox.remove();
+
+  if (r.scrapePagesCount || r.scrapeHeadlines?.length || r.scrapeTriedSources?.length) {
+    const sourceChips = (r.scrapeSources || [])
+      .filter(s => s.status === 'ok')
+      .map(s => `<span class="spill" title="${esc(s.url)}">${esc(s.source)}: ${esc((s.chars/1000).toFixed(1))}k</span>`)
+      .join('');
+    const triedList = r.scrapeTriedSources?.length
+      ? `<div style="margin-top:4px;font-size:10.5px;color:#555;">Platforms tried: ${r.scrapeTriedSources.map(esc).join(' → ')}</div>`
+      : '';
+    const headlines = (r.scrapeHeadlines || [])
+      .map(h => `• ${esc(h)}`).join('<br>');
+    const newsLine  = r.newsSignals ? `<div style="margin-top:6px;font-size:11px;"><b>News signals:</b> ${esc(r.newsSignals)}</div>` : '';
+    const techLine  = r.techStackSignals ? `<div style="font-size:11px;"><b>Tech:</b> ${esc(r.techStackSignals)}</div>` : '';
+    const box = document.createElement('div');
+    box.className = 'scrape-box';
+    box.innerHTML = `<b>Web Intelligence Gathered</b> — quality: <b>${qLabel}</b> · ${r.scrapeChars ? (r.scrapeChars/1000).toFixed(1)+'k' : '0'} chars
+      ${sourceChips ? `<div class="scrape-pages" style="margin-top:6px;">${sourceChips}</div>` : ''}
+      ${triedList}
+      ${headlines ? `<div style="margin-top:6px;font-size:11px;line-height:1.5;"><b>Headlines found:</b><br>${headlines}</div>` : ''}
+      ${newsLine}${techLine}`;
+    emailLetter.insertBefore(box, emailLetter.firstChild);
+  }
+
+  document.getElementById('modalTo').textContent   = toLine || '(contact not supplied)';
+  document.getElementById('modalSubj').textContent = r.email.subject;
+
+  // BUG FIX: normalise body — convert literal \n sequences the model may have kept
+  // as two-char strings into real newlines before splitting into paragraphs
+  const rawBody = r.email.body
+    .replace(/\\n/g, '\n')   // literal backslash-n → real newline
+    .replace(/\\t/g, '  ');  // literal backslash-t → spaces
+
+  const bodyEl = document.getElementById('modalBody');
+  // Split on 2+ newlines → paragraphs; single newline → <br>
+  const paras = rawBody.split(/\n{2,}/);
+  bodyEl.innerHTML = paras
+    .map(p => `<p>${esc(p).replace(/\n/g, '<br>')}</p>`)
+    .join('');
+
+  document.getElementById('overlay').classList.add('show');
+}
+
+document.getElementById('modalClose').addEventListener('click', () => document.getElementById('overlay').classList.remove('show'));
+document.getElementById('overlay').addEventListener('click', e => { if (e.target.id === 'overlay') e.target.classList.remove('show'); });
+
+// Copy buttons
+function flashCopied(btn){ btn.textContent = '✓ Copied'; btn.classList.add('copied'); setTimeout(()=>{ btn.textContent = btn.dataset.label; btn.classList.remove('copied'); }, 1800); }
+document.getElementById('copySubjBtn').dataset.label = 'Copy subject';
+document.getElementById('copyBodyBtn').dataset.label = 'Copy email body';
+document.getElementById('copyAllBtn').dataset.label  = 'Copy all';
+
+document.getElementById('copySubjBtn').addEventListener('click', () => {
+  const subj = document.getElementById('modalSubj').textContent;
+  navigator.clipboard.writeText('Subject: ' + subj);
+  flashCopied(document.getElementById('copySubjBtn'));
+});
+document.getElementById('copyBodyBtn').addEventListener('click', () => {
+  const body = document.getElementById('modalBody').innerText;
+  navigator.clipboard.writeText(body);
+  flashCopied(document.getElementById('copyBodyBtn'));
+});
+document.getElementById('copyAllBtn').addEventListener('click', () => {
+  const subj = document.getElementById('modalSubj').textContent;
+  const to   = document.getElementById('modalTo').textContent;
+  const body = document.getElementById('modalBody').innerText;
+  navigator.clipboard.writeText(`To: ${to}\nSubject: ${subj}\n\n${body}`);
+  flashCopied(document.getElementById('copyAllBtn'));
+});
+
+// ─── Groq dual rate limiter (TPM + RPM) ──────────────────────────────────────
+// Limits are auto-calibrated from Groq's response headers at runtime (see
+// _groqBucket.calibrate below) since exact numbers vary by model and change
+// over time as Groq updates its lineup — don't hardcode them here.
+// Both limits run on a rolling 60-second window. We track every call and
+// proactively wait before firing if either limit would be exceeded.
+const _groqBucket = {
+  calls: [],         // [{ts, tokens}] rolling 60-s window
+  // Conservative defaults used only until the first real Groq response tells
+  // us the account's ACTUAL limits (these vary a lot by account/model/tier —
+  // hardcoding 12000 TPM was the main cause of "rate limited 3x" errors,
+  // because plenty of free-tier keys sit well below that).
+  TPM_LIMIT: 5000,
+  RPM_LIMIT: 20,
+  calibrated: false,
+
+  // Prune calls older than 60s and return {tokens, reqs} used in the window
+  _used() {
+    const cutoff = Date.now() - 60_000;
+    this.calls   = this.calls.filter(c => c.ts > cutoff);
+    return {
+      tokens: this.calls.reduce((s, c) => s + c.tokens, 0),
+      reqs:   this.calls.length
+    };
+  },
+
+  record(tokens) {
+    this.calls.push({ ts: Date.now(), tokens });
+  },
+
+  // Read Groq's own rate-limit headers (sent on EVERY response, including
+  // 429s) and recalibrate the bucket to the account's real limits with a
+  // safety margin. This replaces guessing entirely.
+  calibrate(headers) {
+    const tpmLim = parseInt(headers.get('x-ratelimit-limit-tokens'), 10);
+    const rpmLim = parseInt(headers.get('x-ratelimit-limit-requests'), 10);
+    if (!isNaN(tpmLim) && tpmLim > 0) {
+      this.TPM_LIMIT = Math.max(500, tpmLim - Math.ceil(tpmLim * 0.12));
+      this.calibrated = true;
+    }
+    if (!isNaN(rpmLim) && rpmLim > 0) {
+      this.RPM_LIMIT = Math.max(1, rpmLim - 2);
+      this.calibrated = true;
+    }
+  },
+
+  // Wait until both TPM and RPM have room, then return
+  async waitIfNeeded(neededTokens, statusEl, onWait) {
+    for (;;) {
+      const { tokens, reqs } = this._used();
+      const tpmOk = tokens + neededTokens <= this.TPM_LIMIT;
+      const rpmOk = reqs + 1             <= this.RPM_LIMIT;
+      if (tpmOk && rpmOk) break;
+
+      // Find the oldest call — when it expires we free one request slot
+      const oldest = [...this.calls].sort((a, b) => a.ts - b.ts)[0];
+      const waitMs  = oldest ? Math.max(2000, oldest.ts + 61_000 - Date.now()) : 10_000;
+      const reason  = !rpmOk ? `RPM limit (${reqs}/${this.RPM_LIMIT} req)` : `TPM limit (${tokens}/${this.TPM_LIMIT} tok)`;
+      const waitSec = Math.ceil(waitMs / 1000);
+      let remaining = waitSec;
+
+      statusEl.textContent = `⏳ Pacing — ${reason}, wait ${remaining}s…`;
+      if (onWait) onWait(remaining);
+      const ticker = setInterval(() => {
+        remaining = Math.max(0, remaining - 1);
+        statusEl.textContent = `⏳ Pacing — ${reason}, wait ${remaining}s…`;
+        if (onWait) onWait(remaining);
+      }, 1000);
+      await sleep(waitMs);
+      clearInterval(ticker);
+      statusEl.textContent = 'PIPELINE RUNNING';
+      if (onWait) onWait(0);
+    }
+  }
+};
+
+function parseGroqWait(errText) {
+  const minSec  = errText.match(/(\d+)m([\d.]+)s/);
+  const secOnly = errText.match(/try again in ([\d.]+)s/i);
+  const minsOnly= errText.match(/try again in (\d+)m/i);
+  if (minSec)  return parseInt(minSec[1], 10) * 60 + parseFloat(minSec[2]) + 2;
+  if (minsOnly) return parseInt(minsOnly[1], 10) * 60 + 2;
+  if (secOnly)  return parseFloat(secOnly[1]) + 1;
+  return 0;
+}
+
+// onWait(remainingSec) — optional callback fired every second during a pause
+async function callGroq(messages, maxTokens = 1500, onWait = null){
+  const apiKey = document.getElementById('groqApiKey').value.trim();
+  if (!apiKey) throw new Error('No Groq API key entered. Please enter your key in Step 1.');
+
+  const modelSel = document.getElementById('groqModel');
+  const model = modelSel ? modelSel.value : 'openai/gpt-oss-120b';
+
+  const REQUEST_TIMEOUT_MS = 60_000;
+  const statusEl = document.getElementById('runstatus');
+
+  // Estimate token cost: prompt chars / 3.5 + max output.
+  // Diagnostic showed actual usage is ~295 prompt + ~134 completion = ~430 per call.
+  const inputChars = messages.reduce((s, m) => s + (m.content?.length || 0), 0);
+  const estTokens  = Math.ceil(inputChars / 3.5) + maxTokens;
+
+  // Proactively wait if this call would exceed the per-minute budget
+  await _groqBucket.waitIfNeeded(estTokens, statusEl, onWait);
+
+  // Try up to 3 times — covers one transient 429 that slips through the bucket
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    const controller = new AbortController();
+    const timeoutId  = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+    let resp;
+    try {
+      resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        signal: controller.signal,
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + apiKey },
+        body: JSON.stringify({
+          model: model,
+          max_tokens: maxTokens,
+          messages,
+          temperature: 0.4,
+          // GPT-OSS models (openai/gpt-oss-20b, openai/gpt-oss-120b) are
+          // reasoning models: by default they spend a chunk of max_tokens on
+          // internal chain-of-thought (returned in a separate `reasoning`
+          // field) before writing the actual JSON answer to `content`. At
+          // "medium" (the default) that reasoning can consume the ENTIRE
+          // token budget, leaving `content` empty — which is exactly what
+          // caused "No JSON object found in LLM response". Forcing "low"
+          // keeps reasoning short so there's room left for the real answer.
+          reasoning_effort: "low"
+        })
+      });
+    } catch(fetchErr) {
+      clearTimeout(timeoutId);
+      if (fetchErr.name === 'AbortError') {
+        throw new Error(`Groq request timed out after ${REQUEST_TIMEOUT_MS/1000}s. Check your connection and try again.`);
+      }
+      throw fetchErr;
+    }
+    clearTimeout(timeoutId);
+
+    // Learn the account's real TPM/RPM limits from Groq's own headers —
+    // sent on every response, success or 429. This is what actually fixes
+    // hitting 429s despite "self-throttling": we stop guessing.
+    _groqBucket.calibrate(resp.headers);
+
+    if (resp.status === 429) {
+      const errText = await resp.text().catch(() => '');
+      let waitSec = parseGroqWait(errText);
+      if (waitSec === 0) waitSec = 65;
+
+      // A genuine per-minute rate limit can NEVER require more than ~60s to
+      // clear — it's a rolling 60-second window. If Groq is telling us to
+      // wait longer than that, we've hit a bigger bucket (hourly/daily
+      // token or request quota on the free tier), which will NOT clear by
+      // retrying — only by waiting out the real reset or upgrading/switching
+      // keys. Blindly waiting 9+ minutes 3× in a row wastes ~30 minutes for
+      // nothing, so we surface this immediately instead of looping.
+      const LIKELY_LARGER_QUOTA_THRESHOLD = 90;
+      if (waitSec > LIKELY_LARGER_QUOTA_THRESHOLD) {
+        throw new Error(
+          `Groq rate limit: wait is ${Math.round(waitSec)}s (${Math.round(waitSec/60)}m). ` +
+          `A per-minute limit never needs more than ~60s, so this is almost certainly your ` +
+          `account's DAILY token/request quota, not a per-minute pace issue — retrying won't ` +
+          `fix it. Check usage at console.groq.com/settings/limits, or try again after the ` +
+          `quota resets. Raw Groq message: ${errText.slice(0, 300)}`
+        );
+      }
+
+      // No cap — respect whatever Groq says (can be up to ~90s on RPM limits)
+
+      if (attempt === 3) {
+        throw new Error(`Rate limited 3× — Groq says wait ${Math.round(waitSec)}s. The pipeline is pacing automatically now. Please wait ${Math.round(waitSec)}s then use the Retry button on this row.`);
+      }
+      // Wait exactly what Groq says, then try again
+      let remaining = Math.ceil(waitSec);
+      statusEl.textContent = `⏳ Rate limited — resuming in ${remaining}s (attempt ${attempt}/3)…`;
+      if (onWait) onWait(remaining);
+      const ticker = setInterval(() => {
+        remaining = Math.max(0, remaining - 1);
+        statusEl.textContent = `⏳ Rate limited — resuming in ${remaining}s (attempt ${attempt}/3)…`;
+        if (onWait) onWait(remaining);
+      }, 1000);
+      console.warn(`[callGroq] 429 attempt ${attempt}/3 — waiting ${waitSec}s`);
+      await sleep(Math.ceil(waitSec * 1000));
+      clearInterval(ticker);
+      statusEl.textContent = 'PIPELINE RUNNING';
+      if (onWait) onWait(0);
+      continue;
+    }
+
+    if (!resp.ok) {
+      const errText = await resp.text().catch(() => '');
+      throw new Error(`Groq API error ${resp.status}: ${errText.slice(0, 200)}`);
+    }
+
+    const data = await resp.json();
+    // Record actual usage in the bucket so future calls pace correctly
+    const used = data.usage?.total_tokens || estTokens;
+    _groqBucket.record(used);
+
+    const msg = data.choices?.[0]?.message;
+    let content = msg?.content ?? '';
+
+    // Fallback: some GPT-OSS responses put the final answer in the separate
+    // `reasoning`/`reasoning_content` field instead of `content` (a known
+    // quirk when the model finishes reasoning right as the token budget
+    // runs out). If content has no usable JSON, try reasoning before giving
+    // up — cheaper than a wasted retry.
+    if (!content.includes('{')) {
+      const reasoningText = msg?.reasoning || msg?.reasoning_content || '';
+      if (reasoningText.includes('{')) {
+        console.warn('[callGroq] content had no JSON — falling back to reasoning field');
+        content = reasoningText;
+      }
+    }
+
+    return content;
+  }
+  throw new Error('callGroq: exhausted 3 attempts');
+}
+
+function extractJSON(text){
+  const cleaned = text.replace(/```json/gi, '').replace(/```/g, '').trim();
+  const start   = cleaned.indexOf('{');
+  if (start === -1) throw new Error('No JSON object found in LLM response');
+
+  // Try from the last '}' first (normal case), then try to auto-close truncated JSON
+  let raw;
+  const end = cleaned.lastIndexOf('}');
+  if (end !== -1 && end > start) {
+    raw = cleaned.slice(start, end + 1);
+  } else {
+    // Response was truncated — grab everything from { and append a closing brace
+    raw = cleaned.slice(start) + '"}';
+    console.warn('[extractJSON] Response appears truncated — attempting best-effort close');
+  }
+
+  // Escape bare control characters inside JSON string values
+  raw = raw.replace(/"((?:[^"\\]|\\.)*)"/gs, (match, inner) => {
+    const fixed = inner
+      .replace(/\r\n/g, '\\n')
+      .replace(/(?<!\\)\r/g, '\\n')
+      .replace(/(?<!\\)\n/g, '\\n')
+      .replace(/(?<!\\)\t/g, '\\t');
+    return '"' + fixed + '"';
+  });
+
+  // First attempt: parse as-is
+  let parsed;
+  try {
+    parsed = JSON.parse(raw);
+  } catch(e) {
+    // Second attempt: strip trailing incomplete key/value and close the object
+    const safeRaw = raw.replace(/,\s*"[^"]*"\s*:\s*"[^"]*$/, '').replace(/,\s*"[^"]*"\s*:?\s*$/, '') + '}';
+    try {
+      parsed = JSON.parse(safeRaw);
+    } catch(e2) {
+      throw new Error(`JSON parse failed: ${e.message}. Raw snippet: ${raw.slice(0,120)}`);
+    }
+  }
+
+  // Coerce signal_strength_pct — model sometimes wraps it in quotes
+  if (parsed.signal_strength_pct !== undefined)
+    parsed.signal_strength_pct = parseInt(parsed.signal_strength_pct, 10) || 0;
+  return parsed;
+}
+
+// ─── Agent 1: research ────────────────────────────────────────────────────────
+async function researchCompany(r){
+  const name    = displayName(r.raw[state.mapping.company]);
+  const site    = state.mapping.website ? r.raw[state.mapping.website] : '';
+
+  // Determine whether we have real scraped content or not
+  const hasScrape  = r.scrapeData && r.scrapeData.trim().length > 100 &&
+                     !r.scrapeData.startsWith('NO_SCRAPE_FALLBACK');
+  const isFullFallback = !hasScrape;
+
+  const qualityNote = r.scrapeQuality === 'rich'     ? 'RICH — multiple sources with substantial text.'
+                    : r.scrapeQuality === 'adequate' ? 'ADEQUATE — some confirmed content available.'
+                    : r.scrapeQuality === 'thin'     ? 'THIN — limited content; prioritise hiring signals and news.'
+                    : 'FAILED — no usable web content retrieved.';
+  const triedNote  = r.scrapeTriedSources?.length
+    ? `Sources attempted: ${r.scrapeTriedSources.join(', ')}.`
+    : '';
+
+  // Summarise AI/ML hiring signals for the prompt (two-tier classification)
+  const hiringSignals = r.scrapeHiringSignals || [];
+  const directJobs   = hiringSignals.filter(h => h.role && h.role.includes('[DIRECT AI/ML]'));
+  const adjacentJobs = hiringSignals.filter(h => h.role && h.role.includes('[ADJACENT/DATA]'));
+  const generalJobs  = hiringSignals.filter(h => !h.role?.includes('[DIRECT AI/ML]') && !h.role?.includes('[ADJACENT/DATA]'));
+  const hiringNote = hiringSignals.length > 0
+    ? `JOB POSTINGS FOUND: ${hiringSignals.length} total — ${directJobs.length} DIRECT AI/ML, ${adjacentJobs.length} ADJACENT/DATA, ${generalJobs.length} General.\n` +
+      `TIER DEFINITIONS: [DIRECT AI/ML] = data scientist, ML engineer, LLM, NLP, AI researcher, MLOps, AI product manager — strong signal. [ADJACENT/DATA] = data engineer, analytics engineer, BI developer, data platform, Spark/dbt/Snowflake, data infrastructure — supporting signal indicating ML investment. [GENERAL] = all other roles.\n\n` +
+      hiringSignals.slice(0, 20).map(h =>
+        `  ${h.role} | posted: ${h.date_hint} | source: ${h.source}`
+      ).join('\n')
+    : 'NO JOB POSTINGS DATA. This is a DATA GAP, not evidence of "no hiring" — job-board search is currently blocked at the network level for ALL companies in this run, so absence of job postings here must NOT be read as a negative signal or used to justify a low score. Base the assessment on the WEBSITE CONTENT and any other evidence below instead.';
+
+  const scrapeNote = hasScrape
+    ? `SCRAPED CONTENT AVAILABLE — quality: ${qualityNote} ${r.scrapePagesCount} source(s), ${r.scrapeChars} chars. ${triedNote}`
+    : `NO SCRAPED CONTENT — falling back to LLM training knowledge. ${triedNote} ALL claims MUST be [SPECULATIVE] unless widely verifiable. Still analyse from training knowledge — do not output empty fields.`;
+
+  const messages = [
+    {
+      role: "system",
+      content: `You are a senior B2B intelligence analyst for C-Metric, a custom software development company (IBM Silver Partner for AI & Automation). Your job is to assess companies for genuine sales opportunity signals with rigorous, calibrated honesty.
+
+EPISTEMIC DISCIPLINE — follow these rules without exception:
+- Separate FACTS (confirmed, publicly known) from INFERENCES (reasonable but unproven) from SPECULATION (plausible but no evidence).
+- Label every claim with one of: [CONFIRMED], [INFERRED], or [SPECULATIVE].
+- [CONFIRMED] = directly supported by text in the SCRAPED CONTENT section below, OR by a widely reported, verifiable public fact you are highly confident about.
+- [INFERRED]  = a reasonable conclusion drawn from one or more [CONFIRMED] facts — must be explicitly derived.
+- [SPECULATIVE] = plausible but not supported by anything in the scraped content or verifiable training knowledge.
+- NEVER convert "could benefit from" into "needs" or "is seeking."
+- NEVER assume that because a company is growing, hiring, or has raised funding, it will outsource engineering — many scale entirely in-house.
+- A signal only counts if it specifically implies an external services gap — not just business activity in general.
+- If you do not have direct evidence for a claim, say so explicitly and lower the score accordingly.
+- The signal_strength_pct must reflect ONLY what is actually evidenced, not the best-case interpretation.
+  Score caps: 80-100 = multiple CONFIRMED signals directly implying outsourcing need.
+              60-79  = 1 CONFIRMED + strong INFERRED signals.
+              40-59  = mostly INFERRED, no confirmed outsourcing gap.
+              20-39  = SPECULATIVE only.
+              0-19   = no meaningful signal.
+
+You respond ONLY with valid JSON — no markdown, no explanation, no extra text.`
+    },
+    {
+      role: "user",
+      content: `Analyse "${name}"${site ? ' (' + site + ')' : ''} as a prospect for C-Metric (IBM Silver Partner, AI/automation services).
+
+${scrapeNote}
+
+${hasScrape ? `=== EVIDENCE (quote phrases directly — do not paraphrase) ===
+${r.scrapeData.slice(0, 3200)}
+=== END ===
+
+` : ''}HIRING SIGNALS:
+${hiringNote}
+
+SIGNAL SOURCES — analyse ALL of these together. Hiring data is currently unavailable
+for every company this run (see note above) — it must NOT be the deciding factor.
+Weigh what IS available properly instead of defaulting to a low score by omission:
+1. WEBSITE CONTENT — product/service descriptions, tech stack mentions, stated scale
+   (team size, client base, geography), industry vertical and its typical complexity
+   (e.g. healthcare/finance imply compliance & integration overhead), any stated pain
+   points, recent updates/news/blog content on their own site, evidence of manual or
+   legacy processes, statements about growth, expansion, or technology investment.
+2. WIKIPEDIA / THIRD-PARTY CONTEXT — company history, scale, funding, market position,
+   when available.
+3. HIRING SIGNALS — a positive signal WHEN present, but its absence this run reflects a
+   tool limitation, not a fact about the company.
+4. NEWS — funding, product launches, partnerships found in scraped content.
+
+SCORING RULES for signal_strength_pct — combine evidence from ALL sources above; do NOT
+gate the score on hiring signals alone, since those are unavailable for every company:
+- 80-100: Multiple CONFIRMED signals (from website content, Wikipedia, or news) directly
+  implying an active technology/outsourcing need — e.g. explicit tech complexity beyond
+  likely in-house capacity, stated digital-transformation initiative, confirmed AI/ML
+  hiring where hiring data exists.
+- 60-79: 1 CONFIRMED signal from any source + supporting INFERRED signals from company
+  profile (industry, scale, stated technology usage).
+- 40-59: Mostly INFERRED from company profile and industry context — no single strong
+  confirmed signal, but the company's stated business plausibly needs this kind of work.
+- 20-39: SPECULATIVE only — website content is thin or generic, best-effort industry-based
+  reasoning.
+- 0-19: Reserve for scrape quality FAILED (no usable content at all) AND no substitutable
+  reasoning is possible — not simply "hiring signals were empty."
+- Every score must be traceable to specific evidence you cite in signal_found / evidence_source
+  — but that evidence can come from the website or Wikipedia content just as validly as from
+  hiring data.
+
+DECISION: CONNECT (strong signal from any evidence source) | MAYBE (moderate/inferred from company profile) | PASS (genuinely no usable evidence anywhere, including website content).
+
+Respond ONLY with this JSON, no markdown, no extra text:
+{
+  "signal_found": "[TIER] 1-2 sentences with evidence quotes.",
+  "signal_strength_pct": <0-100>,
+  "evidence_source": "Top 2 signals with confidence tier",
+  "suggested_angle": "One sentence opening angle based on strongest confirmed signal",
+  "news_signals": "Exact headline+date from scraped text, or 'None confirmed'",
+  "tech_stack_signals": "Tech confirmed in scraped text (cite source), or [SPECULATIVE]",
+  "sources_analysed": "Comma list of sources used",
+  "outreach_recommendation": "CONNECT | MAYBE | PASS",
+  "outreach_reason": "One sentence",
+  "ai_ml_hiring_summary": "X DIRECT, Y ADJACENT, Z General. Recency note. AI maturity implication."
+}`
+    }
+  ];
+
+  const onWait = (sec) => { r.waitSec = sec; renderTable(); };
+  const text = await callGroq(messages, 1200, onWait);
+  r.waitSec = 0;
+  return extractJSON(text);
+}
+
+// ─── Agent 2: draft email ─────────────────────────────────────────────────────
+async function draftEmail(r){
+  const name        = displayName(r.raw[state.mapping.company]);
+  const contact     = state.mapping.contact     ? r.raw[state.mapping.contact]     : '';
+  const designation = state.mapping.designation ? r.raw[state.mapping.designation] : '';
+  const tone        = document.getElementById('tone').value;
+  const messages = [
+    {
+      role: "system",
+      content: `You are a senior B2B sales strategist and cold email specialist. You write high-converting outreach emails that feel like peer-to-peer communication, never like a vendor pitch. You have access to deep multi-signal intelligence on the prospect and use it to write hyper-personalised emails. You respond ONLY with valid JSON — absolutely no markdown fences, no explanations, no extra text outside the JSON.`
+    },
+    {
+      role: "user",
+      content: `Write a cold outreach email from AK at C-Metric to ${name}.
+
+SENDER: AK, C-Metric — custom software, AI & automation (IBM Silver Partner, 30yr track record, embedded model, AIVIO product). c-metric.com
+RECIPIENT: ${contact || '[Name]'}, ${designation || 'CTO/VP Engineering'} at ${name}
+
+INTELLIGENCE (from research on this specific company):
+- Signal: ${r.signal?.slice(0, 500) || 'No confirmed signal'}
+- Evidence: ${r.evidence?.slice(0, 350) || 'None'}
+- Angle: ${r.angle?.slice(0, 300) || 'General AI/automation'}
+${r.newsSignals && r.newsSignals !== 'None confirmed' ? `- News: ${r.newsSignals.slice(0, 250)}` : ''}
+${r.techStackSignals && !r.techStackSignals.startsWith('[SPEC') ? `- Tech: ${r.techStackSignals.slice(0, 250)}` : ''}
+${r.scrapeData ? `\nRAW RESEARCH EXCERPT (mine this for one concrete, company-specific detail — a product name, technology, market segment, or number — that the summary above may have compressed away):\n${r.scrapeData.slice(0, 900)}` : ''}
+
+TONE: ${tone === 'formal' ? 'Formal, senior executive register' : 'Direct, crisp, no fluff'}
+LENGTH: 150-200 words body only.
+
+SPECIFICITY REQUIREMENT — this is the most important rule:
+The HOOK (step 2) MUST reference one CONCRETE fact that is true of THIS company only —
+an exact product/service name, a specific technology, their market segment, a stated
+number, or a direct quote/paraphrase from the intelligence above. Do NOT use a hook that
+could be sent unchanged to any other company on this list — no "as you scale," "given your
+growth," "in your industry," or similarly generic openers. If the available evidence is
+genuinely thin, say so plainly in outreach reasoning by keeping the email shorter and more
+research-based (e.g. referencing their stated business/product directly) rather than
+inventing a specific that isn't in the evidence, and rather than falling back to a generic
+growth/industry platitude.
+
+STRUCTURE (blank line between each):
+1. "Dear ${contact || '[Name]'},"
+2. HOOK: the concrete, company-specific fact above, framed as observation/question — never "you need X"
+3. PROBLEM BRIDGE: connect that specific fact to a plausible gap — grounded in what was actually found, not a generic template line
+4. VALUE PROP: one C-Metric credential most relevant to THIS specific situation
+5. CREDIBILITY: one specific statement
+6. CTA: suggest 20-min call
+7. "Warm regards,\\n\\nAK\\nC-Metric | Custom Software & AI Implementation\\nc-metric.com"
+
+NO buzzwords (synergy/leverage/cutting-edge/robust/revolutionize). Pick ONE credential. Subject: 6-10 words, no ALLCAPS, must reference the specific hook — no generic subjects like "Quick question" or "Partnership opportunity."
+
+Respond ONLY with this JSON, no markdown:
+{"subject": "...", "body": "...", "draft_quality_score": <1-10>}`
+    }
+  ];
+
+  const onWait = (sec) => { r.waitSec = sec; renderTable(); };
+  const text = await callGroq(messages, 1100, onWait);
+  r.waitSec = 0;
+  return extractJSON(text);
+}
+
+// ─── Pipeline queue ───────────────────────────────────────────────────────────
+async function processQueue(items, worker, concurrency, interDelay){
+  let i = 0;
+  async function next(){
+    while (i < items.length) {
+      const item = items[i++];
+      await worker(item);
+      // stagger between companies to respect TPM window
+      if (i < items.length && interDelay > 0) {
+        await sleep(interDelay);
+      }
+    }
+  }
+  const workers = Array.from({ length: Math.min(concurrency, items.length) }, next);
+  await Promise.all(workers);
+}
+
+function refreshPipelineGlow(){
+  const scraping    = state.rows.some(r => r.status === 'scraping');
+  const researching = state.rows.some(r => r.status === 'researching');
+  const drafting    = state.rows.some(r => r.status === 'drafting');
+  document.getElementById('node0').classList.toggle('active', scraping);
+  document.getElementById('node1').classList.toggle('active', researching);
+  document.getElementById('node2').classList.toggle('active', drafting);
+  document.getElementById('conduit0').classList.toggle('flowing', scraping);
+  document.getElementById('conduit').classList.toggle('flowing', researching || drafting);
+}
+
+// Dedupe cache: normalized company name → researched signal payload
+const signalCache = {};
+const normName    = name => String(name || '').trim().toLowerCase();
+
+async function processCompanyRow(r){
+  const key     = normName(r.raw[state.mapping.company]);
+  const company = displayName(r.raw[state.mapping.company]);
+  const website = state.mapping.website ? (r.raw[state.mapping.website] || '') : '';
+
+  // ── Step 0: web scrape (only for non-duplicates) ─────────────────────────
+  if (!signalCache[key]) {
+    r.status = 'scraping'; r.error = null; renderTable(); refreshPipelineGlow();
+    const scraped           = await scrapeCompany(company, website);
+    r.scrapeData            = scraped.combined_text;
+    r.scrapePagesCount      = scraped.pages_fetched;
+    r.scrapeChars           = scraped.chars;
+    r.scrapeQuality         = scraped.quality;
+    r.scrapeTriedSources    = scraped.tried_sources || [];
+    r.scrapeHeadlines       = scraped.news_headlines || [];
+    r.scrapeSources         = (scraped.sources || []).map(s => ({ source: s.source, url: s.url, title: s.title, chars: s.chars, status: s.status }));
+    r.scrapeHiringSignals   = scraped.hiring_signals || [];
+    r.scrapeErrors          = scraped.errors || [];
+    renderTable();
+  }
+
+  // ── Agent 1: research ────────────────────────────────────────────────────
+  if (signalCache[key]) {
+    // reuse cached signal for duplicate company names — also reuse scrape
+    r.status = 'researching'; renderTable(); refreshPipelineGlow();
+    const cached          = signalCache[key];
+    r.signal              = cached.signal_found;
+    r.pct                 = cached.signal_strength_pct;
+    r.evidence            = cached.evidence_source;
+    r.angle               = cached.suggested_angle;
+    r.newsSignals         = cached.news_signals       || null;
+    r.techStackSignals    = cached.tech_stack_signals || null;
+    r.sourcesAnalysed     = cached.sources_analysed   || null;
+    r.outreachRec         = cached.outreach_recommendation || null;
+    r.aiMlHiring          = cached.ai_ml_hiring_summary   || null;
+    r.reused              = true;
+    r.status              = 'researched';
+    renderTable(); updateStats(); refreshPipelineGlow();
+  } else {
+    r.status = 'researching'; r.error = null; renderTable(); refreshPipelineGlow();
+    try {
+      const res           = await researchCompany(r);
+      r.signal            = res.signal_found;
+      r.pct               = res.signal_strength_pct;
+      r.evidence          = res.evidence_source;
+      r.angle             = res.suggested_angle;
+      r.newsSignals       = res.news_signals           || null;
+      r.techStackSignals  = res.tech_stack_signals     || null;
+      r.sourcesAnalysed   = res.sources_analysed       || null;
+      r.outreachRec       = res.outreach_recommendation|| null;
+      r.aiMlHiring        = res.ai_ml_hiring_summary   || null;
+      r.status            = 'researched';
+      signalCache[key]    = res;
+    } catch(err) {
+      r.status = 'error'; r.error = 'Research failed: ' + err.message;
+      renderTable(); updateStats(); refreshPipelineGlow();
+      return; // skip email draft when research failed
+    }
+    renderTable(); updateStats(); refreshPipelineGlow();
+  }
+
+  // ── Agent 2: draft outreach ──────────────────────────────────────────────
+  r.status = 'drafting'; renderTable(); refreshPipelineGlow();
+  try {
+    const email      = await draftEmail(r);
+    r.email          = email;
+    r.draftQuality   = email.draft_quality_score !== undefined ? parseInt(email.draft_quality_score, 10) : null;
+    r.status         = 'done';
+  } catch(err) {
+    r.status = 'error'; r.error = 'Email draft failed: ' + err.message;
+  }
+  renderTable(); updateStats(); refreshPipelineGlow();
+}
+
+// ─── Run button ───────────────────────────────────────────────────────────────
+document.getElementById('runPipeline').addEventListener('click', async () => {
+  if (state.running) return;
+  const apiKey = document.getElementById('groqApiKey').value.trim();
+  if (!apiKey){ alert('Please enter your Groq API key in Step 1 before running.'); return; }
+  state.running = true;
+  document.getElementById('runstatus').textContent    = 'PIPELINE RUNNING';
+  document.getElementById('runPipeline').disabled     = true;
+
+  const concurrency = parseInt(document.getElementById('concurrency').value);
+  const interDelay  = parseInt(document.getElementById('reqDelay').value);
+  const targets     = state.rows.filter(r => r.status === 'queued' || r.status === 'error');
+
+  await processQueue(targets, processCompanyRow, concurrency, interDelay);
+
+  state.running = false;
+  document.getElementById('runPipeline').disabled  = false;
+  document.getElementById('runstatus').textContent = 'PIPELINE COMPLETE';
+  document.getElementById('node1').classList.remove('active');
+  document.getElementById('node2').classList.remove('active');
+  document.getElementById('conduit').classList.remove('flowing');
+  updateStats();
+
+  // Auto-prompt export when all rows are done and at least one succeeded
+  const doneCount = state.rows.filter(r => r.status === 'done').length;
+  if (doneCount > 0) {
+    const exportBtn = document.getElementById('exportBtn');
+    exportBtn.textContent = `⬇ Export ${doneCount} companies to Excel`;
+    exportBtn.classList.remove('ghost');
+    exportBtn.classList.add('primary');
+    exportBtn.disabled = false;
+  }
+});
+
+async function retryRow(idx){
+  const r = state.rows[idx];
+  r.status              = 'queued';
+  r.error               = null;
+  r.signal              = null;
+  r.pct                 = null;
+  r.evidence            = null;
+  r.angle               = null;
+  r.newsSignals         = null;
+  r.techStackSignals    = null;
+  r.sourcesAnalysed     = null;
+  r.outreachRec         = null;
+  r.aiMlHiring          = null;
+  r.scrapeData          = null;
+  r.scrapePagesCount    = 0;
+  r.scrapeChars         = 0;
+  r.scrapeQuality       = null;
+  r.scrapeTriedSources  = [];
+  r.scrapeHeadlines     = [];
+  r.scrapeSources       = [];
+  r.scrapeHiringSignals = [];
+  r.scrapeErrors        = [];
+  r.email               = null;
+  r.draftQuality        = null;
+  r.reused            = false;
+  r.waitSec           = 0;
+  // Also evict from signal cache so research reruns cleanly
+  const key = normName(r.raw[state.mapping.company]);
+  delete signalCache[key];
+  renderTable();
+  await processCompanyRow(r);
+}
+
+// ─── Export ───────────────────────────────────────────────────────────────────
+document.getElementById('exportBtn').addEventListener('click', () => {
+  const out = state.rows.map(r => {
+    const base = { ...r.raw };
+    const hiringExport   = r.scrapeHiringSignals || [];
+    const directExport   = hiringExport.filter(h => h.role?.includes('[DIRECT AI/ML]'));
+    const adjacentExport = hiringExport.filter(h => h.role?.includes('[ADJACENT/DATA]'));
+    const aiMlExport     = [...directExport, ...adjacentExport];
+    base['Outreach Recommendation']   = r.outreachRec          || '';
+    base['AI/ML Hiring Summary']      = r.aiMlHiring            || '';
+    base['DIRECT AI/ML Jobs Count']   = directExport.length;
+    base['ADJACENT/DATA Jobs Count']  = adjacentExport.length;
+    base['AI/ML Jobs Count (Total)']  = aiMlExport.length;
+    base['All Jobs Count']            = hiringExport.length;
+    base['DIRECT AI/ML Job Details']  = directExport.slice(0,10).map(h => `${h.role} | ${h.date_hint} | ${h.source}`).join(' || ');
+    base['ADJACENT/DATA Job Details'] = adjacentExport.slice(0,10).map(h => `${h.role} | ${h.date_hint} | ${h.source}`).join(' || ');
+    base['Signal Found']           = r.signal             || '';
+    base['Signal Strength %']      = r.pct !== null ? parseInt(r.pct, 10) : '';
+    base['Evidence Source']        = r.evidence           || '';
+    base['Suggested Angle']        = r.angle              || '';
+    base['News / Press Signals']   = r.newsSignals         || '';
+    base['Tech Stack Signals']     = r.techStackSignals    || '';
+    base['Sources Analysed']       = r.sourcesAnalysed     || '';
+    base['Pages Scraped']          = r.scrapePagesCount    || 0;
+    base['Scrape Quality']         = r.scrapeQuality       || '';
+    base['Sources Tried']          = (r.scrapeTriedSources || []).join(', ');
+    base['Scraped Headlines']      = (r.scrapeHeadlines    || []).join(' | ');
+    base['Draft Quality Score']    = r.draftQuality !== null ? r.draftQuality : '';
+    base['Email Subject']          = r.email               ? r.email.subject : '';
+    base['Email Body']             = r.email               ? r.email.body.replace(/\\n/g, '\n').replace(/\\t/g, '\t') : '';
+    return base;
+  });
+  const ws = XLSX.utils.json_to_sheet(out);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Signals & Outreach');
+  XLSX.writeFile(wb, 'cmetric-signal-intelligence-output.xlsx');
+});
+</script>
+</body>
+</html>
