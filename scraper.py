@@ -69,12 +69,19 @@ async def frontend():
 
 # ── tuning constants ───────────────────────────────────────────────────────────
 TIMEOUT           = 14          # seconds per individual HTTP request
-PAGE_MAX_CHARS    = 4000        # chars to keep per scraped page
-MAX_SUBPAGES      = 5           # internal subpages to crawl per site
+PAGE_MAX_CHARS    = 6000        # chars to keep per scraped page
+MAX_SUBPAGES      = 9           # internal subpages to crawl per site — bumped from 6.
+                                 # Without a search API configured, the website itself is
+                                 # the ONLY reliable source (DDG is IP-blocked on this host,
+                                 # confirmed in production logs), so it's worth crawling
+                                 # more of it. Fetches run in parallel (asyncio.gather), so
+                                 # this costs latency, not much wall-clock time.
 NEWS_RESULTS      = 8           # DDG news headlines to fetch
 SNIPPET_RESULTS   = 5           # DDG general snippets
 MIN_USEFUL_CHARS  = 1200        # if combined text below this, trigger deep fallback
-COMBINED_HARD_CAP = 14000       # hard cap before handing to LLM (~3.5k tokens)
+COMBINED_HARD_CAP = 30000       # hard cap before handing to LLM — raised from 18000 since
+                                 # Tier 2 now always includes LinkedIn/Crunchbase/investment/
+                                 # Wikipedia on top of website+news+jobs+social (was fallback-only)
 
 # ── DDG circuit breaker ──────────────────────────────────────────────────────
 # html.duckduckgo.com gets blocked/throttled on plenty of networks (ISP-level
@@ -131,16 +138,34 @@ WIKI_HEADERS = {
     "Accept": "application/json",
 }
 
-# Internal subpage paths ranked by signal value
-SIGNAL_PATH_PATTERNS = [
-    "about", "about-us", "company", "team", "leadership", "management",
-    "news", "press", "press-release", "media", "newsroom",
-    "blog", "insights", "updates", "announcements", "articles",
-    "careers", "jobs", "hiring", "work-with-us", "open-positions",
-    "product", "products", "solutions", "platform", "services", "technology",
-    "customers", "clients", "case-studies", "success-stories", "partners",
-    "investor", "investors", "funding",
-]
+# Internal subpage paths ranked by signal value. Weighted (not just present/
+# absent) so that the pages the user most wants covered — careers, investor/
+# funding, news/press, about — reliably win a slot in MAX_SUBPAGES instead of
+# being crowded out by lower-value matches like "blog" or "insights".
+SIGNAL_PATH_WEIGHTS = {
+    "about": 3, "about-us": 3, "company": 2, "team": 2, "leadership": 2, "management": 2,
+    "news": 3, "press": 3, "press-release": 3, "media": 2, "newsroom": 3,
+    "blog": 1, "insights": 1, "updates": 1, "announcements": 2, "articles": 1,
+    "careers": 4, "jobs": 4, "hiring": 4, "work-with-us": 3, "open-positions": 3,
+    "product": 2, "products": 2, "solutions": 1, "platform": 1, "services": 1, "technology": 2,
+    "customers": 1, "clients": 1, "case-studies": 1, "success-stories": 1, "partners": 1,
+    "investor": 4, "investors": 4, "funding": 4,
+}
+SIGNAL_PATH_PATTERNS = list(SIGNAL_PATH_WEIGHTS.keys())
+
+# Paths to try as a direct guess when the homepage nav doesn't surface a
+# given page category at all (common on smaller/simpler sites without a
+# linked careers/investors page in the main nav, but the page still exists
+# at a conventional URL). Keyed by the category used to check whether the
+# nav-discovered subpages already cover it.
+GUESS_PATHS_BY_CATEGORY = {
+    "career":   ["careers", "careers/", "jobs", "join-us", "work-with-us"],
+    "about":    ["about", "about-us", "company"],
+    "news":     ["news", "press", "media", "newsroom"],
+    "investor": ["investors", "investor-relations"],
+}
+# kept for backwards compatibility with any external reference
+CAREERS_GUESS_PATHS = GUESS_PATHS_BY_CATEGORY["career"]
 
 # ── company name normaliser ────────────────────────────────────────────────────
 _SOCIAL_SLUG_RE = re.compile(
@@ -180,9 +205,10 @@ def clean_company_name(raw: str) -> str:
 class ScrapeRequest(BaseModel):
     company: str
     website: Optional[str] = None
+    location: Optional[str] = None
 
-    # coerce empty string → None so sending website="" doesn't cause a 422
-    @field_validator("website", mode="before")
+    # coerce empty string → None so sending website/location="" doesn't cause a 422
+    @field_validator("website", "location", mode="before")
     @classmethod
     def empty_str_to_none(cls, v):
         if isinstance(v, str) and v.strip() == "":
@@ -205,6 +231,7 @@ class HiringSignal(BaseModel):
     date_hint:   str   # e.g. "posted 3 days ago", "2024-11", "recent" — raw text from source
     source:      str   # e.g. "LinkedIn Jobs", "Indeed", "Glassdoor"
     is_ai_ml:    bool  # True if role is clearly AI/ML/Data/LLM related
+    is_tech_mod: bool = False
 
 
 class ScrapeResponse(BaseModel):
@@ -379,7 +406,7 @@ def find_subpage_urls(homepage_html: str, base_url: str) -> list[str]:
         if abs_url in seen:
             continue
 
-        score = sum(1 for p in SIGNAL_PATH_PATTERNS if p in path)
+        score = sum(w for p, w in SIGNAL_PATH_WEIGHTS.items() if p in path)
         if score > 0:
             found.append((score, abs_url))
             seen.add(abs_url)
@@ -486,7 +513,7 @@ async def scrape_website(client: httpx.AsyncClient, raw_site: str) -> tuple[list
         for sub_url, (st, sub_html) in zip(subpage_urls, sub_results):
             if st == 200 and sub_html:
                 path  = urllib.parse.urlparse(sub_url).path.lower()
-                ptype = next((p for p in ["news","press","blog","careers","jobs","about","team","product","solutions"] if p in path), "page")
+                ptype = next((p for p in ["news","press","investor","blog","careers","jobs","about","team","product","solutions"] if p in path), "page")
                 sub_title, sub_text = extract_text(sub_html, max_chars=2800)
                 # JS fallback for thin subpages too
                 if len(sub_text) < _JS_FALLBACK_THRESHOLD and PLAYWRIGHT_AVAILABLE:
@@ -499,6 +526,49 @@ async def scrape_website(client: httpx.AsyncClient, raw_site: str) -> tuple[list
                         url=sub_url, title=sub_title, text=sub_text,
                         chars=len(sub_text), status="ok"
                     ))
+
+        # If the nav-discovered subpages don't cover a given high-value
+        # category (careers, about, news, investors), the homepage nav
+        # likely doesn't link one directly — try common conventional URLs
+        # directly instead. This runs OUTSIDE the MAX_SUBPAGES budget so it
+        # never crowds out other discovered pages, and all guesses across all
+        # missing categories fire in parallel for speed (this matters more
+        # now that the website is the primary source of truth per company,
+        # not just a bonus alongside search-based sources).
+        covered_categories = {
+            cat for cat, keywords in {
+                "career":   ("career", "/jobs"),
+                "about":    ("about", "company"),
+                "news":     ("news", "press", "media"),
+                "investor": ("investor",),
+            }.items()
+            if any(kw in u.lower() for u in subpage_urls for kw in keywords)
+        }
+        missing_categories = [c for c in GUESS_PATHS_BY_CATEGORY if c not in covered_categories]
+        if missing_categories:
+            guess_jobs = [
+                (cat, guess, f"{url}/{guess}".rstrip("/"))
+                for cat in missing_categories
+                for guess in GUESS_PATHS_BY_CATEGORY[cat]
+            ]
+            guess_results = await asyncio.gather(
+                *[fetch(client, g_url, f"{cat.title()} guess: {guess}") for cat, guess, g_url in guess_jobs]
+            )
+            found_for_category: set[str] = set()
+            for (cat, guess, g_url), (st, guess_html) in zip(guess_jobs, guess_results):
+                if cat in found_for_category or st != 200 or not guess_html:
+                    continue
+                g_title, g_text = extract_text(guess_html, max_chars=2800)
+                if len(g_text) < _JS_FALLBACK_THRESHOLD and PLAYWRIGHT_AVAILABLE:
+                    _, js_g = await fetch_with_js(g_url, max_chars=2800)
+                    if len(js_g) > len(g_text):
+                        g_text = js_g
+                if len(g_text) > 80:
+                    results.append(SourceResult(
+                        source=f"{cat.title()} page", url=g_url, title=g_title,
+                        text=g_text, chars=len(g_text), status="ok"
+                    ))
+                    found_for_category.add(cat)   # stop trying other guesses for this category
     elif status != 200:
         results.append(SourceResult(
             source="Homepage", url=url, title="", text="",
@@ -507,6 +577,68 @@ async def scrape_website(client: httpx.AsyncClient, raw_site: str) -> tuple[list
         ))
 
     return results, homepage_html
+
+
+# ── secondary search engine (fallback when DDG is walled) ──────────────────────
+# The logs show html.duckduckgo.com AND lite.duckduckgo.com BOTH returning a
+# 202 anti-bot interstitial on every single query for every company — that is
+# not transient rate-limiting, it means DuckDuckGo has blocked this server's
+# IP address entirely (extremely common for cloud/datacenter hosts like
+# Render, Railway, Fly.io, AWS, etc — DDG, Bing, and Google all aggressively
+# block datacenter IP ranges from scraping their HTML search pages). No amount
+# of retrying or pacing fixes an IP-level block.
+#
+# The reliable fix is to use an official search API instead of scraping a
+# search results page. Brave Search API has a genuinely free tier (2,000
+# queries/month, no credit card) and works from any IP since it's a proper
+# API with an API key, not a scraped page:
+#   1. Sign up at https://api.search.brave.com/register
+#   2. Copy your API key
+#   3. Set it as an environment variable on your Render service:
+#        BRAVE_API_KEY = <your key>
+#   4. Redeploy — no code changes needed, this is picked up automatically.
+#
+# Until BRAVE_API_KEY is set, the pipeline behaves exactly as before (DDG
+# only, degrading to website+Wikipedia-only when DDG is walled) — this is a
+# pure addition, not a breaking change.
+BRAVE_API_KEY = os.environ.get("BRAVE_API_KEY", "").strip()
+_BRAVE_URL    = "https://api.search.brave.com/res/v1/web/search"
+
+
+async def _search_brave(client: httpx.AsyncClient, query: str,
+                         label: str, max_results: int = 6) -> tuple[list[str], list[str]]:
+    """Query Brave Search API. Returns (headlines/titles, snippets/descriptions)."""
+    headlines, snippets = [], []
+    if not BRAVE_API_KEY:
+        return headlines, snippets
+    try:
+        r = await client.get(
+            _BRAVE_URL,
+            params={"q": query, "count": max_results},
+            headers={
+                "Accept": "application/json",
+                "X-Subscription-Token": BRAVE_API_KEY,
+            },
+            timeout=TIMEOUT,
+        )
+        if r.status_code != 200:
+            log.warning(f"  Brave:{label} → HTTP {r.status_code}: {r.text[:200]}")
+            return headlines, snippets
+        data = r.json()
+        results = ((data.get("web") or {}).get("results") or [])[:max_results]
+        for item in results:
+            title = (item.get("title") or "").strip()
+            desc  = (item.get("description") or "").strip()
+            desc  = re.sub(r"<[^>]+>", "", desc)   # Brave wraps match terms in <strong>
+            title = re.sub(r"<[^>]+>", "", title)
+            if title and len(title) > 8 and title not in headlines:
+                headlines.append(title)
+            if desc and len(desc) > 20 and desc not in snippets:
+                snippets.append(desc)
+        log.info(f"  Brave:{label} → {len(headlines)} headlines, {len(snippets)} snippets")
+    except Exception as e:
+        log.warning(f"  Brave:{label} → FAIL: {type(e).__name__}: {e}")
+    return headlines, snippets
 
 
 async def search_ddg(client: httpx.AsyncClient, query: str,
@@ -519,12 +651,17 @@ async def search_ddg(client: httpx.AsyncClient, query: str,
     Guarded by a circuit breaker: if DDG is unreachable (connection errors,
     not just "no results"), skip it after a couple of failures instead of
     burning the full timeout on every one of the ~9 DDG calls per company.
+    Falls back to Brave Search API (if BRAVE_API_KEY is configured) whenever
+    DDG is unavailable or walled, so the pipeline still gets real search
+    results instead of silently returning nothing.
     """
     headlines, snippets = [], []
 
     now = time.time()
     if not _ddg_state["available"]:
         if now < _ddg_state["disabled_until"]:
+            if BRAVE_API_KEY:
+                return await _search_brave(client, query, label, max_results)
             log.info(f"  DDG:{label} → skipped (DDG unreachable this run, "
                       f"retrying again in {int(_ddg_state['disabled_until'] - now)}s)")
             return headlines, snippets
@@ -549,10 +686,14 @@ async def search_ddg(client: httpx.AsyncClient, query: str,
             _ddg_state["disabled_until"] = now + _DDG_COOLDOWN
             log.warning(f"  DDG marked UNREACHABLE from this network — "
                          f"skipping remaining DDG calls for {_DDG_COOLDOWN}s to save time")
+        if BRAVE_API_KEY:
+            return await _search_brave(client, query, label, max_results)
         return headlines, snippets
 
     # accept any 2xx — DDG sometimes returns 202 Accepted with full HTML body
     if not (200 <= status < 300) or not html:
+        if BRAVE_API_KEY:
+            return await _search_brave(client, query, label, max_results)
         return headlines, snippets
 
     # DDG sometimes returns HTTP 200/202 but with an anti-bot / JS-loader
@@ -577,6 +718,9 @@ async def search_ddg(client: httpx.AsyncClient, query: str,
                 _ddg_state["disabled_until"] = now + _DDG_COOLDOWN
                 log.warning(f"  DDG marked UNREACHABLE (anti-bot wall on both endpoints) — "
                              f"skipping remaining DDG calls for {_DDG_COOLDOWN}s")
+            if BRAVE_API_KEY:
+                log.info(f"  DDG:{label} → falling back to Brave Search API")
+                return await _search_brave(client, query, label, max_results)
             return headlines, snippets
 
     return headlines[:max_results], snippets[:max_results]
@@ -638,10 +782,19 @@ async def _search_ddg_lite(client: httpx.AsyncClient, query: str,
     return headlines[:max_results], snippets[:max_results]
 
 
-async def search_ddg_news(client: httpx.AsyncClient, company: str) -> list[str]:
-    """Recent news headlines from DuckDuckGo."""
+async def search_ddg_news(client: httpx.AsyncClient, company: str, location: Optional[str] = None) -> list[str]:
+    """Recent news headlines from DuckDuckGo, combining general and local queries if available."""
     q = f"{company} news funding announcement product launch 2024 2025"
     headlines, _ = await search_ddg(client, q, "news", NEWS_RESULTS)
+    
+    # If location is provided, query local news and combine
+    if location:
+        q_loc = f'"{company}" "{location}" news'
+        headlines_loc, _ = await search_ddg(client, q_loc, "local-news", 4)
+        for h in headlines_loc:
+            if h not in headlines:
+                headlines.append(h)
+                
     return headlines
 
 
@@ -652,24 +805,93 @@ async def search_ddg_general(client: httpx.AsyncClient, company: str) -> list[st
     return snippets
 
 
+async def search_investment_funding(client: httpx.AsyncClient, company: str, location: Optional[str] = None) -> Optional[SourceResult]:
+    """
+    Dedicated search for recent investment/funding activity.
+    Incorporates location query in parallel if provided to fetch local funding context.
+    """
+    loc_suffix = f' "{location}"' if location else ""
+    q = (f'"{company}"{loc_suffix} (funding round OR "series a" OR "series b" OR "series c" OR '
+         f'investment OR investors OR valuation OR "raised $" OR acquired OR '
+         f'acquisition OR "venture capital") 2024 OR 2025 OR 2026')
+    headlines, snippets = await search_ddg(client, q, "Investment/Funding", 6)
+    
+    # Fallback to general funding search if location-specific search yielded nothing
+    if len(headlines) + len(snippets) < 2 and location:
+        q_fallback = (f'"{company}" (funding round OR investment OR investors OR valuation OR acquired OR acquisition) 2024 OR 2025 OR 2026')
+        headlines, snippets = await search_ddg(client, q_fallback, "Investment/Funding-fallback", 6)
+
+    combined = "\n".join(headlines + snippets)
+    if len(combined) < 60:
+        return None
+    return SourceResult(
+        source="Investment / Funding news",
+        url=f"https://duckduckgo.com/?q={urllib.parse.quote_plus(q)}",
+        title=f"Recent investment/funding activity: {company}",
+        text=combined[:2000],
+        chars=len(combined[:2000]),
+        status="ok"
+    )
+
+
+async def search_regional_news(client: httpx.AsyncClient, company: str, location: Optional[str] = None) -> Optional[SourceResult]:
+    """
+    Search specifically for local/regional news, local expansion, local office articles.
+    """
+    if not location:
+        return None
+    q = f'"{company}" ("{location}" OR "headquartered in" OR "office in" OR "expansion" OR "hiring in" OR "based in")'
+    headlines, snippets = await search_ddg(client, q, "regional-news", 5)
+    combined = "\n".join(headlines + snippets)
+    if len(combined) < 60:
+        return None
+    return SourceResult(
+        source="Regional & Local News",
+        url=f"https://duckduckgo.com/?q={urllib.parse.quote_plus(q)}",
+        title=f"Regional coverage: {company} in {location}",
+        text=combined[:2000],
+        chars=len(combined[:2000]),
+        status="ok"
+    )
+
+
 async def scrape_crunchbase(client: httpx.AsyncClient, company: str) -> Optional[SourceResult]:
     """
     Try to fetch the Crunchbase organization page for the company.
     Crunchbase slug = company name lowercased, spaces → hyphens.
+
+    Crunchbase's WAF returns HTTP 403 to essentially all non-browser traffic
+    (confirmed: every single company in recent runs got 403 here) — so this
+    direct fetch is kept as a cheap first attempt, but a search-engine
+    fallback (site:crunchbase.com snippet, same approach already used for
+    LinkedIn) is what actually produces data most of the time.
     """
     slug = re.sub(r"[^a-z0-9]+", "-", company.lower().strip()).strip("-")
     url  = f"https://www.crunchbase.com/organization/{slug}"
     log.info(f"[CRUNCHBASE] Trying: {url}")
     status, html = await fetch(client, url, "Crunchbase")
-    if status != 200 or not html:
-        return None
-    title, text = extract_text(html, max_chars=3000)
-    # Crunchbase renders via JS — we often get little text; accept if >100 chars
-    if len(text) < 100:
+    if status == 200 and html:
+        title, text = extract_text(html, max_chars=3000)
+        if len(text) >= 100:
+            return SourceResult(
+                source="Crunchbase", url=url, title=title,
+                text=text, chars=len(text), status="ok"
+            )
+
+    # Direct fetch failed (403/JS-only render) — fall back to a search-engine
+    # snippet, same pattern as LinkedIn.
+    q = f'site:crunchbase.com/organization "{company}"'
+    headlines, snippets = await search_ddg(client, q, "Crunchbase-search", 4)
+    combined = "\n".join(snippets + headlines)
+    if len(combined) < 60:
         return None
     return SourceResult(
-        source="Crunchbase", url=url, title=title,
-        text=text, chars=len(text), status="ok"
+        source="Crunchbase (via search)",
+        url=url,
+        title=f"Crunchbase snippets: {company}",
+        text=combined[:1500],
+        chars=len(combined[:1500]),
+        status="ok"
     )
 
 
@@ -733,6 +955,10 @@ async def scrape_wikipedia(client: httpx.AsyncClient, company: str) -> Optional[
             data = _json.loads(h2)
             titles = data[1] if len(data) > 1 else []
             for candidate in titles:
+                if not _wiki_title_matches_company(candidate, company):
+                    log.info(f"  Wikipedia-opensearch → rejected unrelated match "
+                              f"'{candidate}' for '{company}'")
+                    continue
                 enc3 = urllib.parse.quote(candidate.replace(" ", "_"))
                 s3, h3 = await _fetch_wiki(
                     f"https://en.wikipedia.org/api/rest_v1/page/summary/{enc3}",
@@ -747,6 +973,36 @@ async def scrape_wikipedia(client: httpx.AsyncClient, company: str) -> Optional[
 
     log.info("  Wikipedia — no result found")
     return None
+
+
+def _wiki_title_matches_company(title: str, company: str) -> bool:
+    """
+    Guard against opensearch's loose fuzzy matching returning a completely
+    unrelated page — e.g. "BeeKeeperAI" → "The Beekeeper (2024 film)",
+    "SilverStay" → "Alicia Silverstone", "tevixMD" → "Ares Teixidó". Those
+    get fed to the LLM as if they were real facts about the company, which is
+    worse than having no Wikipedia data at all.
+    Accept only if the normalized company name's word-stem is actually
+    contained in the candidate title (not just "sounds similar").
+    """
+    def _norm(s: str) -> str:
+        s = re.sub(r"\(.*?\)", "", s)               # strip "(2024 film)" etc.
+        s = re.sub(r"[^a-z0-9]+", "", s.lower())     # drop spaces/punctuation
+        return s
+
+    company_norm = _norm(company)
+    title_norm   = _norm(title)
+    if len(company_norm) < 3:
+        return False
+    # Require substantial overlap: either the full normalized company name
+    # sits inside the title, or vice versa, or the first meaningful "word"
+    # stem (e.g. "beekeeper" out of "beekeeperai") is present.
+    if company_norm in title_norm or title_norm in company_norm:
+        return True
+    first_word = re.sub(r"[^a-z0-9]+", "", company.lower().split()[0]) if company.split() else ""
+    if len(first_word) >= 4 and first_word in title_norm:
+        return True
+    return False
 
 
 async def scrape_linkedin_ddg(client: httpx.AsyncClient, company: str) -> Optional[SourceResult]:
@@ -769,31 +1025,47 @@ async def scrape_linkedin_ddg(client: httpx.AsyncClient, company: str) -> Option
     )
 
 
-async def scrape_tech_news(client: httpx.AsyncClient, company: str) -> list[SourceResult]:
+async def scrape_tech_news(client: httpx.AsyncClient, company: str, location: Optional[str] = None) -> list[SourceResult]:
     """
-    Search tech-press sources: TechCrunch, VentureBeat, Forbes, Business Wire.
+    Search tech-press and news wire sources: TechCrunch, VentureBeat, Forbes, Business Wire, PR Newswire, Newswire.com, CCJ Digital, PR Web.
+    If location is provided, also adds location-specific regional wire search queries.
     Uses DDG site: operator — no API key needed.
     """
     sources = [
         ("TechCrunch",   f'site:techcrunch.com "{company}"'),
         ("VentureBeat",  f'site:venturebeat.com "{company}"'),
         ("BusinessWire", f'site:businesswire.com "{company}"'),
+        ("PRNewswire",   f'site:prnewswire.com "{company}"'),
+        ("Newswire",     f'site:newswire.com "{company}"'),
+        ("CCJDigital",   f'site:ccjdigital.com "{company}"'),
+        ("PRWeb",        f'site:prweb.com "{company}"'),
         ("Forbes",       f'site:forbes.com "{company}" funding OR launch OR partnership'),
     ]
-    results: list[SourceResult] = []
-    for name, query in sources:
+    if location:
+        sources.extend([
+            ("PRNewswire-Local", f'site:prnewswire.com "{company}" "{location}"'),
+            ("Newswire-Local",   f'site:newswire.com "{company}" "{location}"'),
+            ("CCJDigital-Local", f'site:ccjdigital.com "{company}" "{location}"'),
+            ("BusinessWire-Local", f'site:businesswire.com "{company}" "{location}"'),
+        ])
+        
+    async def run_single(name, query):
         headlines, snippets = await search_ddg(client, query, name, 4)
         combined = "\n".join(headlines + snippets)
         if len(combined) > 60:
-            results.append(SourceResult(
+            return SourceResult(
                 source=name,
                 url=f"https://duckduckgo.com/?q={urllib.parse.quote_plus(query)}",
                 title=f"{name} coverage of {company}",
-                text=combined[:2000],
-                chars=len(combined[:2000]),
+                text=combined[:3000],
+                chars=len(combined[:3000]),
                 status="ok"
-            ))
-    return results
+            )
+        return None
+
+    tasks = [run_single(name, query) for name, query in sources]
+    completed = await asyncio.gather(*tasks)
+    return [r for r in completed if r is not None]
 
 
 async def scrape_g2_or_glassdoor(client: httpx.AsyncClient, company: str) -> Optional[SourceResult]:
@@ -845,6 +1117,10 @@ DIRECT_AI_ML_KEYWORDS = [
 #   but aren't exclusively AI. A company hiring these alongside business growth
 #   signals is worth flagging for C-Metric.
 ADJACENT_AI_ML_KEYWORDS = [
+    # Technology Leadership & Capacity signals
+    "chief technology officer", "cto", "vp of technology", "vice president of technology",
+    "director of technology", "director of it", "vp of engineering", "vp engineering",
+    "software architect", "tech lead", "technical lead",
     # Data platform / engineering — often feeds ML pipelines
     "data engineer", "data platform", "data infrastructure",
     "analytics engineer", "data architect", "data pipeline",
@@ -866,24 +1142,38 @@ ADJACENT_AI_ML_KEYWORDS = [
     "platform architect", "solutions architect",
 ]
 
+TECH_MODERNIZATION_KEYWORDS = [
+    "software engineer", "software developer", "full stack developer", "fullstack",
+    "backend engineer", "backend developer", "frontend engineer", "frontend developer",
+    "web developer", "applications developer", "app developer", "systems developer",
+    "enterprise architect", "cloud engineer", "cloud architect",
+    "aws engineer", "azure engineer", "gcp engineer", "devops engineer",
+    "qa engineer", "test engineer", "quality assurance",
+    "salesforce", "crm developer", "crm specialist", "sap consultant", "sap developer",
+    "dynamics 365", "sharepoint", "integration developer", "integration architect",
+    "api integration", "database administrator", "database developer", "sql developer"
+]
+
 def _classify_role(text: str) -> str:
     """
-    Returns: 'direct' | 'adjacent' | 'general'
+    Returns: 'direct' | 'adjacent' | 'tech_mod' | 'general'
     - direct   = explicitly an AI/ML/Data Science role → is_ai_ml = True
     - adjacent = data/platform/analytics role that signals ML investment → is_ai_ml = True
-                 (flagged separately so the LLM can weigh it appropriately)
-    - general  = unrelated to AI/ML
+    - tech_mod = software development, cloud, devops, CRM, or integration modernization
+    - general  = unrelated to tech roles
     """
     t = text.lower()
     if any(kw in t for kw in DIRECT_AI_ML_KEYWORDS):
         return "direct"
     if any(kw in t for kw in ADJACENT_AI_ML_KEYWORDS):
         return "adjacent"
+    if any(kw in t for kw in TECH_MODERNIZATION_KEYWORDS):
+        return "tech_mod"
     return "general"
 
 def _is_ai_ml_role(text: str) -> bool:
-    """True for both direct and adjacent AI/ML roles."""
-    return _classify_role(text) in ("direct", "adjacent")
+    """True for direct, adjacent, and tech modernization roles."""
+    return _classify_role(text) in ("direct", "adjacent", "tech_mod")
 
 def _extract_date_hint(snippet: str) -> str:
     """Pull a date or recency hint out of a job snippet."""
@@ -902,19 +1192,81 @@ def _extract_date_hint(snippet: str) -> str:
     return "date unknown"
 
 
+def _is_recent_job(date_hint: str) -> bool:
+    """
+    Returns True if the date hint suggests the job was posted within the last month.
+    Current Year: 2026. Current Month: August.
+    """
+    h = date_hint.lower()
+    if h == "date unknown":
+        return True # Keep if unknown to prevent false negatives
+        
+    # Check for relative time indicators
+    if any(term in h for term in ["hour", "day", "week", "yesterday", "today", "just", "new"]):
+        # Filter out 4+ weeks
+        m_weeks = re.search(r'(\d+)\s+week', h)
+        if m_weeks:
+            weeks = int(m_weeks.group(1))
+            if weeks >= 4:
+                return False
+        return True
+        
+    if "month" in h:
+        # "1 month ago" is fine, but "2 months ago" or more is old
+        m_months = re.search(r'(\d+)\s+month', h)
+        if m_months:
+            months = int(m_months.group(1))
+            return months <= 1
+        return False
+        
+    # Year/Month formats
+    months_map = {
+        "jan": 1, "feb": 2, "mar": 3, "apr": 4, "may": 5, "jun": 6,
+        "jul": 7, "aug": 8, "sep": 9, "oct": 10, "nov": 11, "dec": 12
+    }
+    
+    # 2026-08 style
+    m_ym = re.search(r'(\d{4})-(\d{2})', h)
+    if m_ym:
+        year = int(m_ym.group(1))
+        month = int(m_ym.group(2))
+        if year < 2026:
+            return False
+        return month >= 7 # July or August 2026
+        
+    # "Aug 2026" style
+    m_my = re.search(r'([a-z]{3})\w*\s+(\d{4})', h)
+    if m_my:
+        m_name = m_my.group(1)
+        year = int(m_my.group(2))
+        if year < 2026:
+            return False
+        month_num = months_map.get(m_name, 0)
+        return month_num >= 7
+
+    return True
+
+
 async def search_ai_ml_jobs(client: httpx.AsyncClient, company: str) -> tuple[list[HiringSignal], Optional[SourceResult]]:
     """
-    Search multiple job platforms for AI/ML/Data roles at this company.
+    Search multiple job platforms for AI/ML/Data and Tech Leadership roles at this company.
     Returns (list of HiringSignal, optional SourceResult for the combined text block).
-    Searches: LinkedIn Jobs, Indeed, Glassdoor Jobs, Wellfound (AngelList).
+    Searches: LinkedIn Jobs, Indeed, Glassdoor Jobs, Wellfound, ZipRecruiter.
+    Filters out job postings older than 1 month.
     """
     signals: list[HiringSignal] = []
     all_text_parts: list[str] = []
 
     job_queries = [
-        ("Jobs: LinkedIn+Indeed+Glassdoor",
-         f'"{company}" (site:linkedin.com/jobs OR site:indeed.com OR site:glassdoor.com/job) '
-         f'(AI OR "machine learning" OR "data scientist" OR LLM OR "artificial intelligence")'),
+        ("Jobs: LinkedIn+Indeed+Glassdoor+ZipRecruiter",
+         f'"{company}" (site:linkedin.com/jobs OR site:indeed.com OR site:glassdoor.com/job OR site:ziprecruiter.com) '
+         f'(AI OR "machine learning" OR "data scientist" OR LLM OR "artificial intelligence" OR "generative AI" OR NLP OR MLOps)'),
+        ("Jobs: Tech Leadership & Capacity",
+         f'"{company}" (site:linkedin.com/jobs OR site:indeed.com OR site:glassdoor.com/job OR site:ziprecruiter.com) '
+         f'("VP of Technology" OR "Vice President of Technology" OR "Chief Technology Officer" OR CTO OR "Director of IT" OR "Director of Technology" OR "Software Architect" OR "VP of Engineering" OR "Vice President of Engineering")'),
+        ("Jobs: Tech Modernisation & Cloud",
+         f'"{company}" (site:linkedin.com/jobs OR site:indeed.com OR site:glassdoor.com/job OR site:ziprecruiter.com) '
+         f'(AWS OR Azure OR Cloud OR DevOps OR "Software Engineer" OR developer OR React OR Salesforce OR SAP OR Integration OR API)'),
         ("Jobs: Wellfound+General hiring",
          f'"{company}" (site:wellfound.com OR hiring) '
          f'(AI OR "machine learning" OR "data scientist" OR LLM OR "generative AI") 2024 OR 2025'),
@@ -927,16 +1279,32 @@ async def search_ai_ml_jobs(client: httpx.AsyncClient, company: str) -> tuple[li
             if len(item) < 15:
                 continue
             date_hint = _extract_date_hint(item)
+            
+            # Filter by date/recency
+            if not _is_recent_job(date_hint):
+                continue
+                
             tier      = _classify_role(item)
             is_ai     = tier in ("direct", "adjacent")
+            is_tech   = tier == "tech_mod"
+            
             # prefix the role text with its tier so the LLM sees it clearly
-            tier_label = "[DIRECT AI/ML]" if tier == "direct" else "[ADJACENT/DATA]" if tier == "adjacent" else "[GENERAL]"
+            if tier == "direct":
+                tier_label = "[DIRECT AI/ML]"
+            elif tier == "adjacent":
+                tier_label = "[ADJACENT/DATA]"
+            elif tier == "tech_mod":
+                tier_label = "[TECH MODERNIZATION]"
+            else:
+                tier_label = "[GENERAL]"
+                
             labelled_role = f"{tier_label} {item[:190]}"
             signals.append(HiringSignal(
                 role=labelled_role,
                 date_hint=date_hint,
                 source=source_name,
-                is_ai_ml=is_ai,
+                is_ai_ml=is_ai or is_tech, # treat modernization as a positive tech signal
+                is_tech_mod=is_tech,
             ))
             all_text_parts.append(f"{tier_label} [{source_name}] {item}")
 
@@ -945,11 +1313,13 @@ async def search_ai_ml_jobs(client: httpx.AsyncClient, company: str) -> tuple[li
 
     direct_count   = sum(1 for s in signals if "[DIRECT AI/ML]" in s.role)
     adjacent_count = sum(1 for s in signals if "[ADJACENT/DATA]" in s.role)
-    ai_count       = direct_count + adjacent_count
-    text_block     = "\n".join(all_text_parts[:30])
+    tech_mod_count = sum(1 for s in signals if "[TECH MODERNIZATION]" in s.role)
+    ai_count       = direct_count + adjacent_count + tech_mod_count
+    text_block     = "\n".join(all_text_parts[:35])
     summary = (
         f"Found {len(signals)} job signals: {direct_count} DIRECT AI/ML, "
-        f"{adjacent_count} ADJACENT/DATA, {len(signals)-ai_count} General.\n\n"
+        f"{adjacent_count} ADJACENT/DATA, {tech_mod_count} TECH MODERNIZATION, "
+        f"{len(signals)-ai_count} General.\n\n"
         + text_block
     )
 
@@ -957,8 +1327,8 @@ async def search_ai_ml_jobs(client: httpx.AsyncClient, company: str) -> tuple[li
         source="Job Postings (multi-platform)",
         url=f"https://duckduckgo.com/?q={urllib.parse.quote_plus(company + ' jobs AI ML')}",
         title=f"Hiring signals for {company}",
-        text=summary[:3000],
-        chars=len(summary[:3000]),
+        text=summary[:4000],
+        chars=len(summary[:4000]),
         status="ok",
     )
 
@@ -1007,6 +1377,7 @@ def measure_quality(sources: list[SourceResult]) -> int:
 async def scrape(req: ScrapeRequest):
     raw_company = req.company.strip()
     raw_site    = (req.website or "").strip()
+    location    = (req.location or "").strip()
 
     # If the "company" column contains a LinkedIn/social URL, extract the real name.
     # Also: if no website was provided but the company field IS a URL, use it as
@@ -1028,7 +1399,7 @@ async def scrape(req: ScrapeRequest):
     all_hiring:     list[HiringSignal]  = []
     errors: list[str]                   = []
 
-    log.info(f"=== START SCRAPE: {company!r} (raw={raw_company!r}) site={raw_site!r} ===")
+    log.info(f"=== START SCRAPE: {company!r} (raw={raw_company!r}) site={raw_site!r} loc={location!r} ===")
 
     async with httpx.AsyncClient() as client:
 
@@ -1040,16 +1411,37 @@ async def scrape(req: ScrapeRequest):
         quality = measure_quality(all_sources)
         log.info(f"After website: {quality} useful chars")
 
-        # ── TIER 2 (parallel): DDG news/general + AI/ML jobs + social media ──
-        # Always run all four — jobs and social are independent of scrape quality
-        tried_sources.extend(["DDG News", "DDG General", "AI/ML Job search", "Social media"])
+        # ── TIER 2 (parallel): everywhere the user wants covered, EVERY run ───
+        # Now every source the user asked for — LinkedIn, Crunchbase, dedicated
+        # investment/funding search, news, jobs, social, Wikipedia, press wires,
+        # CCJ Digital, and G2 — always runs for every company, regardless of website quality.
+        tried_sources.extend([
+            "DDG News", "DDG General", "Job search (LinkedIn/Indeed/Glassdoor/ZipRecruiter)", 
+            "Social media", "LinkedIn Profile (via Search)", "Crunchbase (via Search)", 
+            "Investment/Funding search", "Wikipedia", "PR Newswire", "CCJ Digital", 
+            "Newswire.com", "G2 / Glassdoor", "Regional & Local News"
+        ])
         (news_headlines, general_snippets,
          (job_signals, job_source),
-         social_source) = await asyncio.gather(
-            search_ddg_news(client, company),
+         social_source,
+         linkedin_source,
+         crunchbase_source,
+         investment_source,
+         wiki,
+         press_results,
+         g2,
+         regional_source) = await asyncio.gather(
+            search_ddg_news(client, company, location),
             search_ddg_general(client, company),
             search_ai_ml_jobs(client, company),
             search_social_media(client, company),
+            scrape_linkedin_ddg(client, company),
+            scrape_crunchbase(client, company),
+            search_investment_funding(client, company, location),
+            scrape_wikipedia(client, company),
+            scrape_tech_news(client, company, location),
+            scrape_g2_or_glassdoor(client, company),
+            search_regional_news(client, company, location),
         )
 
         if general_snippets:
@@ -1067,45 +1459,29 @@ async def scrape(req: ScrapeRequest):
             all_sources.append(job_source)
         if social_source:
             all_sources.append(social_source)
-
-        quality = measure_quality(all_sources)
-        log.info(f"After DDG+jobs+social: {quality} useful chars, {len(all_hiring)} hiring signals ({sum(1 for h in all_hiring if h.is_ai_ml)} AI/ML)")
-
-        # ── TIER 3: Wikipedia ────────────────────────────────────────────────
-        tried_sources.append("Wikipedia")
-        wiki = await scrape_wikipedia(client, company)
+        if linkedin_source:
+            all_sources.append(linkedin_source)
+        if crunchbase_source:
+            all_sources.append(crunchbase_source)
+        if investment_source:
+            all_sources.append(investment_source)
         if wiki:
             all_sources.append(wiki)
-            quality = measure_quality(all_sources)
-            log.info(f"After Wikipedia: {quality} useful chars")
-
-        # ── TIER 4: if still thin → Crunchbase + LinkedIn ────────────────────
-        if quality < MIN_USEFUL_CHARS:
-            log.info(f"Quality thin ({quality} < {MIN_USEFUL_CHARS}), going deeper…")
-            tried_sources.extend(["Crunchbase", "LinkedIn (via DDG)"])
-            cb, li = await asyncio.gather(
-                scrape_crunchbase(client, company),
-                scrape_linkedin_ddg(client, company),
-            )
-            if cb: all_sources.append(cb)
-            if li: all_sources.append(li)
-            quality = measure_quality(all_sources)
-            log.info(f"After Crunchbase+LinkedIn: {quality} useful chars")
-
-        # ── TIER 5: if still thin → tech press + G2/Glassdoor ────────────────
-        if quality < MIN_USEFUL_CHARS:
-            log.info(f"Still thin ({quality}), searching tech press…")
-            tried_sources.extend(["TechCrunch", "VentureBeat", "BusinessWire", "Forbes", "G2/Glassdoor"])
-            press_results, g2 = await asyncio.gather(
-                scrape_tech_news(client, company),
-                scrape_g2_or_glassdoor(client, company),
-            )
+        if press_results:
             all_sources.extend(press_results)
-            if g2: all_sources.append(g2)
-            quality = measure_quality(all_sources)
-            log.info(f"After tech press: {quality} useful chars")
+        if g2:
+            all_sources.append(g2)
+        if regional_source:
+            all_sources.append(regional_source)
 
-        # ── TIER 6: last resort — broad DDG fallback ─────────────────────────
+        quality = measure_quality(all_sources)
+        log.info(
+            f"After TIER 2 (website+DDG+jobs+social+LinkedIn+Crunchbase+funding+Wikipedia+press+G2+regional): "
+            f"{quality} useful chars, {len(all_sources)} sources, "
+            f"{len(all_hiring)} hiring signals ({sum(1 for h in all_hiring if h.is_ai_ml)} AI/ML)"
+        )
+
+        # ── TIER 4: last resort — broad DDG fallback ──────────────────────────
         if quality < MIN_USEFUL_CHARS:
             log.info(f"Last resort broad search for {company!r}…")
             tried_sources.append("DDG broad fallback")
@@ -1154,14 +1530,44 @@ async def scrape(req: ScrapeRequest):
             + "\n".join(hiring_lines)
         )
 
-    for s in all_sources:
-        if s.status == "ok" and s.chars > 50:
-            sections.append(
-                f"=== SOURCE: {s.source.upper()} ===\n"
-                f"URL: {s.url}\n"
-                f"Title: {s.title}\n\n"
-                f"{s.text}"
-            )
+    # Cap how much any single source can contribute to combined_text, AND
+    # order sources by priority before capping — not insertion order.
+    # With every requested source now always fetched (website incl. careers,
+    # LinkedIn, Crunchbase, investment/funding, Wikipedia, social, news,
+    # jobs), a single company website with 6+ subpages can still generate
+    # more raw text than everything else combined. Sorting by priority here
+    # guarantees LinkedIn / Crunchbase / investment / careers / Wikipedia
+    # survive both this cap AND the frontend's own prompt-size cap even when
+    # the website itself is large — since those are exactly the sources the
+    # website can't substitute for.
+    MAX_CHARS_PER_SOURCE_IN_COMBINED = 3000
+
+    def _source_priority(s: SourceResult) -> int:
+        name = s.source.lower()
+        if name == "homepage":
+            return 0
+        if any(k in name for k in ("linkedin", "crunchbase", "investment", "funding", "wikipedia", "careers")):
+            return 1
+        if any(k in name for k in ("social media", "job postings", "duckduckgo")):
+            return 2
+        if "page" in name:   # about/news/press/product/team/etc. subpages
+            return 3
+        return 4             # tech press, G2/Glassdoor, broad fallback
+
+    ordered_sources = sorted(
+        (s for s in all_sources if s.status == "ok" and s.chars > 50),
+        key=_source_priority
+    )
+    for s in ordered_sources:
+        text = s.text[:MAX_CHARS_PER_SOURCE_IN_COMBINED]
+        if len(s.text) > MAX_CHARS_PER_SOURCE_IN_COMBINED:
+            text += " …[truncated]"
+        sections.append(
+            f"=== SOURCE: {s.source.upper()} ===\n"
+            f"URL: {s.url}\n"
+            f"Title: {s.title}\n\n"
+            f"{text}"
+        )
 
     combined = "\n\n".join(sections)
 
