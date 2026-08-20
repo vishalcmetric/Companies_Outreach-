@@ -15,12 +15,15 @@ Run:
 """
 
 import asyncio
+import contextvars
 import logging
 import os
 import re
 import time
 import urllib.parse
 from typing import Optional
+
+brave_key_var = contextvars.ContextVar("brave_key", default="")
 
 import httpx
 from bs4 import BeautifulSoup
@@ -206,9 +209,10 @@ class ScrapeRequest(BaseModel):
     company: str
     website: Optional[str] = None
     location: Optional[str] = None
+    brave_api_key: Optional[str] = None
 
     # coerce empty string → None so sending website/location="" doesn't cause a 422
-    @field_validator("website", "location", mode="before")
+    @field_validator("website", "location", "brave_api_key", mode="before")
     @classmethod
     def empty_str_to_none(cls, v):
         if isinstance(v, str) and v.strip() == "":
@@ -609,7 +613,8 @@ async def _search_brave(client: httpx.AsyncClient, query: str,
                          label: str, max_results: int = 6) -> tuple[list[str], list[str]]:
     """Query Brave Search API. Returns (headlines/titles, snippets/descriptions)."""
     headlines, snippets = [], []
-    if not BRAVE_API_KEY:
+    key = brave_key_var.get() or BRAVE_API_KEY
+    if not key:
         return headlines, snippets
     try:
         r = await client.get(
@@ -617,7 +622,7 @@ async def _search_brave(client: httpx.AsyncClient, query: str,
             params={"q": query, "count": max_results},
             headers={
                 "Accept": "application/json",
-                "X-Subscription-Token": BRAVE_API_KEY,
+                "X-Subscription-Token": key,
             },
             timeout=TIMEOUT,
         )
@@ -658,9 +663,10 @@ async def search_ddg(client: httpx.AsyncClient, query: str,
     headlines, snippets = [], []
 
     now = time.time()
+    key = brave_key_var.get() or BRAVE_API_KEY
     if not _ddg_state["available"]:
         if now < _ddg_state["disabled_until"]:
-            if BRAVE_API_KEY:
+            if key:
                 return await _search_brave(client, query, label, max_results)
             log.info(f"  DDG:{label} → skipped (DDG unreachable this run, "
                       f"retrying again in {int(_ddg_state['disabled_until'] - now)}s)")
@@ -686,13 +692,13 @@ async def search_ddg(client: httpx.AsyncClient, query: str,
             _ddg_state["disabled_until"] = now + _DDG_COOLDOWN
             log.warning(f"  DDG marked UNREACHABLE from this network — "
                          f"skipping remaining DDG calls for {_DDG_COOLDOWN}s to save time")
-        if BRAVE_API_KEY:
+        if key:
             return await _search_brave(client, query, label, max_results)
         return headlines, snippets
 
     # accept any 2xx — DDG sometimes returns 202 Accepted with full HTML body
     if not (200 <= status < 300) or not html:
-        if BRAVE_API_KEY:
+        if key:
             return await _search_brave(client, query, label, max_results)
         return headlines, snippets
 
@@ -718,7 +724,7 @@ async def search_ddg(client: httpx.AsyncClient, query: str,
                 _ddg_state["disabled_until"] = now + _DDG_COOLDOWN
                 log.warning(f"  DDG marked UNREACHABLE (anti-bot wall on both endpoints) — "
                              f"skipping remaining DDG calls for {_DDG_COOLDOWN}s")
-            if BRAVE_API_KEY:
+            if key:
                 log.info(f"  DDG:{label} → falling back to Brave Search API")
                 return await _search_brave(client, query, label, max_results)
             return headlines, snippets
@@ -1375,6 +1381,7 @@ def measure_quality(sources: list[SourceResult]) -> int:
 # ── main scrape endpoint ──────────────────────────────────────────────────────
 @app.post("/scrape", response_model=ScrapeResponse)
 async def scrape(req: ScrapeRequest):
+    brave_key_var.set((req.brave_api_key or "").strip())
     raw_company = req.company.strip()
     raw_site    = (req.website or "").strip()
     location    = (req.location or "").strip()
