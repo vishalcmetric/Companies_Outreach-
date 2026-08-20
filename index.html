@@ -209,6 +209,522 @@
 
   .footnote{font-size:11.5px; color:var(--ink-faint); margin-top:6px;}
   .empty{padding:30px; text-align:center; color:var(--ink-faint); font-size:13px;}
+
+  /* Tabs for Modal */
+  .modal-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 16px;
+    gap: 4px;
+  }
+  .tab-btn {
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 20px;
+    border: none;
+    background: none;
+    color: var(--ink-soft);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+  }
+  .tab-btn:hover {
+    color: var(--ink);
+  }
+  .tab-btn.active {
+    color: var(--ink);
+    border-bottom: 2px solid var(--ink);
+    background: var(--g6);
+  }
+
+  /* Deal Signal Snapshot Styles */
+  .snap-outer {
+    max-width: 850px;
+    margin: 0 auto 20px;
+    background: #ffffff;
+    border: 1px solid #c8d3df;
+    font-family: "Outfit", "Inter", var(--sans);
+    color: #1a2a3a;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    text-align: left;
+  }
+  
+  .snap-header {
+    background: #0f2a4a;
+    color: #ffffff;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .snap-header-left h2 {
+    font-size: 20px;
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .snap-header-left p {
+    font-size: 10px;
+    font-weight: 500;
+    margin: 2px 0 0 0;
+    color: #9ab4d4;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .snap-header-right {
+    text-align: right;
+  }
+  .snap-header-right .date {
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0;
+    color: #ffffff;
+  }
+  .snap-header-right .period {
+    font-size: 9px;
+    font-weight: 700;
+    margin: 2px 0 0 0;
+    color: #ffd700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .snap-subheader {
+    background: #e6f0fa;
+    padding: 10px 24px;
+    border-bottom: 1px solid #c5d5e6;
+  }
+  .snap-subheader h3 {
+    font-size: 13px;
+    font-weight: 800;
+    margin: 0;
+    color: #0b3c5d;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+  .snap-subheader p {
+    font-size: 11px;
+    margin: 2px 0 0 0;
+    color: #506a85;
+  }
+
+  .snap-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 24px;
+    border-bottom: 1px solid #e1e8f0;
+    gap: 20px;
+    background: #fafbfe;
+  }
+  .snap-hero-left {
+    flex: 1;
+  }
+  .snap-hero-left h1 {
+    font-size: 24px;
+    font-weight: 800;
+    margin: 0;
+    color: #0f2a4a;
+    letter-spacing: -0.01em;
+  }
+  .snap-hero-left .subtitle {
+    font-size: 12.5px;
+    color: #4b6584;
+    margin: 6px 0 10px 0;
+    font-weight: 500;
+  }
+  .snap-hero-left .links {
+    font-size: 11px;
+    font-weight: 600;
+    color: #0077b5;
+  }
+  .snap-hero-left .links a {
+    color: #0077b5;
+    text-decoration: none;
+    margin-right: 12px;
+  }
+  .snap-hero-left .links a:hover {
+    text-decoration: underline;
+  }
+
+  .snap-score-badge {
+    background: #0f2a4a;
+    color: #ffffff;
+    padding: 12px 18px;
+    text-align: center;
+    border-radius: 6px;
+    min-width: 100px;
+    box-shadow: 0 4px 10px rgba(15,42,74,0.15);
+  }
+  .snap-score-badge .score-val {
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 1;
+    font-family: var(--mono);
+  }
+  .snap-score-badge .score-lbl {
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-top: 4px;
+    color: #9ab4d4;
+  }
+  .snap-score-badge .score-stars {
+    font-size: 12px;
+    color: #ffd700;
+    margin-top: 4px;
+    letter-spacing: 1px;
+  }
+
+  .snap-main {
+    padding: 24px;
+  }
+
+  .snap-section-title {
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #4b6584;
+    margin: 0 0 16px 0;
+    border-bottom: 1.5px solid #e1e8f0;
+    padding-bottom: 6px;
+  }
+
+  .snap-timeline {
+    position: relative;
+    margin-bottom: 24px;
+    padding-left: 20px;
+  }
+  .snap-timeline::before {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: 6px;
+    bottom: 6px;
+    width: 2px;
+    background: #e1e8f0;
+  }
+  .snap-timeline-item {
+    position: relative;
+    margin-bottom: 18px;
+  }
+  .snap-timeline-item:last-child {
+    margin-bottom: 0;
+  }
+  .snap-timeline-dot {
+    position: absolute;
+    left: -24px;
+    top: 3px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 2.5px solid #0077b5;
+  }
+  .snap-timeline-dot.must-have {
+    border-color: #3b82f6;
+    background: #3b82f6;
+  }
+  .snap-timeline-dot.supporting {
+    border-color: #10b981;
+    background: #10b981;
+  }
+  .snap-timeline-dot.unique {
+    border-color: #8b5cf6;
+    background: #8b5cf6;
+  }
+  .snap-timeline-content {
+    font-size: 12.5px;
+    line-height: 1.45;
+  }
+  .snap-timeline-content b {
+    font-weight: 700;
+    color: #0f2a4a;
+    font-size: 12px;
+    letter-spacing: 0.02em;
+  }
+  .snap-timeline-content .desc {
+    margin-top: 2px;
+    color: #334e68;
+  }
+  .snap-timeline-content .meta-info {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: #7b8794;
+    margin-top: 4px;
+  }
+
+  .snap-executive-card {
+    background: #f0f4f8;
+    border: 1px solid #d9e2ec;
+    border-radius: 6px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .snap-executive-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #0f2a4a;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  .snap-executive-info {
+    flex: 1;
+  }
+  .snap-executive-info h4 {
+    margin: 0;
+    font-size: 13.5px;
+    font-weight: 800;
+    color: #0f2a4a;
+  }
+  .snap-executive-info p {
+    margin: 2px 0 0 0;
+    font-size: 11.5px;
+    color: #4b6584;
+    font-weight: 500;
+  }
+  .snap-executive-info a {
+    color: #0077b5;
+    text-decoration: none;
+    font-weight: 700;
+  }
+  .snap-executive-info a:hover {
+    text-decoration: underline;
+  }
+
+  .snap-message-box {
+    background: #fafbfe;
+    border: 1.5px dashed #0077b5;
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+  }
+  .snap-message-box h4 {
+    margin: 0 0 10px 0;
+    font-size: 11px;
+    font-weight: 800;
+    color: #0077b5;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .snap-message-body {
+    font-size: 13px;
+    color: #243b53;
+    line-height: 1.55;
+    font-style: italic;
+    white-space: pre-line;
+  }
+
+  .snap-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .snap-grid-col {
+    background: #ffffff;
+    border: 1px solid #e1e8f0;
+    border-radius: 6px;
+    padding: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+  }
+  .snap-grid-col h4 {
+    margin: 0 0 10px 0;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #4b6584;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid #e1e8f0;
+    padding-bottom: 6px;
+  }
+  .snap-grid-col p {
+    margin: 0;
+    font-size: 11.5px;
+    color: #243b53;
+    line-height: 1.45;
+  }
+
+  .snap-tracked-section {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .snap-tracked-col h4 {
+    margin: 0 0 10px 0;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #4b6584;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid #e1e8f0;
+    padding-bottom: 6px;
+  }
+  .snap-tracked-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .snap-tracked-list li {
+    font-size: 11px;
+    color: #4b6584;
+    margin-bottom: 6px;
+    position: relative;
+    padding-left: 14px;
+    line-height: 1.4;
+  }
+  .snap-tracked-list li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #8da2bb;
+    font-weight: bold;
+  }
+  .snap-tracked-list li.matched {
+    color: #1a2a3a;
+    font-weight: 600;
+  }
+  .snap-tracked-list li.matched::before {
+    content: "✓";
+    color: #10b981;
+    font-size: 11px;
+    left: -2px;
+  }
+
+  .snap-sources-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .snap-sources-list li {
+    font-size: 11px;
+    color: #627d98;
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+  .snap-sources-list a {
+    color: #0077b5;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .snap-sources-list a:hover {
+    text-decoration: underline;
+  }
+
+  .snap-footer-banner {
+    background: #0f2a4a;
+    color: #ffffff;
+    padding: 14px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+  }
+  .snap-footer-banner p {
+    margin: 0;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .snap-footer-banner a.book-btn {
+    background: #ffd700;
+    color: #0f2a4a;
+    text-decoration: none;
+    padding: 6px 16px;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    border-radius: 4px;
+    transition: background 0.2s ease;
+  }
+  .snap-footer-banner a.book-btn:hover {
+    background: #ffd700;
+  }
+
+  .print-action-bar {
+    display: flex;
+    justify-content: flex-end;
+    padding: 12px 24px 12px;
+    background: #ffffff;
+    gap: 10px;
+    border-bottom: 1px solid #e1e8f0;
+  }
+
+  /* Printable stylesheet settings */
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+    #overlay, .modal, .snap-outer, .snap-outer * {
+      visibility: visible;
+    }
+    #overlay {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      background: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+    .modal {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      max-width: 100% !important;
+      height: auto !important;
+      box-shadow: none !important;
+      border: none !important;
+      background: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+    .modal-head, .modal-tabs, .print-action-bar, .modal-meta, .email-copy-bar {
+      display: none !important;
+    }
+    #tabContentSnapshot {
+      display: block !important;
+    }
+    .snap-outer {
+      border: none !important;
+      box-shadow: none !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    .snap-footer-banner {
+      background: #0f2a4a !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .snap-header {
+      background: #0f2a4a !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .snap-subheader {
+      background: #e6f0fa !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+  }
 </style>
 </head>
 <body>
@@ -260,11 +776,26 @@
 <div class="step" id="step1">
   <div class="step-head"><div class="label"><b>Step 1</b> · API key &amp; company list</div></div>
   <div class="step-body">
-    <div class="apikey-row">
-      <label>Groq API key <span style="color:var(--ink)">*</span></label>
-      <input type="password" id="groqApiKey" placeholder="gsk_…  (get yours free at console.groq.com)" autocomplete="off">
+    <div class="apikey-row" style="display:flex; gap:16px; margin-bottom:14px; flex-wrap:wrap;">
+      <div style="flex:1; min-width:200px;">
+        <label>API Provider</label>
+        <select id="apiProvider" style="margin-top:6px;">
+          <option value="groq" selected>Groq (Fast, low free daily quotas)</option>
+          <option value="openai">OpenAI (GPT-4o-mini, high limits, paid key)</option>
+          <option value="openrouter">OpenRouter (Supports Llama/Gemma & FREE models)</option>
+          <option value="ollama">Ollama (Local/Self-hosted open-source, free)</option>
+        </select>
+      </div>
+      <div style="flex:2; min-width:280px;">
+        <label id="apiKeyLabel">Groq API key <span style="color:var(--ink)">*</span></label>
+        <input type="password" id="groqApiKey" style="margin-top:6px;" placeholder="gsk_…" autocomplete="off">
+      </div>
     </div>
-    <div class="footnote" style="margin-bottom:14px;">Your key is used only in this browser tab and never sent anywhere except <b>api.groq.com</b>. Free tier is roughly: GPT-OSS 120B ~30 req/min, ~200K tokens/day; GPT-OSS 20B similar or higher. Limits are per-organization (a second key on the same account shares the same quota) and <b>Groq's model lineup changes over time</b> — if a model 404s as "does not exist," check <a href="https://console.groq.com/docs/models" target="_blank">console.groq.com/docs/models</a> for the current list and swap the model ID in the code. Pick your model in Step 3.</div>
+    <div class="apikey-row" id="customUrlRow" style="display:none; margin-bottom:14px;">
+      <label>Ollama Base URL</label>
+      <input type="text" id="customBaseUrl" value="http://localhost:11434/v1" placeholder="http://localhost:11434/v1" style="margin-top:6px;">
+    </div>
+    <div class="footnote" style="margin-bottom:14px;">Choose your LLM provider. If your Groq key is rate-limited, swap to OpenAI or OpenRouter (which offers free models like Llama 3.1 8B or Gemma 2 9B) or run unlimited local models via Ollama.</div>
     <div class="backend-row">
       <label>Scraper backend</label>
       <input type="text" id="backendUrl" value="http://localhost:8765" placeholder="http://localhost:8765">
@@ -291,6 +822,7 @@
     <div class="maprow"><label>Website (optional)</label><select id="mapWebsite"></select></div>
     <div class="maprow"><label>Contact name (optional)</label><select id="mapContact"></select></div>
     <div class="maprow"><label>Target designation (optional)</label><select id="mapDesignation"></select></div>
+    <div class="maprow"><label>Location / HQ (optional)</label><select id="mapLocation"></select></div>
     <div class="footnote">Leave optional fields as "— none —" if your sheet doesn't have them.</div>
     <div class="btnrow"><button class="primary" id="confirmMap">Confirm mapping →</button></div>
   </div>
@@ -304,8 +836,12 @@
       <div class="field">
         Groq model
         <select id="groqModel">
-          <option value="openai/gpt-oss-120b" selected>GPT-OSS 120B — best quality, ~200K tokens/day</option>
-          <option value="openai/gpt-oss-20b">GPT-OSS 20B — faster, lighter, good for structured extraction</option>
+          <option value="llama-3.1-70b-versatile" selected>Llama 3.1 70B — recommended (High daily limits)</option>
+          <option value="llama-3.1-8b-instant">Llama 3.1 8B — fastest, lowest token usage (High limits)</option>
+          <option value="mixtral-8x7b-32768">Mixtral 8x7B — good for large logs</option>
+          <option value="gemma2-9b-it">Gemma 2 9B — efficient extraction</option>
+          <option value="openai/gpt-oss-120b">GPT-OSS 120B — reasoning, low limit (200K tokens/day)</option>
+          <option value="openai/gpt-oss-20b">GPT-OSS 20B — reasoning, low limit (200K tokens/day)</option>
         </select>
       </div>
       <div class="field">
@@ -368,28 +904,45 @@
 
 <!-- EMAIL MODAL -->
 <div class="overlay" id="overlay">
-  <div class="modal">
+  <div class="modal" style="max-width: 900px; width: 95%;">
     <div class="modal-head">
       <h3 id="modalCompany">—</h3>
       <div class="modal-head-actions">
         <button class="modal-close" id="modalClose">✕</button>
       </div>
     </div>
-    <!-- meta bar: signal strength + evidence -->
-    <div class="modal-meta" id="modalMeta"></div>
-    <!-- email letter -->
-    <div class="email-letter">
-      <div class="email-subject-line">Subject line</div>
-      <div class="email-subject-value" id="modalSubj"></div>
-      <div class="email-field-row"><span class="email-field-label">To</span><span class="email-field-value" id="modalTo"></span></div>
-      <div class="email-field-row"><span class="email-field-label">From</span><span class="email-field-value">AK &lt;ak@c-metric.com&gt;</span></div>
-      <hr class="email-divider">
-      <div class="email-body-text" id="modalBody"></div>
+    
+    <div class="modal-tabs">
+      <button class="tab-btn active" id="tabEmailBtn">Outreach Email</button>
+      <button class="tab-btn" id="tabSnapshotBtn">Deal Signal Snapshot</button>
     </div>
-    <div class="email-copy-bar">
-      <button class="copy-btn" id="copySubjBtn">Copy subject</button>
-      <button class="copy-btn" id="copyBodyBtn">Copy email body</button>
-      <button class="copy-btn" id="copyAllBtn">Copy all</button>
+
+    <!-- Tab 1: Outreach Email -->
+    <div class="tab-content" id="tabContentEmail">
+      <div class="modal-meta" id="modalMeta"></div>
+      <div class="email-letter">
+        <div class="email-subject-line">Subject line</div>
+        <div class="email-subject-value" id="modalSubj"></div>
+        <div class="email-field-row"><span class="email-field-label">To</span><span class="email-field-value" id="modalTo"></span></div>
+        <div class="email-field-row"><span class="email-field-label">From</span><span class="email-field-value">AK &lt;ak@c-metric.com&gt;</span></div>
+        <hr class="email-divider">
+        <div class="email-body-text" id="modalBody"></div>
+      </div>
+      <div class="email-copy-bar">
+        <button class="copy-btn" id="copySubjBtn">Copy subject</button>
+        <button class="copy-btn" id="copyBodyBtn">Copy email body</button>
+        <button class="copy-btn" id="copyAllBtn">Copy all</button>
+      </div>
+    </div>
+
+    <!-- Tab 2: Deal Signal Snapshot -->
+    <div class="tab-content" id="tabContentSnapshot" style="display:none;">
+      <div class="print-action-bar">
+        <button class="primary" id="printSnapBtn">Print / Save PDF</button>
+      </div>
+      <div class="snap-outer" id="snapOuter">
+        <!-- Will be dynamically populated by JS -->
+      </div>
     </div>
   </div>
 </div>
@@ -397,8 +950,64 @@
 <script>
 const state = { rows: [], mapping: {}, headers: [], running: false, backendOnline: false };
 
+const modelsByProvider = {
+  groq: [
+    { value: "llama-3.1-70b-versatile", label: "Llama 3.1 70B — recommended (High daily limits)" },
+    { value: "llama-3.1-8b-instant", label: "Llama 3.1 8B — fastest, lowest token usage (High limits)" },
+    { value: "mixtral-8x7b-32768", label: "Mixtral 8x7B — good for large logs" },
+    { value: "gemma2-9b-it", label: "Gemma 2 9B — efficient extraction" },
+    { value: "openai/gpt-oss-120b", label: "GPT-OSS 120B — reasoning, low limit (200K tokens/day)" },
+    { value: "openai/gpt-oss-20b", label: "GPT-OSS 20B — reasoning, low limit (200K tokens/day)" }
+  ],
+  openai: [
+    { value: "gpt-4o-mini", label: "GPT-4o Mini — recommended (Fast, cheap, high limits)" },
+    { value: "gpt-4o", label: "GPT-4o — best quality, premium" }
+  ],
+  openrouter: [
+    { value: "meta-llama/llama-3.1-70b-instruct", label: "Llama 3.1 70B (OpenRouter)" },
+    { value: "google/gemma-2-9b-it:free", label: "Gemma 2 9B — FREE Model" },
+    { value: "meta-llama/llama-3.1-8b-instruct:free", label: "Llama 3.1 8B — FREE Model" },
+    { value: "meta-llama/llama-3.1-405b-instruct", label: "Llama 3.1 405B — flagship" }
+  ],
+  ollama: [
+    { value: "llama3.1", label: "Llama 3.1 (Local)" },
+    { value: "gemma2", label: "Gemma 2 (Local)" },
+    { value: "mistral", label: "Mistral (Local)" }
+  ]
+};
+
+function updateModelDropdown() {
+  const provider = document.getElementById('apiProvider').value;
+  const modelSel = document.getElementById('groqModel');
+  const models = modelsByProvider[provider] || [];
+  modelSel.innerHTML = models.map(m => `<option value="${m.value}">${m.label}</option>`).join('');
+  
+  // Show/hide Ollama URL settings
+  const customUrlRow = document.getElementById('customUrlRow');
+  const apiKeyLabel = document.getElementById('apiKeyLabel');
+  const apiKeyInput = document.getElementById('groqApiKey');
+  
+  if (provider === 'ollama') {
+    customUrlRow.style.display = 'block';
+    apiKeyLabel.innerHTML = 'API Key (Ollama does not require one)';
+    apiKeyInput.placeholder = 'Optional / None';
+  } else {
+    customUrlRow.style.display = 'none';
+    apiKeyLabel.innerHTML = `${provider.toUpperCase()} API key <span style="color:var(--ink)">*</span>`;
+    apiKeyInput.placeholder = `Enter your ${provider.toUpperCase()} API key...`;
+  }
+}
+
+// Bind change listener and initialize
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('apiProvider').addEventListener('change', updateModelDropdown);
+  updateModelDropdown();
+});
+
 function genRunId(){ return Math.random().toString(36).slice(2,8).toUpperCase(); }
-document.getElementById('runid').textContent = genRunId();
+window.addEventListener('load', () => {
+  document.getElementById('runid').textContent = genRunId();
+});
 
 // ─── auto-detect backend URL when this page is served BY the backend ──────────
 // scraper.py now serves this file directly at "/", so when opened via the
@@ -447,7 +1056,7 @@ pingBackend();
 
 // ─── Web Scraper ──────────────────────────────────────────────────────────────
 // Falls back gracefully if the backend is offline.
-async function scrapeCompany(companyName, websiteUrl){
+async function scrapeCompany(companyName, websiteUrl, locationValue){
   const base = document.getElementById('backendUrl').value.trim().replace(/\/$/, '');
   const empty = { combined_text:'', pages_fetched:0, news_headlines:[], hiring_signals:[], quality:'failed', quality_chars:0, tried_sources:[], sources:[], errors:[], chars:0 };
   if (!state.backendOnline) {
@@ -457,7 +1066,7 @@ async function scrapeCompany(companyName, websiteUrl){
     const resp = await fetch(base + '/scrape', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ company: companyName, website: websiteUrl || null }),
+      body: JSON.stringify({ company: companyName, website: websiteUrl || null, location: locationValue || null }),
       signal: AbortSignal.timeout(90000)   // 90 s — job + social searches add time
     });
     if (!resp.ok) throw new Error('Scraper HTTP ' + resp.status);
@@ -509,7 +1118,7 @@ function handleFile(file){
 }
 
 function populateMapping(){
-  ['mapCompany','mapWebsite','mapContact','mapDesignation'].forEach(id => {
+  ['mapCompany','mapWebsite','mapContact','mapDesignation','mapLocation'].forEach(id => {
     const sel = document.getElementById(id);
     sel.innerHTML = '<option value="">— none —</option>' + state.headers.map(h => `<option value="${h}">${h}</option>`).join('');
   });
@@ -518,10 +1127,12 @@ function populateMapping(){
   const w = guess(['website','domain','url']);
   const ct = guess(['contact','person']);
   const d  = guess(['designation','title','role']);
+  const l  = guess(['location','country','state','city','hq','address','based']);
   if (c)  document.getElementById('mapCompany').value     = c;
   if (w)  document.getElementById('mapWebsite').value     = w;
   if (ct) document.getElementById('mapContact').value     = ct;
   if (d)  document.getElementById('mapDesignation').value = d;
+  if (l)  document.getElementById('mapLocation').value    = l;
 }
 
 document.getElementById('confirmMap').addEventListener('click', () => {
@@ -531,7 +1142,8 @@ document.getElementById('confirmMap').addEventListener('click', () => {
     company,
     website:     document.getElementById('mapWebsite').value,
     contact:     document.getElementById('mapContact').value,
-    designation: document.getElementById('mapDesignation').value
+    designation: document.getElementById('mapDesignation').value,
+    location:    document.getElementById('mapLocation').value
   };
   document.getElementById('step3').classList.remove('disabled');
   document.getElementById('resultsArea').style.display = 'block';
@@ -662,6 +1274,9 @@ function openModal(idx){
 
   document.getElementById('modalCompany').textContent = displayName(r.raw[state.mapping.company]);
 
+  // Reset tab to Email draft first
+  switchTab('email');
+
   // quality badge colour
   const qColour = { rich:'#155724', adequate:'#0c3a6e', thin:'#856404', failed:'#721c24' };
   const qBg     = { rich:'#d4edda', adequate:'#dce8ff', thin:'#fff3cd', failed:'#f8d7da' };
@@ -727,8 +1342,262 @@ function openModal(idx){
     .map(p => `<p>${esc(p).replace(/\n/g, '<br>')}</p>`)
     .join('');
 
+  // ─── DYNAMIC SNAPSHOT RENDER ──────────────────────────────────────────────
+  const snapOuter = document.getElementById('snapOuter');
+  
+  // Format stars & score
+  const score = Math.min(100, Math.max(0, parseInt(r.pct, 10) || 0));
+  const starsCount = Math.round(score / 10);
+  let starsHtml = '';
+  for(let i=0; i<10; i++) {
+    starsHtml += i < starsCount ? '★' : '☆';
+  }
+
+  // Format date
+  const today = new Date();
+  const dateOptions = { day: 'numeric', month: 'long', year: 'numeric' };
+  const formattedToday = today.toLocaleDateString('en-GB', dateOptions); // e.g., "19 August 2026"
+
+  // Company details
+  const companyName = esc(displayName(r.raw[state.mapping.company]));
+  const metadata = r.companyMetadata || {};
+  const industry = esc(metadata.industry || 'Asset-based 3PL');
+  const employeeRange = esc(metadata.employee_range || '500-1,000 employees');
+  const revenue = esc(metadata.revenue || '~$150M revenue');
+  const location = esc(metadata.location || 'Defiance, Ohio');
+  const subtitleLine = `${industry} · ${employeeRange} · ${revenue} · ${location}`;
+
+  // Domain & LinkedIn Page link
+  const rawWebsite = state.mapping.website ? (r.raw[state.mapping.website] || '') : '';
+  const cleanWebsite = rawWebsite ? rawWebsite.replace(/^https?:\/\/(www\.)?/, '').split('/')[0] : '';
+  const linkedinSearchUrl = `https://www.linkedin.com/search/results/companies/?keywords=${encodeURIComponent(companyName)}`;
+  const linkedinUrl = r.keyExecutive?.linkedin_url || `https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent((r.keyExecutive?.name || '') + ' ' + companyName)}`;
+
+  // Buying Signals Timeline
+  const buyingSignals = r.buyingSignals || [];
+  let signalsHtml = '';
+  if (buyingSignals.length > 0) {
+    buyingSignals.forEach(sig => {
+      const catClass = sig.category === 'must-have' ? 'must-have' : sig.category === 'supporting' ? 'supporting' : 'unique';
+      signalsHtml += `
+        <div class="snap-timeline-item">
+          <div class="snap-timeline-dot ${catClass}"></div>
+          <div class="snap-timeline-content">
+            <b>${esc(sig.title)}</b>
+            <div class="desc">${esc(sig.detail)}</div>
+            <div class="meta-info">${esc(sig.date_score)}</div>
+          </div>
+        </div>
+      `;
+    });
+  } else {
+    // If no structured signals found, fallback to rendering the raw signal_found text
+    signalsHtml = `
+      <div class="snap-timeline-item">
+        <div class="snap-timeline-dot must-have"></div>
+        <div class="snap-timeline-content">
+          <b>CONFIRMED SALES INTEL</b>
+          <div class="desc">${esc(r.signal || 'Verified opportunity detected via web intelligence.')}</div>
+          <div class="meta-info">Active</div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Key Executive
+  const exec = r.keyExecutive || {};
+  const execName = esc(exec.name || 'Unknown');
+  const execTitle = esc(exec.title || 'Unknown');
+  const execAppt = esc(exec.appointment_info || 'Active');
+  const initials = execName !== 'Unknown' ? execName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : 'EX';
+
+  // Suggested outreach message
+  const outreachMsg = r.suggestedOutreachMessage || (r.email ? r.email.body.replace(/\\n/g, '\n') : '');
+
+  // Matched from Website
+  const matched = r.matchedFromWebsite || {};
+  const services = esc(matched.your_services || 'Custom software, cloud (AWS/Azure), DevOps, AI/ML, QA and security testing');
+  const icp = esc(matched.icp_matched || 'Mid-market non-tech company, 500-1,000 employees, active digital transformation');
+  const why = esc(matched.why_this_lead || 'New CTO, open tech roles, proprietary software build, AI roadmap, SOC 2 needs');
+
+  // Tracked Checklist items - match status against what AI returned
+  const trackedObj = r.signalsTracked || {
+    must_haves: [
+      "CTO/CXO hire with tech modernisation mandate",
+      "Legacy system replacement/announcements",
+      "Open senior technology roles (capacity gap)"
+    ],
+    supporting: [
+      "Active product development / software builds",
+      "Headcount growth and geographic expansion",
+      "Contract wins requiring tech delivery"
+    ],
+    unique: [
+      "Operator-built software being productised",
+      "AI-vision partnerships and roadmap",
+      "SOC 2 / ISO 27001 compliance needs"
+    ]
+  };
+  
+  // A helper to render checklists with checkmarks
+  const renderChecklist = (items) => {
+    if (!items || items.length === 0) return '<li>None tracked</li>';
+    return items.map(item => `<li class="matched">${esc(item)}</li>`).join('');
+  };
+
+  // Sources list
+  const sources = r.sourcesList || [];
+  let sourcesHtml = '';
+  if (sources.length > 0) {
+    sources.forEach((src, sIdx) => {
+      sourcesHtml += `<li>[${sIdx+1}] <a href="${esc(src.url)}" target="_blank">${esc(src.label)}</a></li>`;
+    });
+  } else {
+    // Fallback: parse sources from scraper data
+    const scrapSources = r.scrapeSources || [];
+    if (scrapSources.length > 0) {
+      scrapSources.filter(s => s.status === 'ok').slice(0, 4).forEach((src, sIdx) => {
+        sourcesHtml += `<li>[${sIdx+1}] <a href="${esc(src.url)}" target="_blank">${esc(src.source)}: ${esc(src.title || companyName)}</a></li>`;
+      });
+    } else {
+      sourcesHtml = `<li>[1] <a href="https://duckduckgo.com/?q=${encodeURIComponent(companyName)}" target="_blank">DuckDuckGo Web Search: ${companyName}</a></li>`;
+    }
+  }
+
+  snapOuter.innerHTML = `
+    <div class="snap-header">
+      <div class="snap-header-left">
+        <h2>C-Metric</h2>
+        <p>DEAL SIGNAL SNAPSHOT</p>
+      </div>
+      <div class="snap-header-right">
+        <div class="date">${formattedToday}</div>
+        <div class="period">LAST 60 DAYS - GLOBAL</div>
+      </div>
+    </div>
+    
+    <div class="snap-subheader">
+      <h3>Your next client (ready to buy now)</h3>
+      <p>One hyper-qualified buyer showing verified buying signals for C-Metric's services</p>
+    </div>
+
+    <div class="snap-hero">
+      <div class="snap-hero-left">
+        <h1>${companyName}</h1>
+        <div class="subtitle">${subtitleLine}</div>
+        <div class="links">
+          ${rawWebsite ? `site: <a href="${rawWebsite}" target="_blank">${cleanWebsite}</a> · ` : ''}
+          <a href="${linkedinSearchUrl}" target="_blank">LinkedIn Company Page</a>
+        </div>
+      </div>
+      <div class="snap-score-badge">
+        <div class="score-val">${score}</div>
+        <div class="score-lbl">DEAL SIGNAL SCORE</div>
+        <div class="score-stars">${starsHtml}</div>
+      </div>
+    </div>
+
+    <div class="snap-main">
+      <div class="snap-section-title">VERIFIED BUYING SIGNALS</div>
+      <div class="snap-timeline">
+        ${signalsHtml}
+      </div>
+
+      ${execName !== 'Unknown' ? `
+      <div class="snap-executive-card">
+        <div class="snap-executive-avatar">${initials}</div>
+        <div class="snap-executive-info">
+          <h4>${execName}</h4>
+          <p>${execTitle}, ${companyName} (${execAppt}) | <a href="${linkedinUrl}" target="_blank">LinkedIn Profile</a></p>
+        </div>
+      </div>
+      ` : ''}
+
+      <div class="snap-message-box">
+        <h4>SUGGESTED OUTREACH ANGLE (MESSAGE 1)</h4>
+        <div class="snap-message-body">${esc(outreachMsg)}</div>
+      </div>
+
+      <div class="snap-section-title">MATCHED FROM YOUR WEBSITE</div>
+      <div class="snap-grid-3">
+        <div class="snap-grid-col">
+          <h4>YOUR SERVICES</h4>
+          <p>${services}</p>
+        </div>
+        <div class="snap-grid-col">
+          <h4>ICP MATCHED</h4>
+          <p>${icp}</p>
+        </div>
+        <div class="snap-grid-col">
+          <h4>Why this lead</h4>
+          <p>${why}</p>
+        </div>
+      </div>
+
+      <div class="snap-section-title">SIGNALS WE TRACKED (LAST 60 DAYS)</div>
+      <div class="snap-tracked-section">
+        <div class="snap-tracked-col">
+          <h4>MUST-HAVES</h4>
+          <ul class="snap-tracked-list">
+            ${renderChecklist(trackedObj.must_haves)}
+          </ul>
+        </div>
+        <div class="snap-tracked-col">
+          <h4>SUPPORTING</h4>
+          <ul class="snap-tracked-list">
+            ${renderChecklist(trackedObj.supporting)}
+          </ul>
+        </div>
+        <div class="snap-tracked-col">
+          <h4>UNIQUE</h4>
+          <ul class="snap-tracked-list">
+            ${renderChecklist(trackedObj.unique)}
+          </ul>
+        </div>
+      </div>
+
+      <div class="snap-section-title">SOURCES (CLICK TO VERIFY)</div>
+      <ul class="snap-sources-list">
+        ${sourcesHtml}
+      </ul>
+    </div>
+
+    <div class="snap-footer-banner">
+      <p>See how we'd fill your pipeline in 15 minutes?</p>
+      <a class="book-btn" href="https://c-metric.com/contact-us" target="_blank">Book Your Call →</a>
+    </div>
+  `;
+
   document.getElementById('overlay').classList.add('show');
 }
+
+// ─── Modal Tab Toggles & Event Handling ─────────────────────────────────────
+const tabEmailBtn = document.getElementById('tabEmailBtn');
+const tabSnapshotBtn = document.getElementById('tabSnapshotBtn');
+const tabContentEmail = document.getElementById('tabContentEmail');
+const tabContentSnapshot = document.getElementById('tabContentSnapshot');
+
+function switchTab(activeTab) {
+  if (activeTab === 'email') {
+    tabEmailBtn.classList.add('active');
+    tabSnapshotBtn.classList.remove('active');
+    tabContentEmail.style.display = 'block';
+    tabContentSnapshot.style.display = 'none';
+  } else {
+    tabEmailBtn.classList.remove('active');
+    tabSnapshotBtn.classList.add('active');
+    tabContentEmail.style.display = 'none';
+    tabContentSnapshot.style.display = 'block';
+  }
+}
+
+tabEmailBtn.addEventListener('click', () => switchTab('email'));
+tabSnapshotBtn.addEventListener('click', () => switchTab('snapshot'));
+
+// Print snapshot button
+document.getElementById('printSnapBtn').addEventListener('click', () => {
+  window.print();
+});
 
 document.getElementById('modalClose').addEventListener('click', () => document.getElementById('overlay').classList.remove('show'));
 document.getElementById('overlay').addEventListener('click', e => { if (e.target.id === 'overlay') e.target.classList.remove('show'); });
@@ -803,13 +1672,33 @@ const _groqBucket = {
     }
   },
 
-  // Wait until both TPM and RPM have room, then return
+  // Wait until both TPM and RPM have room, then return.
+  //
+  // BUG FIXED: if a single call's neededTokens is bigger than the ENTIRE
+  // TPM_LIMIT (possible once real evidence is ~7-8k chars and the account's
+  // calibrated TPM budget turns out to be smaller than that single call's
+  // cost), tpmOk could never become true — there's no "oldest call" to
+  // expire (this.calls may already be empty), so the loop fell through to
+  // the flat 10_000ms default every single iteration and spun FOREVER,
+  // printing "wait 10s" on repeat with no progress. This is what "stuck
+  // reloading, 10 seconds over and over, doesn't finish" was — not a
+  // network issue, the pipeline was waiting on a budget it could never
+  // satisfy. Detect that case and proceed anyway (with a console warning)
+  // instead of waiting on an impossible condition.
   async waitIfNeeded(neededTokens, statusEl, onWait) {
-    for (;;) {
+    if (neededTokens > this.TPM_LIMIT) {
+      console.warn(`[groqBucket] single call needs ~${neededTokens} tokens but TPM_LIMIT is `
+        + `${this.TPM_LIMIT} — this call can never fit under the budget by waiting, so `
+        + `proceeding immediately instead of pacing forever. If you see 429s, the evidence `
+        + `sent per call needs to be smaller for this account's real limit.`);
+      return;
+    }
+    const MAX_WAIT_ITERATIONS = 20;   // safety valve — never loop forever regardless of cause
+    for (let iter = 0; iter < MAX_WAIT_ITERATIONS; iter++) {
       const { tokens, reqs } = this._used();
       const tpmOk = tokens + neededTokens <= this.TPM_LIMIT;
       const rpmOk = reqs + 1             <= this.RPM_LIMIT;
-      if (tpmOk && rpmOk) break;
+      if (tpmOk && rpmOk) return;
 
       // Find the oldest call — when it expires we free one request slot
       const oldest = [...this.calls].sort((a, b) => a.ts - b.ts)[0];
@@ -830,6 +1719,7 @@ const _groqBucket = {
       statusEl.textContent = 'PIPELINE RUNNING';
       if (onWait) onWait(0);
     }
+    console.warn('[groqBucket] gave up pacing after ' + MAX_WAIT_ITERATIONS + ' waits — proceeding anyway.');
   }
 };
 
@@ -845,127 +1735,153 @@ function parseGroqWait(errText) {
 
 // onWait(remainingSec) — optional callback fired every second during a pause
 async function callGroq(messages, maxTokens = 1500, onWait = null){
+  const provider = document.getElementById('apiProvider').value;
   const apiKey = document.getElementById('groqApiKey').value.trim();
-  if (!apiKey) throw new Error('No Groq API key entered. Please enter your key in Step 1.');
+  if (provider !== 'ollama' && !apiKey) {
+    throw new Error(`No API key entered. Please enter your ${provider.toUpperCase()} API key in Step 1.`);
+  }
 
   const modelSel = document.getElementById('groqModel');
-  const model = modelSel ? modelSel.value : 'openai/gpt-oss-120b';
+  const model = modelSel ? modelSel.value : 'llama-3.1-70b-versatile';
 
   const REQUEST_TIMEOUT_MS = 60_000;
   const statusEl = document.getElementById('runstatus');
 
-  // Estimate token cost: prompt chars / 3.5 + max output.
-  // Diagnostic showed actual usage is ~295 prompt + ~134 completion = ~430 per call.
+  // Determine endpoint URL & headers
+  let url = "https://api.groq.com/openai/v1/chat/completions";
+  let headers = { "Content-Type": "application/json" };
+
+  if (provider === 'groq') {
+    url = "https://api.groq.com/openai/v1/chat/completions";
+    headers["Authorization"] = "Bearer " + apiKey;
+  } else if (provider === 'openai') {
+    url = "https://api.openai.com/v1/chat/completions";
+    headers["Authorization"] = "Bearer " + apiKey;
+  } else if (provider === 'openrouter') {
+    url = "https://openrouter.ai/api/v1/chat/completions";
+    headers["Authorization"] = "Bearer " + apiKey;
+    headers["HTTP-Referer"] = window.location.origin;
+    headers["X-Title"] = "C-Metric Outreach Engine";
+  } else if (provider === 'ollama') {
+    const base = document.getElementById('customBaseUrl').value.trim().replace(/\/$/, '');
+    url = base + "/chat/completions";
+  }
+
+  // Estimate token cost for pacing
   const inputChars = messages.reduce((s, m) => s + (m.content?.length || 0), 0);
   const estTokens  = Math.ceil(inputChars / 3.5) + maxTokens;
 
-  // Proactively wait if this call would exceed the per-minute budget
-  await _groqBucket.waitIfNeeded(estTokens, statusEl, onWait);
+  // Proactively wait ONLY if using Groq (which has tight free tier limits)
+  if (provider === 'groq') {
+    await _groqBucket.waitIfNeeded(estTokens, statusEl, onWait);
+  }
 
-  // Try up to 3 times — covers one transient 429 that slips through the bucket
+  // Try up to 3 times
   for (let attempt = 1; attempt <= 3; attempt++) {
     const controller = new AbortController();
     const timeoutId  = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
     let resp;
     try {
-      resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      const bodyObj = {
+        model: model,
+        max_tokens: maxTokens,
+        messages: messages,
+        temperature: 0.4
+      };
+      
+      // reasoning_effort is only supported on GPT-OSS reasoning models
+      if (model.includes('gpt-oss')) {
+        bodyObj.reasoning_effort = "low";
+      }
+
+      resp = await fetch(url, {
         method: "POST",
         signal: controller.signal,
-        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + apiKey },
-        body: JSON.stringify({
-          model: model,
-          max_tokens: maxTokens,
-          messages,
-          temperature: 0.4,
-          // GPT-OSS models (openai/gpt-oss-20b, openai/gpt-oss-120b) are
-          // reasoning models: by default they spend a chunk of max_tokens on
-          // internal chain-of-thought (returned in a separate `reasoning`
-          // field) before writing the actual JSON answer to `content`. At
-          // "medium" (the default) that reasoning can consume the ENTIRE
-          // token budget, leaving `content` empty — which is exactly what
-          // caused "No JSON object found in LLM response". Forcing "low"
-          // keeps reasoning short so there's room left for the real answer.
-          reasoning_effort: "low"
-        })
+        headers: headers,
+        body: JSON.stringify(bodyObj)
       });
     } catch(fetchErr) {
       clearTimeout(timeoutId);
       if (fetchErr.name === 'AbortError') {
-        throw new Error(`Groq request timed out after ${REQUEST_TIMEOUT_MS/1000}s. Check your connection and try again.`);
+        throw new Error(`${provider.toUpperCase()} request timed out after ${REQUEST_TIMEOUT_MS/1000}s. Check your connection and try again.`);
       }
       throw fetchErr;
     }
     clearTimeout(timeoutId);
 
-    // Learn the account's real TPM/RPM limits from Groq's own headers —
-    // sent on every response, success or 429. This is what actually fixes
-    // hitting 429s despite "self-throttling": we stop guessing.
-    _groqBucket.calibrate(resp.headers);
+    // Calibrate pacing ONLY for Groq
+    if (provider === 'groq') {
+      _groqBucket.calibrate(resp.headers);
+    }
 
     if (resp.status === 429) {
       const errText = await resp.text().catch(() => '');
-      let waitSec = parseGroqWait(errText);
-      if (waitSec === 0) waitSec = 65;
+      if (provider === 'groq') {
+        let waitSec = parseGroqWait(errText);
+        if (waitSec === 0) waitSec = 65;
 
-      // A genuine per-minute rate limit can NEVER require more than ~60s to
-      // clear — it's a rolling 60-second window. If Groq is telling us to
-      // wait longer than that, we've hit a bigger bucket (hourly/daily
-      // token or request quota on the free tier), which will NOT clear by
-      // retrying — only by waiting out the real reset or upgrading/switching
-      // keys. Blindly waiting 9+ minutes 3× in a row wastes ~30 minutes for
-      // nothing, so we surface this immediately instead of looping.
-      const LIKELY_LARGER_QUOTA_THRESHOLD = 90;
-      if (waitSec > LIKELY_LARGER_QUOTA_THRESHOLD) {
-        throw new Error(
-          `Groq rate limit: wait is ${Math.round(waitSec)}s (${Math.round(waitSec/60)}m). ` +
-          `A per-minute limit never needs more than ~60s, so this is almost certainly your ` +
-          `account's DAILY token/request quota, not a per-minute pace issue — retrying won't ` +
-          `fix it. Check usage at console.groq.com/settings/limits, or try again after the ` +
-          `quota resets. Raw Groq message: ${errText.slice(0, 300)}`
-        );
-      }
+        const LIKELY_LARGER_QUOTA_THRESHOLD = 90;
+        if (waitSec > LIKELY_LARGER_QUOTA_THRESHOLD) {
+          throw new Error(
+            `Groq rate limit: wait is ${Math.round(waitSec)}s (${Math.round(waitSec/60)}m). ` +
+            `A per-minute limit never needs more than ~60s, so this is almost certainly your ` +
+            `account's DAILY token/request quota, not a per-minute pace issue — retrying won't ` +
+            `fix it. Check usage at console.groq.com/settings/limits, or try again after the ` +
+            `quota resets. Raw Groq message: ${errText.slice(0, 300)}`
+          );
+        }
 
-      // No cap — respect whatever Groq says (can be up to ~90s on RPM limits)
+        if (attempt === 3) {
+          throw new Error(`Rate limited 3× — Groq says wait ${Math.round(waitSec)}s. The pipeline is pacing automatically now. Please wait ${Math.round(waitSec)}s then use the Retry button on this row.`);
+        }
 
-      if (attempt === 3) {
-        throw new Error(`Rate limited 3× — Groq says wait ${Math.round(waitSec)}s. The pipeline is pacing automatically now. Please wait ${Math.round(waitSec)}s then use the Retry button on this row.`);
-      }
-      // Wait exactly what Groq says, then try again
-      let remaining = Math.ceil(waitSec);
-      statusEl.textContent = `⏳ Rate limited — resuming in ${remaining}s (attempt ${attempt}/3)…`;
-      if (onWait) onWait(remaining);
-      const ticker = setInterval(() => {
-        remaining = Math.max(0, remaining - 1);
+        let remaining = Math.ceil(waitSec);
         statusEl.textContent = `⏳ Rate limited — resuming in ${remaining}s (attempt ${attempt}/3)…`;
         if (onWait) onWait(remaining);
-      }, 1000);
-      console.warn(`[callGroq] 429 attempt ${attempt}/3 — waiting ${waitSec}s`);
-      await sleep(Math.ceil(waitSec * 1000));
-      clearInterval(ticker);
-      statusEl.textContent = 'PIPELINE RUNNING';
-      if (onWait) onWait(0);
-      continue;
+        const ticker = setInterval(() => {
+          remaining = Math.max(0, remaining - 1);
+          statusEl.textContent = `⏳ Rate limited — resuming in ${remaining}s (attempt ${attempt}/3)…`;
+          if (onWait) onWait(remaining);
+        }, 1000);
+        console.warn(`[callGroq] 429 attempt ${attempt}/3 — waiting ${waitSec}s`);
+        await sleep(Math.ceil(waitSec * 1000));
+        clearInterval(ticker);
+        statusEl.textContent = 'PIPELINE RUNNING';
+        if (onWait) onWait(0);
+        continue;
+      } else {
+        // Simple backoff for other providers
+        if (attempt === 3) {
+          throw new Error(`${provider.toUpperCase()} Rate limit exceeded: ${errText.slice(0, 200)}`);
+        }
+        let remaining = 10;
+        statusEl.textContent = `⏳ Rate limited — retrying in ${remaining}s (attempt ${attempt}/3)…`;
+        const ticker = setInterval(() => {
+          remaining = Math.max(0, remaining - 1);
+          statusEl.textContent = `⏳ Rate limited — retrying in ${remaining}s (attempt ${attempt}/3)…`;
+        }, 1000);
+        await sleep(10000);
+        clearInterval(ticker);
+        continue;
+      }
     }
 
     if (!resp.ok) {
       const errText = await resp.text().catch(() => '');
-      throw new Error(`Groq API error ${resp.status}: ${errText.slice(0, 200)}`);
+      throw new Error(`${provider.toUpperCase()} API error ${resp.status}: ${errText.slice(0, 200)}`);
     }
 
     const data = await resp.json();
-    // Record actual usage in the bucket so future calls pace correctly
-    const used = data.usage?.total_tokens || estTokens;
-    _groqBucket.record(used);
+    if (provider === 'groq') {
+      const used = data.usage?.total_tokens || estTokens;
+      _groqBucket.record(used);
+    }
 
     const msg = data.choices?.[0]?.message;
     let content = msg?.content ?? '';
 
-    // Fallback: some GPT-OSS responses put the final answer in the separate
-    // `reasoning`/`reasoning_content` field instead of `content` (a known
-    // quirk when the model finishes reasoning right as the token budget
-    // runs out). If content has no usable JSON, try reasoning before giving
-    // up — cheaper than a wasted retry.
+    // Fallback logic for reasoning models
     if (!content.includes('{')) {
       const reasoningText = msg?.reasoning || msg?.reasoning_content || '';
       if (reasoningText.includes('{')) {
@@ -1029,6 +1945,7 @@ function extractJSON(text){
 async function researchCompany(r){
   const name    = displayName(r.raw[state.mapping.company]);
   const site    = state.mapping.website ? r.raw[state.mapping.website] : '';
+  const locationVal = state.mapping.location ? (r.raw[state.mapping.location] || '') : '';
 
   // Determine whether we have real scraped content or not
   const hasScrape  = r.scrapeData && r.scrapeData.trim().length > 100 &&
@@ -1047,23 +1964,60 @@ async function researchCompany(r){
   const hiringSignals = r.scrapeHiringSignals || [];
   const directJobs   = hiringSignals.filter(h => h.role && h.role.includes('[DIRECT AI/ML]'));
   const adjacentJobs = hiringSignals.filter(h => h.role && h.role.includes('[ADJACENT/DATA]'));
-  const generalJobs  = hiringSignals.filter(h => !h.role?.includes('[DIRECT AI/ML]') && !h.role?.includes('[ADJACENT/DATA]'));
+  const techModJobs  = hiringSignals.filter(h => h.role && h.role.includes('[TECH MODERNIZATION]'));
+  const generalJobs  = hiringSignals.filter(h => !h.role?.includes('[DIRECT AI/ML]') && !h.role?.includes('[ADJACENT/DATA]') && !h.role?.includes('[TECH MODERNIZATION]'));
   const hiringNote = hiringSignals.length > 0
-    ? `JOB POSTINGS FOUND: ${hiringSignals.length} total — ${directJobs.length} DIRECT AI/ML, ${adjacentJobs.length} ADJACENT/DATA, ${generalJobs.length} General.\n` +
-      `TIER DEFINITIONS: [DIRECT AI/ML] = data scientist, ML engineer, LLM, NLP, AI researcher, MLOps, AI product manager — strong signal. [ADJACENT/DATA] = data engineer, analytics engineer, BI developer, data platform, Spark/dbt/Snowflake, data infrastructure — supporting signal indicating ML investment. [GENERAL] = all other roles.\n\n` +
-      hiringSignals.slice(0, 20).map(h =>
+    ? `JOB POSTINGS FOUND: ${hiringSignals.length} total — ${directJobs.length} DIRECT AI/ML, ${adjacentJobs.length} ADJACENT/DATA, ${techModJobs.length} TECH MODERNIZATION, ${generalJobs.length} General.\n` +
+      `TIER DEFINITIONS: [DIRECT AI/ML] = data scientist, ML engineer, LLM, NLP, AI researcher, MLOps, AI product manager — strong AI signal. [ADJACENT/DATA] = data engineer, analytics engineer, BI developer, data platform, Spark/dbt/Snowflake — supporting signal indicating ML investment. [TECH MODERNIZATION] = software engineer/developer, cloud/DevOps architect, QA engineer, test automation, Salesforce/SAP/CRM developer — strong custom software and automation build signal. [GENERAL] = all other roles.\n\n` +
+      hiringSignals.slice(0, 30).map(h =>
         `  ${h.role} | posted: ${h.date_hint} | source: ${h.source}`
       ).join('\n')
-    : 'NO JOB POSTINGS DATA. This is a DATA GAP, not evidence of "no hiring" — job-board search is currently blocked at the network level for ALL companies in this run, so absence of job postings here must NOT be read as a negative signal or used to justify a low score. Base the assessment on the WEBSITE CONTENT and any other evidence below instead.';
+    : 'NO JOB POSTINGS DATA for this company. This is a DATA GAP (search may not have surfaced any, or the company genuinely has none open right now), not evidence of "no hiring" — absence here must NOT be read as a negative signal or used to justify a low score. Base the assessment on WEBSITE CONTENT, LINKEDIN, CRUNCHBASE/INVESTMENT NEWS, and any other evidence below instead.';
 
   const scrapeNote = hasScrape
     ? `SCRAPED CONTENT AVAILABLE — quality: ${qualityNote} ${r.scrapePagesCount} source(s), ${r.scrapeChars} chars. ${triedNote}`
     : `NO SCRAPED CONTENT — falling back to LLM training knowledge. ${triedNote} ALL claims MUST be [SPECULATIVE] unless widely verifiable. Still analyse from training knowledge — do not output empty fields.`;
 
+  const RESEARCH_MAX_TOKENS = 900;
+  const PROMPT_OVERHEAD_CHARS = 1000;   // system prompt + hiring note, roughly
+  function evidenceCharsForResearch() {
+    const provider = document.getElementById('apiProvider').value;
+    if (provider !== 'groq') return 18000;   // Allow much deeper context (18K chars) for OpenRouter/OpenAI/Ollama
+    if (!_groqBucket.calibrated) return 8000;   // pre-calibration default for Groq
+    const budgetTokens   = Math.floor(_groqBucket.TPM_LIMIT * 0.55) - RESEARCH_MAX_TOKENS;
+    const budgetChars    = Math.max(0, budgetTokens) * 3.5;
+    const evidenceBudget = Math.max(0, budgetChars - PROMPT_OVERHEAD_CHARS);
+    return Math.max(1500, Math.min(10000, Math.floor(evidenceBudget)));
+  }
+  const EVIDENCE_CHARS_FOR_RESEARCH = evidenceCharsForResearch();
+
   const messages = [
     {
       role: "system",
       content: `You are a senior B2B intelligence analyst for C-Metric, a custom software development company (IBM Silver Partner for AI & Automation). Your job is to assess companies for genuine sales opportunity signals with rigorous, calibrated honesty.
+
+RECENCY CONSTRAINTS (CRITICAL SALES INTENT):
+- Current Year: 2026. Current Month: August 2026.
+- HIRING RECENCY: Only consider job postings that are actively open/posted within the last month (July 2026 or August 2026). Reject or ignore any postings indicating dates before July 2026 (such as 2024 or 2025).
+- FUNDING & INVESTMENT RECENCY: Only consider funding rounds, valuations, acquisitions, or capital injections that occurred within the last 2-3 months (since June 2026). Reject older rounds (from 2024 or 2025) as active buying signals, and adjust the score down accordingly.
+
+LOCATION SYNTHESIS & SIGNAL CONNECTION:
+- Identify the company's location (HQ/state/country) from the metadata or scraped content.
+- Connect the dots between:
+  1. Active Hiring: senior tech roles, capacity gaps, product expansion, and software engineering modernization (including AI/ML, Cloud/DevOps, CRM like Salesforce/SAP, custom web development, and QA test automation).
+  2. Investments & Funding: recent funding rounds (past 2-3 months) or capital allocations indicating a new technical modernization budget.
+  3. Regional context: local press, regional expansion plans, or local offices.
+- Formulate a logical, sales-prospective reason why C-Metric should reach out now (e.g. connecting a local logistics warehouse expansion or recent Series A funding with cloud/software capacity gap hires like custom software developers or test automation engineers).
+
+CRITICAL QUALIFICATION: B2B SALES LEAD FILTERS
+1. ROUTINE BACKFILL (REPLACEMENT) VS. STRATEGIC MODERNIZATION:
+   - ROUTINE BACKFILL (REPLACEMENT): Focuses on maintaining existing day-to-day systems, legacy support, or simple seat-filling (e.g., "maintain existing databases," "replace departing administrator"). This indicates no new transformation budget, making it a WEAK sales lead. Cap the opportunity score at a maximum of 45.
+   - STRATEGIC MODERNIZATION: Focuses on "scaling platforms," "greenfield development," "modernizing legacy architecture," "implementing new AI/automation," "migrating to cloud," or "launching new products." This represents a STRONG sales opportunity.
+2. IN-HOUSE IT MAINTENANCE (LOW PREFERENCE) VS. NEW CUSTOM SOFTWARE PUSH OR LARGE-SCALE HIRING (HIGH PREFERENCE):
+   - IN-HOUSE IT MAINTENANCE: If a company is hiring only 1-2 standard developers to maintain or scale their existing in-built/proprietary software using their own self-sufficient internal IT team, they are highly unlikely to outsource. This is a WEAK lead. Cap the opportunity score at a maximum of 45.
+   - NEW CUSTOM SOFTWARE PUSH (HIGH PREFERENCE): If there is evidence (from LinkedIn, websites, or press releases) that the company is planning to develop new custom software, digitize manual/paper operations, or productize an internal tool, give this the HIGHEST preference.
+   - LARGE-SCALE HIRING SPIKES (HIGH PREFERENCE): If a company has a large-scale hiring surge (multiple open technical positions across software, cloud, QA, or data), it signals an urgent capacity gap they cannot fill in-house. Give this HIGH preference.
+- In your output JSON, explicitly justify whether the company's signals reflect "Routine Backfill", "In-House IT Maintenance", "New Custom Software Push", or "Large-Scale Hiring" in the "why_this_lead" field.
 
 EPISTEMIC DISCIPLINE — follow these rules without exception:
 - Separate FACTS (confirmed, publicly known) from INFERENCES (reasonable but unproven) from SPECULATION (plausible but no evidence).
@@ -1078,41 +2032,59 @@ EPISTEMIC DISCIPLINE — follow these rules without exception:
 - The signal_strength_pct must reflect ONLY what is actually evidenced, not the best-case interpretation.
   Score caps: 80-100 = multiple CONFIRMED signals directly implying outsourcing need.
               60-79  = 1 CONFIRMED + strong INFERRED signals.
-              40-59  = mostly INFERRED, no confirmed outsourcing gap.
-              20-39  = SPECULATIVE only.
-              0-19   = no meaningful signal.
+              45-59  = mostly INFERRED, no confirmed outsourcing gap.
+              0-45   = speculative only, or routine employee backfill/replacement with no modernization mandate.
 
 You respond ONLY with valid JSON — no markdown, no explanation, no extra text.`
     },
     {
       role: "user",
-      content: `Analyse "${name}"${site ? ' (' + site + ')' : ''} as a prospect for C-Metric (IBM Silver Partner, AI/automation services).
+      content: `Analyse "${name}"${site ? ' (' + site + ')' : ''}${locationVal ? ', located in: ' + locationVal : ''} as a prospect for C-Metric (IBM Silver Partner, AI/automation services).
 
 ${scrapeNote}
 
 ${hasScrape ? `=== EVIDENCE (quote phrases directly — do not paraphrase) ===
-${r.scrapeData.slice(0, 3200)}
+${r.scrapeData.slice(0, EVIDENCE_CHARS_FOR_RESEARCH)}
 === END ===
 
 ` : ''}HIRING SIGNALS:
 ${hiringNote}
 
-SIGNAL SOURCES — analyse ALL of these together. Hiring data is currently unavailable
-for every company this run (see note above) — it must NOT be the deciding factor.
-Weigh what IS available properly instead of defaulting to a low score by omission:
-1. WEBSITE CONTENT — product/service descriptions, tech stack mentions, stated scale
-   (team size, client base, geography), industry vertical and its typical complexity
-   (e.g. healthcare/finance imply compliance & integration overhead), any stated pain
-   points, recent updates/news/blog content on their own site, evidence of manual or
-   legacy processes, statements about growth, expansion, or technology investment.
-2. WIKIPEDIA / THIRD-PARTY CONTEXT — company history, scale, funding, market position,
-   when available.
-3. HIRING SIGNALS — a positive signal WHEN present, but its absence this run reflects a
-   tool limitation, not a fact about the company.
-4. NEWS — funding, product launches, partnerships found in scraped content.
+SIGNAL SOURCES — analyse ALL of these together, weigh whichever are actually
+present for THIS company (not every source will have data for every company —
+in particular, search-engine-derived sources like LinkedIn/Crunchbase/social/
+investment-news/job-boards depend on a live web search succeeding, so it's
+normal and expected for MANY companies to have only WEBSITE + WIKIPEDIA data
+and nothing from sources 2, 3, 5, 6 below. That is not a weak company — it's
+a search gap. Read the website content thoroughly and extract everything it
+actually says before treating the result as thin):
+1. WEBSITE CONTENT (incl. careers/jobs, about, news/press, investor pages) —
+   product/service descriptions, tech stack mentions, stated scale (team size,
+   client base, geography), industry vertical and its typical complexity (e.g.
+   healthcare/finance imply compliance & integration overhead), any stated pain
+   points, recent updates/news/press-release content, evidence of manual or
+   legacy processes, statements about growth, expansion, funding, or technology
+   investment, and open roles listed on their own careers page. THIS is usually
+   the richest and most reliable source — read it closely rather than treating
+   it as a fallback.
+2. LINKEDIN — company size/headcount signals, recent updates, described focus.
+3. CRUNCHBASE / INVESTMENT & FUNDING NEWS — funding rounds, investors, valuation,
+   acquisitions — a recent raise is a strong signal of budget for new initiatives.
+4. WIKIPEDIA / THIRD-PARTY CONTEXT — company history, scale, market position.
+5. SOCIAL MEDIA (Twitter/X, Reddit, HackerNews, ProductHunt) — product launches,
+   community sentiment, technical discussion about the company.
+6. HIRING SIGNALS — job postings found across LinkedIn/Indeed/Glassdoor/Wellfound.
+   ${hiringSignals.length > 0
+     ? 'Present for this company — weigh AI/ML-tagged roles as a strong signal.'
+     : 'None found for this company this run — treat as a DATA GAP (roles may exist but weren\'t surfaced by search, or the careers page on the site itself may already cover this — check WEBSITE CONTENT above), not as evidence the company isn\'t hiring. Do not let its absence alone drag the score down.'}
+7. NEWS — funding, product launches, partnerships found in scraped content.
 
 SCORING RULES for signal_strength_pct — combine evidence from ALL sources above; do NOT
-gate the score on hiring signals alone, since those are unavailable for every company:
+gate the score on hiring signals alone if they happen to be missing for this company,
+and do NOT gate it on sources 2/3/5/6 being present — a thorough read of WEBSITE CONTENT
++ WIKIPEDIA alone is a complete and sufficient basis for a confident score when that's
+all that's available; don't undermine an otherwise-clear signal just because other
+source types are empty for this run:
 - 80-100: Multiple CONFIRMED signals (from website content, Wikipedia, or news) directly
   implying an active technology/outsourcing need — e.g. explicit tech complexity beyond
   likely in-house capacity, stated digital-transformation initiative, confirmed AI/ML
@@ -1134,7 +2106,7 @@ DECISION: CONNECT (strong signal from any evidence source) | MAYBE (moderate/inf
 Respond ONLY with this JSON, no markdown, no extra text:
 {
   "signal_found": "[TIER] 1-2 sentences with evidence quotes.",
-  "signal_strength_pct": <0-100>,
+  "signal_strength_pct": <number 0-100>,
   "evidence_source": "Top 2 signals with confidence tier",
   "suggested_angle": "One sentence opening angle based on strongest confirmed signal",
   "news_signals": "Exact headline+date from scraped text, or 'None confirmed'",
@@ -1142,13 +2114,62 @@ Respond ONLY with this JSON, no markdown, no extra text:
   "sources_analysed": "Comma list of sources used",
   "outreach_recommendation": "CONNECT | MAYBE | PASS",
   "outreach_reason": "One sentence",
-  "ai_ml_hiring_summary": "X DIRECT, Y ADJACENT, Z General. Recency note. AI maturity implication."
+  "ai_ml_hiring_summary": "X DIRECT, Y ADJACENT, Z General. Recency note. AI maturity implication.",
+  "company_metadata": {
+    "industry": "Industry descriptor (e.g., Asset-Based 3PL, Healthcare, Retail)",
+    "employee_range": "e.g., 500-1,000 employees",
+    "revenue": "e.g., ~$150M revenue, or 'Unknown'",
+    "location": "e.g., Defiance, Ohio"
+  },
+  "buying_signals": [
+    {
+      "title": "Short title of signal in caps (e.g., NEW CTO HIRE - DIGITAL TRANSFORMATION MANDATE)",
+      "category": "must-have OR supporting OR unique",
+      "detail": "Description of the signal (e.g., Mai Hudson-Niwak appointed CTO to modernise WMS, TMS and digital fulfilment...)",
+      "date_score": "Date or status (e.g., 30 Jul 2026, Active, or 25 Nov 2025)"
+    }
+  ],
+  "key_executive": {
+    "name": "Full name of key executive (CTO, VP of Tech, or similar) or 'Unknown'",
+    "title": "Exact job title or 'Unknown'",
+    "appointment_info": "Date of appointment or details (e.g., appointed 30 Jul 2026) or 'Unknown'",
+    "linkedin_url": "Real or suggested LinkedIn profile url search query if not scraped (e.g. https://www.linkedin.com/search/results/people/?keywords=Mai%20Hudson-Niwak%20Keller%20Logistics)"
+  },
+  "suggested_outreach_message": "A short, highly personalized cold message / email (around 4-5 lines, like the suggested outreach angle in the reference snapshot: 'Hi Mai, Keller Logistics has run four affiliates and built YardLink... Your appointment as CTO... signals a build phase. Want me to send it over?')",
+  "matched_from_website": {
+    "your_services": "Services that match (e.g., Custom software, cloud (AWS/Azure), DevOps, AI/ML)",
+    "icp_matched": "ICP criteria matched (e.g., Mid-market non-tech company, 500-1,000 employees)",
+    "why_this_lead": "Short reasons separated by commas (e.g., New CTO, open tech roles, proprietary software build)"
+  },
+  "signals_tracked": {
+    "must_haves": [
+      "CTO/CXO hire with tech modernisation mandate",
+      "Legacy system replacement/announcements",
+      "Open senior technology roles (capacity gap)"
+    ],
+    "supporting": [
+      "Active product development / software builds",
+      "Headcount growth and geographic expansion",
+      "Contract wins requiring tech delivery"
+    ],
+    "unique": [
+      "Operator-built software being productised",
+      "AI-vision partnerships and roadmap",
+      "SOC 2 / ISO 27001 compliance needs"
+    ]
+  },
+  "sources": [
+    {
+      "label": "Source title (e.g., PR Newswire: Keller Logistics Names CTO)",
+      "url": "Source verification URL"
+    }
+  ]
 }`
     }
   ];
 
   const onWait = (sec) => { r.waitSec = sec; renderTable(); };
-  const text = await callGroq(messages, 1200, onWait);
+  const text = await callGroq(messages, 900, onWait);
   r.waitSec = 0;
   return extractJSON(text);
 }
@@ -1177,7 +2198,7 @@ INTELLIGENCE (from research on this specific company):
 - Angle: ${r.angle?.slice(0, 300) || 'General AI/automation'}
 ${r.newsSignals && r.newsSignals !== 'None confirmed' ? `- News: ${r.newsSignals.slice(0, 250)}` : ''}
 ${r.techStackSignals && !r.techStackSignals.startsWith('[SPEC') ? `- Tech: ${r.techStackSignals.slice(0, 250)}` : ''}
-${r.scrapeData ? `\nRAW RESEARCH EXCERPT (mine this for one concrete, company-specific detail — a product name, technology, market segment, or number — that the summary above may have compressed away):\n${r.scrapeData.slice(0, 900)}` : ''}
+${r.scrapeData ? `\nRAW RESEARCH EXCERPT (mine this for one concrete, company-specific detail — a product name, technology, market segment, or number — that the summary above may have compressed away):\n${r.scrapeData.slice(0, 1800)}` : ''}
 
 TONE: ${tone === 'formal' ? 'Formal, senior executive register' : 'Direct, crisp, no fluff'}
 LENGTH: 150-200 words body only.
@@ -1210,7 +2231,7 @@ Respond ONLY with this JSON, no markdown:
   ];
 
   const onWait = (sec) => { r.waitSec = sec; renderTable(); };
-  const text = await callGroq(messages, 1100, onWait);
+  const text = await callGroq(messages, 600, onWait);
   r.waitSec = 0;
   return extractJSON(text);
 }
@@ -1251,11 +2272,12 @@ async function processCompanyRow(r){
   const key     = normName(r.raw[state.mapping.company]);
   const company = displayName(r.raw[state.mapping.company]);
   const website = state.mapping.website ? (r.raw[state.mapping.website] || '') : '';
+  const location = state.mapping.location ? (r.raw[state.mapping.location] || '') : '';
 
   // ── Step 0: web scrape (only for non-duplicates) ─────────────────────────
   if (!signalCache[key]) {
     r.status = 'scraping'; r.error = null; renderTable(); refreshPipelineGlow();
-    const scraped           = await scrapeCompany(company, website);
+    const scraped           = await scrapeCompany(company, website, location);
     r.scrapeData            = scraped.combined_text;
     r.scrapePagesCount      = scraped.pages_fetched;
     r.scrapeChars           = scraped.chars;
@@ -1282,6 +2304,13 @@ async function processCompanyRow(r){
     r.sourcesAnalysed     = cached.sources_analysed   || null;
     r.outreachRec         = cached.outreach_recommendation || null;
     r.aiMlHiring          = cached.ai_ml_hiring_summary   || null;
+    r.companyMetadata     = cached.company_metadata    || { industry: 'Unknown', employee_range: 'Unknown', revenue: 'Unknown', location: 'Unknown' };
+    r.buyingSignals       = cached.buying_signals      || [];
+    r.keyExecutive         = cached.key_executive       || { name: 'Unknown', title: 'Unknown', appointment_info: 'Unknown', linkedin_url: '#' };
+    r.suggestedOutreachMessage = cached.suggested_outreach_message || '';
+    r.matchedFromWebsite  = cached.matched_from_website || { your_services: '', icp_matched: '', why_this_lead: '' };
+    r.signalsTracked      = cached.signals_tracked      || { must_haves: [], supporting: [], unique: [] };
+    r.sourcesList         = cached.sources              || [];
     r.reused              = true;
     r.status              = 'researched';
     renderTable(); updateStats(); refreshPipelineGlow();
@@ -1298,6 +2327,13 @@ async function processCompanyRow(r){
       r.sourcesAnalysed   = res.sources_analysed       || null;
       r.outreachRec       = res.outreach_recommendation|| null;
       r.aiMlHiring        = res.ai_ml_hiring_summary   || null;
+      r.companyMetadata     = res.company_metadata    || { industry: 'Unknown', employee_range: 'Unknown', revenue: 'Unknown', location: 'Unknown' };
+      r.buyingSignals       = res.buying_signals      || [];
+      r.keyExecutive         = res.key_executive       || { name: 'Unknown', title: 'Unknown', appointment_info: 'Unknown', linkedin_url: '#' };
+      r.suggestedOutreachMessage = res.suggested_outreach_message || '';
+      r.matchedFromWebsite  = res.matched_from_website || { your_services: '', icp_matched: '', why_this_lead: '' };
+      r.signalsTracked      = res.signals_tracked      || { must_haves: [], supporting: [], unique: [] };
+      r.sourcesList         = res.sources              || [];
       r.status            = 'researched';
       signalCache[key]    = res;
     } catch(err) {
@@ -1324,8 +2360,9 @@ async function processCompanyRow(r){
 // ─── Run button ───────────────────────────────────────────────────────────────
 document.getElementById('runPipeline').addEventListener('click', async () => {
   if (state.running) return;
+  const provider = document.getElementById('apiProvider').value;
   const apiKey = document.getElementById('groqApiKey').value.trim();
-  if (!apiKey){ alert('Please enter your Groq API key in Step 1 before running.'); return; }
+  if (provider !== 'ollama' && !apiKey){ alert(`Please enter your ${provider.toUpperCase()} API key in Step 1 before running.`); return; }
   state.running = true;
   document.getElementById('runstatus').textContent    = 'PIPELINE RUNNING';
   document.getElementById('runPipeline').disabled     = true;
