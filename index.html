@@ -795,6 +795,10 @@
       <label>Ollama Base URL</label>
       <input type="text" id="customBaseUrl" value="http://localhost:11434/v1" placeholder="http://localhost:11434/v1" style="margin-top:6px;">
     </div>
+    <div class="apikey-row" style="margin-bottom:14px;">
+      <label>Brave Search API key (optional — recommended to bypass DuckDuckGo blocks on Render/Railway) <a href="https://api.search.brave.com/register" target="_blank" style="font-size:11px; text-decoration:underline;">get yours free</a></label>
+      <input type="password" id="braveApiKey" placeholder="bsk_…" autocomplete="off" style="margin-top:6px;">
+    </div>
     <div class="footnote" style="margin-bottom:14px;">Choose your LLM provider. If your Groq key is rate-limited, swap to OpenAI or OpenRouter (which offers free models like Llama 3.1 8B or Gemma 2 9B) or run unlimited local models via Ollama.</div>
     <div class="backend-row">
       <label>Scraper backend</label>
@@ -1063,10 +1067,16 @@ async function scrapeCompany(companyName, websiteUrl, locationValue){
     return { ...empty, errors:['Backend offline — using LLM training knowledge only.'] };
   }
   try {
+    const braveKey = document.getElementById('braveApiKey')?.value.trim() || '';
     const resp = await fetch(base + '/scrape', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ company: companyName, website: websiteUrl || null, location: locationValue || null }),
+      body: JSON.stringify({ 
+        company: companyName, 
+        website: websiteUrl || null, 
+        location: locationValue || null,
+        brave_api_key: braveKey || null
+      }),
       signal: AbortSignal.timeout(90000)   // 90 s — job + social searches add time
     });
     if (!resp.ok) throw new Error('Scraper HTTP ' + resp.status);
